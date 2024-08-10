@@ -1,16 +1,11 @@
-import Login from './component/Login'
-import Footer from './layout/Footer'
-import Header from './layout/Header'
+
+import { Outlet } from 'react-router-dom'
 
 function App() {
   return (
     <>
-      <div className='min-h-screen flex flex-col'>
-        <Header />
-        <div className='flex flex-grow bg-white'>
-          <Login />
-        </div>
-        <Footer />
+      <div className="flex flex-col h-screen">
+        <Outlet />
       </div>
     </>
   )
