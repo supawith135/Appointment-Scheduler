@@ -11,7 +11,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role }) => {
   if (user?.role !== role) {
     return <Navigate to="/" />;
   }
-
   return <Outlet />;
 };
 

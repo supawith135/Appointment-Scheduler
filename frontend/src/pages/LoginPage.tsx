@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Header from "../layout/Header"
+import LoginHeader from "../layout/LoginHeader"
 import Footer from "../layout/Footer"
 import CPE from "../assets/CPE_logo.jpg"
 
@@ -35,9 +35,9 @@ function Login() {
     };
     return (
         <>
-            <div className='min-h-screen flex flex-col'>
-                <Header />
-                <div className='flex flex-grow bg-white'>
+            <div className='min-h-screen flex flex-col bg-white'>
+                <LoginHeader />
+                <div className='flex flex-grow'>
                     <div className='mt-10 mx-center flex flex-col gap-y-4 items-center '>
                         <div className='w-2/4'>
                             <img src={CPE} alt="CPE Logo"></img>
