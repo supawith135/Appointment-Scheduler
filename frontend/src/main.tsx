@@ -9,6 +9,7 @@ import TeacherHomePage from './pages/teacher/TeacherHomePage'
 import StudentHomePage from './pages/student/StudentHomePage'
 import AdminHomePage from './pages/admin/AdminHomePage'
 import StudentHistoryPage from './pages/student/StudentHistoryPage'
+import TeacherHistoryPage from './pages/teacher/TeacherHistoryPage'
 
 const router = createBrowserRouter([
   // {
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute role="teacher" />,
         children: [
           { path: '', element: <TeacherHomePage /> },
+          { path: 'history', element: <TeacherHistoryPage /> },
         ],
       },
       {
@@ -43,7 +45,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute role="student" />,
         children: [
           { path: '', element: <StudentHomePage /> },
-          { path: 'History', element: <StudentHistoryPage /> },
+          { path: 'history', element: <StudentHistoryPage /> },
         ],
       },
       {

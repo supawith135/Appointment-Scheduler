@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function Navbar() {
+function StuduntNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,4 +52,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default StuduntNavbar;
