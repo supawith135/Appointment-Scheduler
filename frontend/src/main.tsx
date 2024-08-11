@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App'
-import Login from './pages/LoginPage'
+import LoginPage from './pages/LoginPage'
 import ProtectedRoute from './routers/ProtectRoute'
 import TeacherHomePage from './pages/teacher/TeacherHomePage'
 import StudentHomePage from './pages/student/StudentHomePage'
 import AdminHomePage from './pages/admin/AdminHomePage'
-
+import StudentHistoryPage from './pages/student/StudentHistoryPage'
 
 const router = createBrowserRouter([
   // {
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Login />,
+        element: <LoginPage />,
       },
       {
         path: '/teacher',
@@ -43,6 +43,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute role="student" />,
         children: [
           { path: '', element: <StudentHomePage /> },
+          { path: 'History', element: <StudentHistoryPage /> },
         ],
       },
       {

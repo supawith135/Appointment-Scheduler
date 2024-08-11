@@ -19,7 +19,7 @@ function Footer() {
                     ?subject=Hello — กำหนดหัวข้อของอีเมล
                     &body=How are you? — กำหนดเนื้อหาของอีเมล */}
                 <Link to={`mailto:cpe@sut.ac.th?subject=Subject&body=Message Body`}>
-                    <MdEmail className="text-2xl text-gray-200 hover:text-cyan-700" aria-label="Email Us" />
+                    <MdEmail className="text-2xl text-gray-200 hover:text-cyan-700 " aria-label="Email Us" />
                 </Link>
             </div>
         </footer>
