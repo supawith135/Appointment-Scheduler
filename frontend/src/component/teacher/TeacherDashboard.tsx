@@ -1,55 +1,67 @@
-import React from 'react'
-import { TbUsers } from "react-icons/tb";
-import { TbUserCheck } from "react-icons/tb";
+import React from 'react';
+import { TbUsers, TbUserCheck } from "react-icons/tb";
 import { LuCalendarRange } from "react-icons/lu";
+
 function TeacherDashboard() {
     return (
-        <div>
-            <div className='flex p-5 bg-white border-white rounded-md items-center shadow-lg'>
-                <div className='flex flex-row justify-between'>
-                    <div className='flex flex-row justify-between items-center '>
-                        <div className='bg-green-200 p-4 rounded-full'>
-                            <TbUsers className='stroke-green-600 size-6' />
+        <div className='p-4 sm:p-6 lg:p-10'>
+            <div className='bg-white border border-gray-200 rounded-md shadow-lg p-5'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+                    {/* Section 1 */}
+                    <div className='flex items-center p-4 bg-green-100 rounded-lg'>
+                        <div className='bg-green-200 p-3 rounded-full'>
+                            <TbUsers className='text-green-600 text-3xl' />
                         </div>
-                        <div className='mx-4'>
+                        <div className='ml-4'>
                             <ul>
-                                <li className='text-sm font-Kanit'>จำนวนนักศึกษาทั้งสาขา</li>
-                                <li className='text-2xl font-Kanit text-black'>250</li>
+                                <li className='text-sm font-medium text-gray-700'>จำนวนนักศึกษาทั้งสาขา</li>
+                                <li className='text-2xl font-bold text-black'>250</li>
                             </ul>
                         </div>
-                        <div className='bg-green-200 p-4 rounded-full'>
-                            <TbUserCheck className='stroke-green-600 size-6' />
+                    </div>
+                    
+                    {/* Section 2 */}
+                    <div className='flex items-center p-4 bg-green-100 rounded-lg'>
+                        <div className='bg-green-200 p-3 rounded-full'>
+                            <TbUserCheck className='text-green-600 text-3xl' />
                         </div>
-                        <div className='mx-4'>
+                        <div className='ml-4'>
                             <ul>
-                                <li className='text-sm font-Kanit'>จำนวนนักศึกษาที่ดูแล</li>
-                                <li className='text-2xl font-Kanit text-black'>25</li>
+                                <li className='text-sm font-medium text-gray-700'>จำนวนนักศึกษาที่ดูแล</li>
+                                <li className='text-2xl font-bold text-black'>25</li>
                             </ul>
                         </div>
-                        <div className='bg-green-200 p-4 rounded-full'>
-                            <LuCalendarRange className='stroke-green-600 size-6' />
+                    </div>
+
+                    {/* Section 3 */}
+                    <div className='flex items-center p-4 bg-green-100 rounded-lg'>
+                        <div className='bg-green-200 p-3 rounded-full'>
+                            <LuCalendarRange className='text-green-600 text-3xl' />
                         </div>
-                        <div className='mx-4'>
+                        <div className='ml-4'>
                             <ul>
-                                <li className='text-sm font-Kanit'>นัดหมายทั้งหมด</li>
-                                <li className='text-2xl font-Kanit text-black'>15</li>
+                                <li className='text-sm font-medium text-gray-700'>นัดหมายทั้งหมด</li>
+                                <li className='text-2xl font-bold text-black'>15</li>
                             </ul>
                         </div>
-                        <div className='bg-yellow-200 p-4 rounded-full'>
-                            <LuCalendarRange className='stroke-yellow-600 size-6' />
+                    </div>
+
+                    {/* Section 4 */}
+                    <div className='flex items-center p-4 bg-yellow-100 rounded-lg'>
+                        <div className='bg-yellow-200 p-3 rounded-full'>
+                            <LuCalendarRange className='text-yellow-600 text-3xl' />
                         </div>
-                        <div className='mx-4'>
+                        <div className='ml-4'>
                             <ul>
-                                <li className='text-sm font-Kanit'>นัดหมายที่เหลือ</li>
-                                <li className='text-2xl font-Kanit text-black'>2</li>
+                                <li className='text-sm font-medium text-gray-700'>นัดหมายที่เหลือ</li>
+                                <li className='text-2xl font-bold text-black'>2</li>
                             </ul>
                         </div>
-                        
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default TeacherDashboard
+export default TeacherDashboard;

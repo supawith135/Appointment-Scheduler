@@ -1,55 +1,37 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-function StuduntNavbar() {
-  const navigate = useNavigate();
+const StudentNavbar: React.FC = () => {
   const location = useLocation();
+  const [activeLink, setActiveLink] = useState<string>(location.pathname);
 
-  const handleClickHistory = () => {
-    if (location.pathname !== '/student/history') {
-      navigate('/student/history');
-    }
+  // Handle active link state based on the current path
+  const handleLinkClick = (path: string) => {
+    setActiveLink(path);
   };
 
   return (
-    <div className="navbar bg-white shadow-xl h-10">
-      <div className="flex-1"></div>
-      <div className="flex-none">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <details>
-              <summary className="font-Kanit text-black hover:bg-orange-400 hover:text-white">
-                การจองคิวนัดหมาย
-              </summary>
-              <ul className="bg-white rounded-t-none p-2">
-                <li>
-                  <a className="text-black font-Kanit hover:bg-orange-400 hover:text-white">
-                    อาจารย์ที่ปรึกษา
-                  </a>
-                </li>
-                <li>
-                  <a className="text-black font-Kanit hover:bg-orange-400 hover:text-white">
-                    อาจารย์สาขา
-                  </a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a
-              className={`font-Kanit text-black ${
-                location.pathname === '/student/history'
-                  ? 'bg-orange-400 text-white'
-                  : 'text-black hover:bg-orange-400'
-              }`}
-              onClick={handleClickHistory}
-            >
-              ประวัติการจองคิว
-            </a>
-          </li>
+    <div className='bg-white flex justify-end items-center h-14 w-full mx-auto px-2 text-black shadow-xl'>
+      <div className='flex font-Kanit'>
+        <ul 
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
+            activeLink === '/Student/Appointment' ? 'border-orange-500 text-orange-500' : 'border-white'
+          }`}
+          onClick={() => handleLinkClick('/Student/Appointment')}
+        >
+          <Link to="/Student/Appointment" className="block">การจองคิวนัดหมาย</Link>
+        </ul>
+        <ul 
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
+            activeLink === '/Student/History' ? 'border-orange-500 text-orange-500' : 'border-white'
+          }`}
+          onClick={() => handleLinkClick('/Student/History')}
+        >
+          <Link to="/Student/History" className="block">ประวัติการจองคิว</Link>
         </ul>
       </div>
     </div>
   );
-}
+};
 
-export default StuduntNavbar;
+export default StudentNavbar;
