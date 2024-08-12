@@ -10,6 +10,13 @@ import StudentHomePage from './pages/student/StudentHomePage'
 import AdminHomePage from './pages/admin/AdminHomePage'
 import StudentHistoryPage from './pages/student/StudentHistoryPage'
 import TeacherHistoryPage from './pages/teacher/TeacherHistoryPage'
+import AddStudent from './pages/admin/AddStudentPage'
+import StudenAppointmentPage from './pages/student/StudenAppointmentPage'
+import TeacherCreateTimeSlotPage from './pages/teacher/TeacherCreateTimeSlotPage'
+import TeacherAppointmentPage from './pages/teacher/TeacherAppointmentPage'
+import AddTeacher from './pages/admin/AddTeacherPage'
+import StudentListPage from './pages/admin/StudentListPage'
+import TecherListPage from './pages/admin/TeacherListPage'
 
 const router = createBrowserRouter([
   // {
@@ -33,26 +40,34 @@ const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: '/teacher',
+        path: '/Teacher',
         element: <ProtectedRoute role="teacher" />,
         children: [
           { path: '', element: <TeacherHomePage /> },
-          { path: 'history', element: <TeacherHistoryPage /> },
+          { path: 'A', element: <TeacherCreateTimeSlotPage /> },
+          { path: 'Appointment', element: <TeacherAppointmentPage /> },
+          { path: 'CreateTimeSlot', element: <TeacherCreateTimeSlotPage /> },
+          { path: 'History', element: <TeacherHistoryPage /> },
         ],
       },
       {
-        path: '/student',
+        path: '/Student',
         element: <ProtectedRoute role="student" />,
         children: [
           { path: '', element: <StudentHomePage /> },
-          { path: 'history', element: <StudentHistoryPage /> },
+          { path: 'Appointment', element: <StudenAppointmentPage /> },
+          { path: 'History', element: <StudentHistoryPage /> },
         ],
       },
       {
-        path: '/admin',
+        path: '/Admin',
         element: <ProtectedRoute role="admin" />,
         children: [
           { path: '', element: <AdminHomePage /> },
+          { path: 'AddStudent', element: <AddStudent /> },
+          { path: 'AddTeacher', element: <AddTeacher /> },
+          { path: 'StudentList', element: <StudentListPage /> },
+          { path: 'TeacherList', element: <TecherListPage /> },
         ],
       },
     ],

@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaEye, FaTrash } from 'react-icons/fa'; // Import icons from react-icons
-
 // Define TypeScript interface for the data
 interface Appointment {
     id: number;
@@ -20,7 +19,7 @@ const data: Appointment[] = [
     { id: 7, firstname: 'Lek', lastname: 'Thong', reasons: 'Scholarship inquiry', status: 'เข้าพบสำเร็จ' },
 ];
 
-const TeacherHistoryTable: React.FC = () => {
+const TeacherListTable: React.FC = () => {
     // Function to determine cell color based on status
     const getStatusColor = (status: string): string => {
         switch (status) {
@@ -48,32 +47,31 @@ const TeacherHistoryTable: React.FC = () => {
     };
 
     return (
-        <div className="border rounded-lg shadow-lg p-4 bg-white">
+        <div className='border rounded-lg shadow-xl p-10'>
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reasons</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <table className="table-md ">
+                    {/* head */}
+                    <thead>
+                        <tr className='text-black'>
+                            <th>ID</th>
+                            <th>FirstName</th>
+                            <th>LastName</th>
+                            <th>Reasons</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className='font-Kanit text-black'>
                         {data.map((entry) => (
                             <tr key={entry.id}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{entry.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.firstname}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.lastname}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.reasons}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`py-1 px-2 text-sm font-medium rounded-md bg-${getStatusColor(entry.status)}-200 text-${getStatusColor(entry.status)}-800`}>
-                                        {entry.status}
-                                    </span>
+                                <td>{entry.id}</td>
+                                <td>{entry.firstname}</td>
+                                <td>{entry.lastname}</td>
+                                <td>{entry.reasons}</td>
+                                <td >
+                                    <div className={`py-1 px-2 rounded-md text-center bg-${getStatusColor(entry.status)}-200 border-solid border-2 border-${getStatusColor(entry.status)}-400 `}>{entry.status}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td className='px-6 py-4 whitespace-nowrap text-center'>
                                     <button
                                         onClick={() => handleViewDetails(entry.id)}
                                         className='text-blue-500 hover:text-blue-700 mx-2'
@@ -94,6 +92,6 @@ const TeacherHistoryTable: React.FC = () => {
             </div>
         </div>
     );
-};
+}
 
-export default TeacherHistoryTable;
+export default TeacherListTable;

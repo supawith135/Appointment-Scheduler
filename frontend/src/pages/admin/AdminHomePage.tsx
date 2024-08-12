@@ -1,22 +1,21 @@
 import { useNavigate } from 'react-router-dom';
+import Header from '../../layout/Header';
+import Footer from '../../layout/Footer';
+import NavbarV2 from '../../layout/AdminNavbar';
 
 function AdminHomePage() {
-    const navigate = useNavigate();
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/');
-    };
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
-            <h1 className="text-2xl font-semibold">Welcome, AdminHomePage</h1>
-            <button
-                className="mt-4 bg-red-500 text-white py-2 px-4 rounded"
-                onClick={handleLogout}
-            >
-                Logout
-            </button>
+        <div className="min-h-screen flex flex-col bg-white">
+            <Header />
+            <NavbarV2 />
+            <div className='flex flex-grow m-auto'>
+                <div className='text-2xl m-auto'>
+                    Admin HomePage
+                </div>
+            </div>
+            <Footer />
         </div>
     )
 }

@@ -34,7 +34,7 @@ function HeaderPage() {
             <div className="flex-none gap-2">
                 <div className="form-control">
                     <div className='flex font-Kanit text-xl text-white '>
-                        Teacher
+                        Test
                     </div>
                 </div>
                 <Menu/>

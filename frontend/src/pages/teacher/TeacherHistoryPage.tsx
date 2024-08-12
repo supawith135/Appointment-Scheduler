@@ -1,29 +1,26 @@
-import React from 'react'
-import Header from '../../layout/Header'
-import TeacherNavbar from '../../layout/TeacherNavbar'
-import Footer from '../../layout/Footer'
-import TeacherHistoryTable from '../../component/teacher/TeacherHistoryTable'
-import TeacherDashboard from '../../component/teacher/TeacherDashboard'
-import TestNavbar from '../../layout/TestNavbar'
-
+import React from 'react';
+import Header from '../../layout/Header';
+import TeacherNavbar from '../../layout/TeacherNavbar';
+import Footer from '../../layout/Footer';
+import TeacherHistoryTable from '../../component/teacher/TeacherHistoryTable';
+import TeacherDashboard from '../../component/teacher/TeacherDashboard';
 
 function TeacherHistoryPage() {
     return (
-        <div className="min-h-screen flex flex-col bg-white">
+        <div className="min-h-screen flex flex-col bg-white ">
             <Header />
-            {/* <TestNavbar username="John Doe" role="Administrator"/> */}
             <TeacherNavbar />
-            <div className='flex flex-grow flex-col m-auto my-4'>
-                <div className='mb-4'>
+            <main className="flex flex-grow flex-col mx-4 my-4 md:mx-8 md:my-6 h-full">
+                <section className='mb-6'>
                     <TeacherDashboard />
-                </div>
-                <div className=''>
+                </section>
+                <section>
                     <TeacherHistoryTable />
-                </div>
-            </div>
+                </section>
+            </main>
             <Footer />
         </div>
-    )
+    );
 }
 
-export default TeacherHistoryPage
+export default TeacherHistoryPage;

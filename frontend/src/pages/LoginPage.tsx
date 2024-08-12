@@ -12,9 +12,9 @@ interface User {
 }
 
 const users: Record<string, User> = {
-    sut123: { role: 'teacher', password: 'sut321' },
-    B643210: { role: 'student', password: 'B123' },
-    adminsut: { role: 'admin', password: 'admin' },
+    sut123: { role: 'teacher', password: 'sut123' },
+    user123: { role: 'student', password: 'user123' },
+    admin123: { role: 'admin', password: 'admin123' },
 };
 
 
@@ -48,16 +48,16 @@ function Login() {
                                 <p className='text-center text-2xl text-orange-400'>วิธีการเข้าสู่ระบบ</p>
 
                                 <p className='text-lx  text-gray-600 mt-2'>อาจารย์</p>
-                                <p className='text-sm  text-gray-400 ml-6'>• ชื่อผู้ใช้ : SUT123</p>
-                                <p className='text-sm  text-gray-400 ml-6'>• รหัสผ่าน : SUT123</p>
+                                <p className='text-sm  text-gray-400 ml-6'>• ชื่อผู้ใช้ : sut123</p>
+                                <p className='text-sm  text-gray-400 ml-6'>• รหัสผ่าน : sut123</p>
 
                                 <p className='text-lx  text-gray-600 mt-2'>นักศึกษา</p>
-                                <p className='text-sm  text-gray-400 ml-6'>• ชื่อผู้ใช้ : B64xxxxx</p>
-                                <p className='text-sm  text-gray-400 ml-6'>• รหัสผ่าน : B64xxxxx</p>
+                                <p className='text-sm  text-gray-400 ml-6'>• ชื่อผู้ใช้ : user123</p>
+                                <p className='text-sm  text-gray-400 ml-6'>• รหัสผ่าน : user123</p>
 
                                 <p className='text-lx  text-gray-600 mt-2'>แอดมิน</p>
-                                <p className='text-sm  text-gray-400 ml-6'>• ชื่อผู้ใช้ : Admin123</p>
-                                <p className='text-sm  text-gray-400 ml-6'>• รหัสผ่าน : Admin123</p>
+                                <p className='text-sm  text-gray-400 ml-6'>• ชื่อผู้ใช้ : admin123</p>
+                                <p className='text-sm  text-gray-400 ml-6'>• รหัสผ่าน : admin123</p>
 
                             </div>
                             <div className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
