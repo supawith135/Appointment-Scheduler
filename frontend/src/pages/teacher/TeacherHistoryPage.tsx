@@ -10,7 +10,7 @@ function TeacherHistoryPage() {
         <div className="min-h-screen flex flex-col bg-white ">
             <Header />
             <TeacherNavbar />
-            <main className="flex flex-grow flex-col mx-4 my-4 md:mx-8 md:my-6 h-full">
+            <main className="flex flex-grow flex-col mx-4 my-4 md:mx-8 md:my-6 h-full bg-white">
                 <section className='mb-6'>
                     <TeacherDashboard />
                 </section>

@@ -35,7 +35,7 @@ const AdminNavbar: React.FC = () => {
     <div className='bg-white flex justify-end items-center h-14 w-full mx-auto px-2 text-black shadow-xl'>
       <div className='flex md:flex font-Kanit'>
         <ul className='p-2 m-2 cursor-pointer border-b-2 border-white duration-300 hover:border-b-2 hover:border-orange-500 hover:text-orange-500'>
-          <button>การนัดหมายอาจารย์</button>
+          <Link to='/Admin/AddStudentPage'>การนัดหมายอาจารย์</Link>
         </ul>
         <ul
           className='p-2 m-2 cursor-pointer border-b-2 border-white duration-300 hover:border-b-2 hover:border-orange-500 hover:text-orange-500 relative'

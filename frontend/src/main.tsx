@@ -17,6 +17,7 @@ import TeacherAppointmentPage from './pages/teacher/TeacherAppointmentPage'
 import AddTeacher from './pages/admin/AddTeacherPage'
 import StudentListPage from './pages/admin/StudentListPage'
 import TecherListPage from './pages/admin/TeacherListPage'
+import AppointAdvisor from './pages/admin/AppointmentAdvisor'
 
 const router = createBrowserRouter([
   // {
@@ -68,6 +69,7 @@ const router = createBrowserRouter([
           { path: 'AddTeacher', element: <AddTeacher /> },
           { path: 'StudentList', element: <StudentListPage /> },
           { path: 'TeacherList', element: <TecherListPage /> },
+          { path: 'AddStudentPage', element: <AppointAdvisor /> },
         ],
       },
     ],
