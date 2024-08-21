@@ -4,9 +4,9 @@ import { LuCalendarRange } from "react-icons/lu";
 
 function TeacherDashboard() {
     return (
-        <div className='p-4 sm:p-6 lg:p-10'>
-            <div className='bg-white border border-gray-200 rounded-md shadow-lg p-5'>
-                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+        <div className='sm:p-6 lg:p-10'>
+            <div className='bg-white border border-gray-200 rounded-md shadow-lg p-5 font-NotoSans'>
+                <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
                     {/* Section 1 */}
                     <div className='flex items-center p-4 bg-green-100 rounded-lg'>
                         <div className='bg-green-200 p-3 rounded-full'>
@@ -14,7 +14,7 @@ function TeacherDashboard() {
                         </div>
                         <div className='ml-4'>
                             <ul>
-                                <li className='text-sm font-medium text-gray-700'>จำนวนนักศึกษาทั้งสาขา</li>
+                                <li className='text-sm font-medium text-gray-700'>นักศึกษาทั้งสาขา</li>
                                 <li className='text-2xl font-bold text-black'>250</li>
                             </ul>
                         </div>
@@ -27,7 +27,7 @@ function TeacherDashboard() {
                         </div>
                         <div className='ml-4'>
                             <ul>
-                                <li className='text-sm font-medium text-gray-700'>จำนวนนักศึกษาที่ดูแล</li>
+                                <li className='text-sm font-medium text-gray-700'>นักศึกษาที่ดูแล</li>
                                 <li className='text-2xl font-bold text-black'>25</li>
                             </ul>
                         </div>

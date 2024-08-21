@@ -12,18 +12,18 @@ const StudentNavbar: React.FC = () => {
 
   return (
     <div className='bg-white flex justify-end items-center h-14 w-full mx-auto px-2 text-black shadow-xl'>
-      <div className='flex font-Kanit'>
+      <div className='flex font-NotoSans'>
         <ul 
-          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
-            activeLink === '/Student/Appointment' ? 'border-orange-500 text-orange-500' : 'border-white'
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
+            activeLink === '/Student/Appointment' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
           }`}
           onClick={() => handleLinkClick('/Student/Appointment')}
         >
           <Link to="/Student/Appointment" className="block">การจองคิวนัดหมาย</Link>
         </ul>
         <ul 
-          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
-            activeLink === '/Student/History' ? 'border-orange-500 text-orange-500' : 'border-white'
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
+            activeLink === '/Student/History' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
           }`}
           onClick={() => handleLinkClick('/Student/History')}
         >

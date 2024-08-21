@@ -12,26 +12,26 @@ const TeacherNavbar: React.FC = () => {
 
   return (
     <div className='bg-white flex justify-end items-center h-14 w-full mx-auto px-2 text-black shadow-xl'>
-      <div className='flex font-Kanit'>
+      <div className='flex font-NotoSans'>
         <ul 
-          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
-            activeLink === '/Teacher/Appointment' ? 'border-orange-500 text-orange-500' : 'border-white'
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
+            activeLink === '/Teacher/Appointment' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
           }`}
           onClick={() => handleLinkClick('/Student/Appointment')}
         >
           <Link to="/Teacher/Appointment" className="block">การนัดหมาย</Link>
         </ul>
         <ul 
-          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
-            activeLink === '/Teacher/CreateTimeSlot' ? 'border-orange-500 text-orange-500' : 'border-white'
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
+            activeLink === '/Teacher/CreateTimeSlot' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
           }`}
           onClick={() => handleLinkClick('/Teacher/CreateTimeSlot')}
         >
           <Link to="/Teacher/CreateTimeSlot" className="block">สร้างเวลานัดหมาย</Link>
         </ul>
         <ul 
-          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-orange-500 hover:text-orange-500 ${
-            activeLink === '/Teacher/History' ? 'border-orange-500 text-orange-500' : 'border-white'
+          className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
+            activeLink === '/Teacher/History' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
           }`}
           onClick={() => handleLinkClick('/Teacher/History')}
         >

@@ -7,20 +7,21 @@ import TeacherDashboard from '../../component/teacher/TeacherDashboard';
 
 function TeacherHistoryPage() {
     return (
-        <div className="min-h-screen flex flex-col bg-white ">
+        <div className="w-screen flex flex-col bg-white">
             <Header />
             <TeacherNavbar />
-            <main className="flex flex-grow flex-col mx-4 my-4 md:mx-8 md:my-6 h-full bg-white">
-                <section className='mb-6'>
-                    <TeacherDashboard />
-                </section>
-                <section>
-                    <TeacherHistoryTable />
-                </section>
-            </main>
-            <Footer />
+            <div className="flex flex-grow flex-col font-NotoSans my-4 gap-3">
+                <div className='m-auto w-full sm:w-full lg:w-4/5'>
+                    <TeacherDashboard />   
+                </div>
+                <div className='m-auto w-full sm:w-full lg:w-4/5'>
+                    <TeacherHistoryTable />           
+                </div>
+            </div>  
+            <Footer />  
         </div>
     );
 }
 
 export default TeacherHistoryPage;
+ 

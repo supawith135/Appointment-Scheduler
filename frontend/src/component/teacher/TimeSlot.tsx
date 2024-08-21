@@ -77,7 +77,7 @@ function TimeSlot() {
       <div className="flex justify-between items-center mb-6 sm:mb-10">
         <button
           onClick={() => navigateDate('prev')}
-          className="bg-gray-200 px-2 sm:px-4 py-1 sm:py-2 rounded-md hover:bg-orange-400 hover:text-white"
+          className="bg-gray-200 px-2 sm:px-4 py-1 sm:py-2 rounded-md hover:bg-red-700 hover:text-white"
         >
           &lt;
         </button>
@@ -91,7 +91,7 @@ function TimeSlot() {
         </div>
         <button
           onClick={() => navigateDate('next')}
-          className="bg-gray-200 px-2 sm:px-4 py-1 sm:py-2 rounded-md hover:bg-orange-400 hover:text-white"
+          className="bg-gray-200 px-2 sm:px-4 py-1 sm:py-2 rounded-md hover:bg-red-700 hover:text-white"
         >
           &gt;
         </button>
