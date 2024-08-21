@@ -1,37 +1,34 @@
 import React from 'react';
-import { FaEye, FaTrash } from 'react-icons/fa'; // Import icons from react-icons
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import Tooltip from '@mui/material/Tooltip';
 
-// Define TypeScript interface for the data
-interface Appointment {
-    id: number;
-    firstname: string;
-    lastname: string;
-    reasons: string;
-    status: string;
-}
-
-const data: Appointment[] = [
-    { id: 1, firstname: 'Aek', lastname: 'Chai', reasons: 'Discussion about project', status: 'รอการเข้าพบ' },
-    { id: 2, firstname: 'Somchai', lastname: 'Sukhum', reasons: 'Course counseling', status: 'รอการเข้าพบ' },
-    { id: 3, firstname: 'Anan', lastname: 'Praphat', reasons: 'Exam review', status: 'ไม่ได้เข้าพบ' },
-    { id: 4, firstname: 'Nicha', lastname: 'Wong', reasons: 'Career advice', status: 'เข้าพบสำเร็จ' },
-    { id: 5, firstname: 'Pim', lastname: 'Sawatdee', reasons: 'Personal issues', status: 'เข้าพบสำเร็จ' },
-    { id: 6, firstname: 'Kanya', lastname: 'Kiat', reasons: 'Research assistance', status: 'เข้าพบสำเร็จ' },
-    { id: 7, firstname: 'Lek', lastname: 'Thong', reasons: 'Scholarship inquiry', status: 'เข้าพบสำเร็จ' },
+const rows = [
+    { id: 1, firstName: 'Aek', lastName: 'Chai', reasons: 'Discussion about project', status: 'รอการเข้าพบ' },
+    { id: 2, firstName: 'Somchai', lastName: 'Sukhum', reasons: 'Course counseling', status: 'รอการเข้าพบ' },
+    { id: 3, firstName: 'Anan', lastName: 'Praphat', reasons: 'Exam review', status: 'ไม่ได้เข้าพบ' },
+    { id: 4, firstName: 'Nicha', lastName: 'Wong', reasons: 'Career advice', status: 'เข้าพบสำเร็จ' },
+    { id: 5, firstName: 'Pim', lastName: 'Sawatdee', reasons: 'Personal issues', status: 'เข้าพบสำเร็จ' },
+    { id: 6, firstName: 'Kanya', lastName: 'Kiat', reasons: 'Research assistance', status: 'เข้าพบสำเร็จ' },
+    { id: 7, firstName: 'Lek', lastName: 'Thong', reasons: 'Scholarship inquiry', status: 'เข้าพบสำเร็จ' },
 ];
 
 const TeacherHistoryTable: React.FC = () => {
-    // Function to determine cell color based on status
-    const getStatusColor = (status: string): string => {
+    // Function to get the icon, color, and description based on status
+    const getStatusIconAndColor = (status: string): { icon: JSX.Element; color: string; description: string } => {
         switch (status) {
             case 'รอการเข้าพบ':
-                return 'yellow'; // Light yellow
+                return { icon: <AccessTimeIcon />, color: 'orange', description: 'รอการเข้าพบ' };
             case 'เข้าพบสำเร็จ':
-                return 'green'; // Light green
+                return { icon: <CheckIcon />, color: 'green', description: 'เข้าพบสำเร็จ' };
             case 'ไม่ได้เข้าพบ':
-                return 'red'; // Light red
+                return { icon: <ClearIcon />, color: 'red', description: 'ไม่ได้เข้าพบ' };
             default:
-                return 'white'; // Default background color
+                return { icon: <AccessTimeIcon />, color: 'gray', description: 'Unknown' };
         }
     };
 
@@ -47,50 +44,89 @@ const TeacherHistoryTable: React.FC = () => {
         // Implement your delete logic here
     };
 
+    // Define the columns with custom actions
+    const columns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 70 },
+        {
+            field: 'fullName',
+            headerName: 'Full name',
+            description: 'This column has a value getter and is not sortable.',
+            sortable: false,
+            width: 200,
+            valueGetter: (value, rows) => `${rows.firstName || ''} ${rows.lastName || ''}`,
+        },
+        { field: 'reasons', headerName: 'Reasons', width: 300 },
+        {
+            field: 'status',
+            headerName: 'Status',
+            width: 80,
+            renderCell: (params) => {
+                const { icon, color, description } = getStatusIconAndColor(params.value as string);
+                return (
+                    <Tooltip title={description} arrow>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color , marginTop: '16px'}}>
+                            {icon}
+                        </div>
+                    </Tooltip>
+                );
+            },
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 150,
+            sortable: false,
+            renderCell: (params) => (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <Tooltip title="View Details" arrow>
+                        <RemoveRedEyeOutlinedIcon
+                            color="primary"
+                            style={{ cursor: 'pointer', marginTop: '16px' }}
+                            onClick={() => handleViewDetails(params.row.id)} // Added onClick for view details
+                        />
+                    </Tooltip>
+                    <Tooltip title="Delete" arrow>
+                        <DeleteIcon
+                            color="error"
+                            style={{ cursor: 'pointer', marginTop: '16px' }}
+                            onClick={() => handleDelete(params.row.id)} // Added onClick for delete action
+                        />
+                    </Tooltip>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="border rounded-lg shadow-lg p-4 bg-white">
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reasons</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {data.map((entry) => (
-                            <tr key={entry.id}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{entry.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.firstname}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.lastname}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.reasons}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`py-1 px-2 text-sm font-medium rounded-md bg-${getStatusColor(entry.status)}-200 text-${getStatusColor(entry.status)}-800`}>
-                                        {entry.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button
-                                        onClick={() => handleViewDetails(entry.id)}
-                                        className='text-blue-500 hover:text-blue-700 mx-2'
-                                    >
-                                        <FaEye />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(entry.id)}
-                                        className='text-red-500 hover:text-red-700 mx-2'
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <h2 className="text-lg font-semibold mb-4">Appointment History</h2>
+            <div style={{ height: 400, width: '100%' }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { page: 0, pageSize: 5 },
+                        },
+                    }}
+                    pageSizeOptions={[5, 10]}
+                    checkboxSelection
+                    sx={{
+                        '& .MuiDataGrid-cell': {
+                            fontFamily: 'Noto Sans, Noto Sans Thai',
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f5f5f5',
+                            fontWeight: 'bold',
+                        },
+                        '& .MuiDataGrid-row:hover': {
+                            backgroundColor: '#e0f7fa',
+                        },
+                        '& .MuiDataGrid-columnSeparator--sideRight': {
+                            display: 'none',
+                        },
+                    }}
+                />
             </div>
         </div>
     );

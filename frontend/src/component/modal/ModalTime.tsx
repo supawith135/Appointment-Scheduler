@@ -41,7 +41,7 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, selectedTi
         ref={modalRef} 
         className={`bg-white p-6 rounded-md shadow-lg w-80 transition-transform ${isOpen ? 'transform scale-100' : 'transform scale-90'} duration-300`}
       >
-        <h2 className="text-lg font-Kanit mb-4 text-orange-400">ระบุสาเหตุที่เข้าพบ</h2>
+        <h2 className="text-lg font-NotoSans mb-4 text-red-700">ระบุสาเหตุที่เข้าพบ</h2>
         {selectedTime && (
           <p className="mb-4 text-sm text-gray-600">Selected Time: {selectedTime}</p>
         )}
@@ -49,19 +49,19 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, selectedTi
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           rows={3}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-red-700"
           placeholder="กรุณากรอกรายละเอียด..."
         />
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className=" px-4 py-2 rounded-md hover:text-red-400 font-Kanit"
+            className=" px-4 py-2 rounded-md hover:text-red-400 font-NotoSans"
           >
             ยกเลิก
           </button>
           <button
             onClick={handleSubmit}
-            className="bg-orange-400 text-white px-4 py-2 rounded-md hover:bg-orange-500 font-Kanit transition duration-300 ease-in-out"
+            className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-ENGi-Red font-NotoSans transition duration-300 ease-in-out"
           >
             จอง
           </button>

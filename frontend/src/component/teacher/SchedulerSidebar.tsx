@@ -70,7 +70,7 @@ function SchedulerSidebar() {
             <input
                 type="text"
                 placeholder="Add title"
-                className="w-full border-b-2 border-gray-400 focus:outline-none mb-4 bg-white p-3 focus:border-orange-500"
+                className="w-full border-b-2 border-gray-400 focus:outline-none mb-4 bg-white p-3 focus:border-ENGi-Red"
             />
             <div className="mb-4">
                 <h3 className="font-semibold">Appointment duration</h3>

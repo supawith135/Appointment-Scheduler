@@ -11,7 +11,7 @@ function TeacherHomePage() {
             <Header />
             <TeacherNavbar />
             <div className='flex flex-grow m-auto'>
-                <div className='text-2xl m-auto'>
+                <div className='text-2xl m-auto font-NotoSans'>
                     Tacher HomePage
                 </div>
             </div>

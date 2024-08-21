@@ -9,9 +9,9 @@ function StudentHistoryPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       <StudentNavbar/>
-      <main className="flex-grow p-4 sm:p-6 lg:p-10 bg-white">
+      <main className="flex-grow p-4 sm:p-6 lg:p-10 bg-white font-NotoSans">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-Kanit text-center mb-6 text-orange-400">
+          <h1 className="text-2xl md:text-3xl font-NotoSans text-center mb-6 text-red-700">
             ประวัติการจองคิวหมายของนักศึกษา
           </h1>
           <StudentHistoryTable />
