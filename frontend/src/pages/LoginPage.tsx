@@ -38,7 +38,7 @@ function Login() {
                 <LoginHeader />
                 <div className='flex flex-grow bg-white'>
                     <div className='my-auto flex flex-col gap-y-4 m-auto '> 
-                        <div className='flex flex-col-reverse sm:flex-row justify-center gap-6 font-NotoSans'>
+                        <div className='flex flex-col-reverse sm:flex-row justify-center gap-6 '>
                             <div className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
 
                                 <p className='text-center text-2xl text-ENGi-Red'>วิธีการเข้าสู่ระบบ</p>
@@ -88,7 +88,7 @@ function Login() {
                                 </div>
                                 {error && <p className="text-red-500 mb-4">{error}</p>}
                                 <div className='flex justify-center'>
-                                    <button className="border border-red-700 rounded-md px-5 py-2 font-NotoSans text-ENGi-Red hover:bg-ENGi-Red hover:text-white" onClick={handleLogin}>
+                                    <button className="border border-red-700 rounded-md px-5 py-2  text-ENGi-Red hover:bg-ENGi-Red hover:text-white" onClick={handleLogin}>
                                         เข้าสู่ระบบ
                                     </button>
                                 </div>

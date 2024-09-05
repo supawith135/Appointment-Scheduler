@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 import ModalTime from '../modal/ModalTime';
-import CalendarDay from './AppointmentCalendayDay';
+import AppointmentCalendayDay from './AppointmentCalendayDay';
 interface DayInfo {
   day: string;
   date: number;
@@ -98,10 +98,10 @@ function AppointmentCalendar() {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
         {days.map(day => (
-          <CalendarDay
+          <AppointmentCalendayDay
             key={`${day.day}-${day.date}`}
             {...day}
-            currentDate={currentDate} // Pass currentDate to CalendarDay
+            currentDate={currentDate} // Pass currentDate to AppointmentCalendayDay
             onTimeSelect={(time: string) => handleTimeSelection(day.day, time)}
           />
         ))}

@@ -12,7 +12,7 @@ const StudentNavbar: React.FC = () => {
 
   return (
     <div className='bg-white flex justify-end items-center h-14 w-full mx-auto px-2 text-black shadow-xl'>
-      <div className='flex font-NotoSans'>
+      <div className='flex '>
         <ul 
           className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
             activeLink === '/Student/Appointment' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'

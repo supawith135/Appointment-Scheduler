@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'NotoSans': ['Noto Sans Thai', 'Noto Sans', 'sans-serif'],
+        // 'NotoSans': ['Noto Sans Thai', 'Noto Sans', 'sans-serif'],
         // 'NotoSansEng': ['Noto Sans', 'sans-serif'],
         // 'Kanit': ['Kanit', 'sans-serif'],
         

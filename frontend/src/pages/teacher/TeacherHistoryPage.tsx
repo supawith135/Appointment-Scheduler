@@ -10,7 +10,7 @@ function TeacherHistoryPage() {
         <div className="w-screen flex flex-col bg-white">
             <Header />
             <TeacherNavbar />
-            <div className="flex flex-grow flex-col font-NotoSans my-4 gap-3">
+            <div className="flex flex-grow flex-col  my-4 gap-3">
                 <div className='m-auto w-full sm:w-full lg:w-4/5'>
                     <TeacherDashboard />   
                 </div>
