@@ -5,7 +5,7 @@ import { LuCalendarRange } from "react-icons/lu";
 function TeacherDashboard() {
     return (
         <div className='sm:p-6 lg:p-10'>
-            <div className='bg-white border border-gray-200 rounded-md shadow-lg p-5 font-NotoSans'>
+            <div className='bg-white border border-gray-200 rounded-md shadow-lg p-5 '>
                 <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
                     {/* Section 1 */}
                     <div className='flex items-center p-4 bg-green-100 rounded-lg'>

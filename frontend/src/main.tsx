@@ -18,7 +18,9 @@ import AddTeacher from './pages/admin/AddTeacherPage'
 import StudentListPage from './pages/admin/StudentListPage'
 import TecherListPage from './pages/admin/TeacherListPage'
 import AppointAdvisor from './pages/admin/AppointmentAdvisor'
-
+import { LicenseInfo } from '@mui/x-license';
+import StudentDetailsPage from './pages/teacher/StudentDetailsPage'
+LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
   // {
   //   path: "/",
@@ -49,6 +51,7 @@ const router = createBrowserRouter([
           { path: 'Appointment', element: <TeacherAppointmentPage /> },
           { path: 'CreateTimeSlot', element: <TeacherCreateTimeSlotPage /> },
           { path: 'History', element: <TeacherHistoryPage /> },
+          { path: 'StudentDetails/:id', element: <StudentDetailsPage /> },
         ],
       },
       {

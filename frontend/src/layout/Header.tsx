@@ -17,7 +17,7 @@ function HeaderPage() {
         //     </div>
         //     {/* <div className='w-4/12'></div> */}
         //     <div className='w-1/2 flex justify-end mr-5 gap-4 items-center'>
-        //         <div className='flex font-NotoSans text-xl text-white '>
+        //         <div className='flex  text-xl text-white '>
         //             B6432140 ศุภวิชญ์ อยู่นิยม
         //         </div>
         //         <Menu />
@@ -33,7 +33,7 @@ function HeaderPage() {
             </div>
             <div className="flex-none gap-2">
                 <div className="form-control">
-                    <div className='flex font-NotoSans text-xl text-white '>
+                    <div className='flex  text-xl text-white '>
                         Test
                     </div>
                 </div>

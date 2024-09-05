@@ -1,11 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Tooltip from '@mui/material/Tooltip';
+import { DataGridPremium, GridToolbarContainer, GridToolbarExport, GridColDef, GridCsvExportOptions } from '@mui/x-data-grid-premium';
 
 const rows = [
     { id: 1, firstName: 'Aek', lastName: 'Chai', reasons: 'Discussion about project', status: 'รอการเข้าพบ' },
@@ -17,7 +18,21 @@ const rows = [
     { id: 7, firstName: 'Lek', lastName: 'Thong', reasons: 'Scholarship inquiry', status: 'เข้าพบสำเร็จ' },
 ];
 
+function CustomToolbar() {
+    const csvOptions: GridCsvExportOptions = {
+        utf8WithBom: true, // Ensure UTF-8 with BOM for proper encoding in Excel
+    };
+
+    return (
+        <GridToolbarContainer>
+            <GridToolbarExport csvOptions={csvOptions} />
+        </GridToolbarContainer>
+    );
+}
+
 const TeacherHistoryTable: React.FC = () => {
+    const navigate = useNavigate();
+
     // Function to get the icon, color, and description based on status
     const getStatusIconAndColor = (status: string): { icon: JSX.Element; color: string; description: string } => {
         switch (status) {
@@ -44,6 +59,13 @@ const TeacherHistoryTable: React.FC = () => {
         // Implement your delete logic here
     };
 
+    // Handle cell click
+    const handleCellClick = (params: any) => {
+        if (params.field === 'fullName') {
+            navigate(`/Teacher/StudentDetails/${params.row.id}`);
+        }
+    };
+
     // Define the columns with custom actions
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -64,7 +86,7 @@ const TeacherHistoryTable: React.FC = () => {
                 const { icon, color, description } = getStatusIconAndColor(params.value as string);
                 return (
                     <Tooltip title={description} arrow>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color , marginTop: '16px'}}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color, marginTop: '16px' }}>
                             {icon}
                         </div>
                     </Tooltip>
@@ -82,14 +104,14 @@ const TeacherHistoryTable: React.FC = () => {
                         <RemoveRedEyeOutlinedIcon
                             color="primary"
                             style={{ cursor: 'pointer', marginTop: '16px' }}
-                            onClick={() => handleViewDetails(params.row.id)} // Added onClick for view details
+                            onClick={() => handleViewDetails(params.row.id)}
                         />
                     </Tooltip>
                     <Tooltip title="Delete" arrow>
                         <DeleteIcon
                             color="error"
                             style={{ cursor: 'pointer', marginTop: '16px' }}
-                            onClick={() => handleDelete(params.row.id)} // Added onClick for delete action
+                            onClick={() => handleDelete(params.row.id)}
                         />
                     </Tooltip>
                 </div>
@@ -101,9 +123,12 @@ const TeacherHistoryTable: React.FC = () => {
         <div className="border rounded-lg shadow-lg p-4 bg-white">
             <h2 className="text-lg font-semibold mb-4">Appointment History</h2>
             <div style={{ height: 400, width: '100%' }}>
-                <DataGrid
+                <DataGridPremium
                     rows={rows}
                     columns={columns}
+                    slots={{
+                        toolbar: CustomToolbar,
+                    }}
                     initialState={{
                         pagination: {
                             paginationModel: { page: 0, pageSize: 5 },
@@ -111,6 +136,7 @@ const TeacherHistoryTable: React.FC = () => {
                     }}
                     pageSizeOptions={[5, 10]}
                     checkboxSelection
+                    onCellClick={handleCellClick}
                     sx={{
                         '& .MuiDataGrid-cell': {
                             fontFamily: 'Noto Sans, Noto Sans Thai',
