@@ -6,66 +6,73 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
+// Users represents a user entity.
+type Users struct {
 	gorm.Model
-	PositionID *uint
-	Position   Position `gorm:"foreignKey:PositionID;references:ID"`
-	FullName   string `gorm:"uniqueIndex"`
-	RoleID     *uint
-	Role       Role `gorm:"foreignKey:RoleID;references:ID"`
-	AdvisorID  *uint
-	Advisor    *User  `gorm:"foreignKey:AdvisorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Email      string `gorm:"uniqueIndex"`
-	UserName   string `gorm:"uniqueIndex"`
-	Password   string
-	GenderID   *uint
-	Gender     Gender `gorm:"foreignKey:GenderID;references:ID"`
+	PositionID *uint    `json:"position_id"`
+	Position   Positions `gorm:"foreignKey:PositionID;references:ID" json:"position"`
+	FullName   string   `gorm:"uniqueIndex;not null" json:"full_name"`
+	RoleID     *uint    `json:"role_id"`
+	Role       Roles     `gorm:"foreignKey:RoleID;references:ID" json:"role"`
+	AdvisorID  *uint    `json:"advisor_id"`
+	Advisor    *Users   `gorm:"foreignKey:AdvisorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"advisor"`
+	Email      string   `gorm:"uniqueIndex;not null" json:"email"`
+	UserName   string   `gorm:"uniqueIndex;not null" json:"user_name"`
+	Password   string   `json:"password"`
+	GenderID   *uint    `json:"gender_id"`
+	Gender     Genders   `gorm:"foreignKey:GenderID;references:ID" json:"gender"`
 }
 
-type Position struct {
+// Positions represents a position entity.
+type Positions struct {
 	gorm.Model
-	PositionName string
-	Users        []User `gorm:"foreignKey:PositionID"`
+	PositionName string  `gorm:"uniqueIndex;not null" json:"position_name"`
+	Users        []Users `gorm:"foreignKey:PositionID" json:"users"`
 }
 
-type Gender struct {
+// Genders represents a gender entity.
+type Genders struct {
 	gorm.Model
-	GenderName string `gorm:"uniqueIndex"`
-	Users      []User `gorm:"foreignKey:GenderID"`
+	GenderName string  `gorm:"uniqueIndex;not null" json:"gender_name"`
+	Users      []Users `gorm:"foreignKey:GenderID" json:"users"`
 }
 
-type Role struct {
+// Roles represents a role entity.
+type Roles struct {
 	gorm.Model
-	RoleName string `gorm:"uniqueIndex"`
-	Users    []User `gorm:"foreignKey:RoleID"`
+	RoleName string  `gorm:"uniqueIndex;not null" json:"role_name"`
+	Users    []Users `gorm:"foreignKey:RoleID" json:"users"`
 }
 
-type TimeSlot struct {
+// TimeSlots represents a time slot entity.
+type TimeSlots struct {
 	gorm.Model
-	UserID        uint
-	User          User `gorm:"foreignKey:UserID;references:ID"`
-	SlotDate      time.Time
-	SlotStartTime time.Time
-	SlotEndTime   time.Time
-	Location      string
-	Title         string
-	IsAvailable   bool
+	UserID        uint      `json:"user_id"`
+	User          Users     `gorm:"foreignKey:UserID;references:ID" json:"user"`
+	SlotDate      time.Time `gorm:"not null" json:"slot_date"`
+	SlotStartTime time.Time `gorm:"not null" json:"slot_start_time"`
+	SlotEndTime   time.Time `gorm:"not null" json:"slot_end_time"`
+	Location      string    `json:"location"`
+	Title         string    `json:"title"`
+	IsAvailable   bool      `json:"is_available"`
 }
 
-type Booking struct {
+// Bookings represents a booking entity.
+type Bookings struct {
 	gorm.Model
-	BookingDate time.Time
-	BookingTime time.Time
-	StatusID    *uint
-	Status      Status `gorm:"foreignKey:StatusID;references:ID"`
-	TimeSlotID  *uint
-	TimeSlot    TimeSlot `gorm:"foreignKey:TimeSlotID;references:ID"`
-	UserID      *uint
-	User        User `gorm:"foreignKey:UserID;references:ID"`
+	BookingDate time.Time `gorm:"not null" json:"booking_date"`
+	BookingTime time.Time `gorm:"not null" json:"booking_time"`
+	StatusID    *uint     `json:"status_id"`
+	Status      Statuses  `gorm:"foreignKey:StatusID;references:ID" json:"status"`
+	TimeSlotID  *uint     `json:"time_slot_id"`
+	TimeSlot    TimeSlots `gorm:"foreignKey:TimeSlotID;references:ID" json:"time_slot"`
+	UserID      *uint     `json:"user_id"`
+	User        Users     `gorm:"foreignKey:UserID;references:ID" json:"user"`
 }
 
-type Status struct {
+// Statuses represents a status entity.
+type Statuses struct {
 	gorm.Model
-	Status   string
-	Bookings []Booking `gorm:"foreignKey:StatusID"`
+	Status   string    `gorm:"uniqueIndex;not null" json:"status"`
+	Bookings []Bookings `gorm:"foreignKey:StatusID" json:"bookings"`
 }

@@ -1,0 +1,153 @@
+package teacher
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/supawith135/Appointment-Scheduler/config"
+	"github.com/supawith135/Appointment-Scheduler/entity"
+)
+
+// ดึงข้อมูล Timeslot ทั้งหมด
+func GetListTimeSlots(c *gin.Context) {
+
+	var timeSlots []entity.TimeSlots
+
+	db := config.DB()
+
+	results := db.Preload("User").Find(&timeSlots)
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Time slots retrieved successfully",
+		"data":    timeSlots,
+	})
+}
+
+// ดึงข้อมูล Timeslot โดย ID
+func GetTimeSlotById(c *gin.Context) {
+
+	ID := c.Param("id")
+
+	var timeSlot entity.TimeSlots
+
+	db := config.DB()
+
+	results := db.Preload("User").Find(&timeSlot, ID)
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	if timeSlot.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "TimeSlot not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Time slot retrieved successfully",
+		"data":    timeSlot,
+	})
+}
+
+// สร้างข้อมูล TimeSlot
+func CreateTimeSlot(c *gin.Context) {
+
+	var timeSlot entity.TimeSlots
+
+	db := config.DB()
+
+	if err := c.ShouldBindJSON(&timeSlot); err != nil {
+		log.Printf("JSON binding error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	var user entity.Users
+	result := db.First(&user, "id = ?", timeSlot.UserID)
+	if result.Error != nil {
+		log.Printf("Database query error: %v", result.Error)
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "UserID not found"})
+		return
+	}
+
+	result = db.Create(&timeSlot)
+	if result.Error != nil {
+		log.Printf("Database create error: %v", result.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to create time slot"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status":  "success",
+		"message": "Time slot created successfully",
+		"data":    timeSlot,
+	})
+}
+
+func UpdateTimeSlotById(c *gin.Context) {
+	var timeSlot entity.TimeSlots
+
+	TimeSlotID := c.Param("id")
+
+	db := config.DB()
+
+	// ค้นหา TimeSlot ที่ต้องการอัพเดท
+	result := db.First(&timeSlot, TimeSlotID)
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  "error",
+			"message": "Time slot not found",
+		})
+		return
+	}
+
+	// แปลงข้อมูล JSON ที่ส่งมาเป็นโครงสร้าง TimeSlots
+	if err := c.ShouldBindJSON(&timeSlot); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status":  "error","message": "Bad request, unable to parse payload",})
+		return
+	}
+
+	// บันทึกการเปลี่ยนแปลง
+	result = db.Save(&timeSlot)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status":  "error","message": "Failed to update time slot",})
+		return
+	}
+
+	// ส่งข้อมูลที่อัพเดทแล้วกลับไป
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Time slot updated successfully",
+		"data":    timeSlot,
+	})
+}
+
+// ลบข้อมูล TimeSlot โดย ID
+func DeleteTimeSlotById(c *gin.Context) {
+	id := c.Param("id")
+
+	db := config.DB()
+
+	result := db.Exec("DELETE FROM time_slots WHERE id = ?", id)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to delete time slot"})
+		return
+	}
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Time slot not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Time slot deleted successfully",
+	})
+}
