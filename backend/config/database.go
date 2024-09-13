@@ -1,9 +1,10 @@
-package entity
+package config
 
 import (
 	"fmt"
+	// "log"
 	"time"
-
+	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,8 +14,16 @@ import (
 var db *gorm.DB
 
 // DB returns the global database instance
+// func DB() *gorm.DB {
+// 	if db == nil {
+// 		log.Fatal("Database connection is not initialized")
+// 	}
+// 	return db
+// }
 func DB() *gorm.DB {
+
 	return db
+
 }
 
 // hashPassword hashes the password using bcrypt
@@ -41,51 +50,58 @@ func SetupDatabase() {
 	db = database
 
 	// Drop and migrate tables
-	database.Migrator().DropTable(&User{}, &Position{}, &Gender{}, &Role{}, &TimeSlot{}, &Booking{}, &Status{})
-	database.AutoMigrate(&User{}, &Position{}, &Gender{}, &Role{}, &TimeSlot{}, &Booking{}, &Status{})
+	db.Migrator().DropTable(&entity.Users{}, &entity.Positions{}, &entity.Genders{}, &entity.Roles{}, &entity.TimeSlots{}, &entity.Bookings{}, &entity.Statuses{})
+	db.AutoMigrate(&entity.Users{}, &entity.Positions{}, &entity.Genders{}, &entity.Roles{}, &entity.TimeSlots{}, &entity.Bookings{}, &entity.Statuses{})
 	fmt.Println("Database migration completed!")
 
+	// Seed data
+	seedData()
+}
+
+// Seed function to add the seed data
+func seedData() {
 	// Seed Gender data
-	genders := []Gender{
+	genders := []entity.Genders{
 		{GenderName: "ชาย"},
 		{GenderName: "หญิง"},
+		
 	}
 	for _, gender := range genders {
-		database.Where(Gender{GenderName: gender.GenderName}).FirstOrCreate(&gender)
+		db.FirstOrCreate(&gender, &entity.Genders{GenderName: gender.GenderName})
 	}
 
 	// Seed Position data
-	positions := []Position{
+	positions := []entity.Positions{
 		{PositionName: "ศาสตราจารย์"},
 		{PositionName: "รองศาสตราจารย์"},
 		{PositionName: "ผู้ช่วยศาสตราจารย์"},
 	}
 	for _, position := range positions {
-		database.Where(Position{PositionName: position.PositionName}).FirstOrCreate(&position)
+		db.FirstOrCreate(&position, &entity.Positions{PositionName: position.PositionName})
 	}
 
 	// Seed Status data
-	statuses := []Status{
+	statuses := []entity.Statuses{
 		{Status: "ไม่ได้เข้าพบ"},
 		{Status: "เข้าพบแล้ว"},
 		{Status: "เลื่อนการนัดหมาย"},
 	}
 	for _, status := range statuses {
-		database.Where(Status{Status: status.Status}).FirstOrCreate(&status)
+		db.FirstOrCreate(&status, &entity.Statuses{Status: status.Status})
 	}
 
 	// Seed Role data
-	roles := []Role{
+	roles := []entity.Roles{
 		{RoleName: "นักศึกษา"},
 		{RoleName: "อาจารย์"},
 		{RoleName: "แอดมิน"},
 	}
 	for _, role := range roles {
-		database.Where(Role{RoleName: role.RoleName}).FirstOrCreate(&role)
+		db.FirstOrCreate(&role, &entity.Roles{RoleName: role.RoleName})
 	}
 
 	// Seed User data
-	users := []User{
+	users := []entity.Users{
 		// Teacher
 		{
 			PositionID: uintPtr(3),
@@ -160,40 +176,41 @@ func SetupDatabase() {
 		users[i].Password = hashedPassword
 
 		// Insert or update the user
-		database.Where(User{Email: user.Email}).FirstOrCreate(&users[i])
+		db.FirstOrCreate(&users[i], &entity.Users{Email: user.Email})
 	}
-	thTimeZone := time.FixedZone("ICT", 7*3600) //TimeZone Thailand
-	timeSlots := []TimeSlot{
+
+	// Seed TimeSlot data
+	thTimeZone := time.FixedZone("ICT", 7*3600)
+	timeSlots := []entity.TimeSlots{
 		{
-			UserID:        1, // สมมติว่า User ID นี้มีอยู่
-			SlotDate:      time.Date(2024, time.September, 15, 0, 0, 0, 0, thTimeZone), // วันที่เท่านั้น
-			SlotStartTime: time.Date(2024, time.September, 15, 9, 0, 0, 0, thTimeZone), // เวลาเริ่มต้น: 09:00 น.
-			SlotEndTime:   time.Date(2024, time.September, 15, 10, 30, 0, 0, thTimeZone), // เวลาสิ้นสุด: 10:00 น.
+			UserID:        1,
+			SlotDate:      time.Date(2024, time.September, 15, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 15, 9, 0, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 15, 10, 30, 0, 0, thTimeZone),
 			Location:      "ห้องเรียน A",
 			Title:         "การประชุมรายงาน",
 			IsAvailable:   true,
 		},
 		{
-			UserID:        1, // สมมติว่า User ID นี้มีอยู่
-			SlotDate:      time.Date(2024, time.September, 16, 0, 0, 0, 0, thTimeZone), // วันที่เท่านั้น
-			SlotStartTime: time.Date(2024, time.September, 16, 14, 0, 0, 0, thTimeZone), // เวลาเริ่มต้น: 14:00 น.
-			SlotEndTime:   time.Date(2024, time.September, 16, 15, 30, 0, 0, thTimeZone), // เวลาสิ้นสุด: 15:00 น.
+			UserID:        1,
+			SlotDate:      time.Date(2024, time.September, 16, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 16, 14, 0, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 16, 15, 30, 0, 0, thTimeZone),
 			Location:      "ห้องเรียน B",
 			Title:         "การประชุมทีมงาน",
 			IsAvailable:   false,
 		},
 		{
-			UserID:        2, // สมมติว่า User ID นี้มีอยู่
-			SlotDate:      time.Date(2024, time.September, 17, 0, 0, 0, 0, thTimeZone), // วันที่เท่านั้น
-			SlotStartTime: time.Date(2024, time.September, 17, 11, 0, 0, 0, thTimeZone), // เวลาเริ่มต้น: 11:00 น.
-			SlotEndTime:   time.Date(2024, time.September, 17, 12, 0, 0, 0, thTimeZone), // เวลาสิ้นสุด: 12:00 น.
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 17, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 17, 11, 0, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 17, 12, 0, 0, 0, thTimeZone),
 			Location:      "ห้องเรียน C",
 			Title:         "การสัมมนา",
 			IsAvailable:   true,
 		},
 	}
 	for _, timeSlot := range timeSlots {
-		database.Where(timeSlot).FirstOrCreate(&timeSlot)
+		db.Where(timeSlot).FirstOrCreate(&timeSlot)
 	}
-
 }
