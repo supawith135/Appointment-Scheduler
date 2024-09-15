@@ -92,9 +92,9 @@ func seedData() {
 
 	// Seed Role data
 	roles := []entity.Roles{
-		{RoleName: "นักศึกษา"},
-		{RoleName: "อาจารย์"},
-		{RoleName: "แอดมิน"},
+		{RoleName: "student"},
+		{RoleName: "teacher"},
+		{RoleName: "admin"},
 	}
 	for _, role := range roles {
 		db.FirstOrCreate(&role, &entity.Roles{RoleName: role.RoleName})
