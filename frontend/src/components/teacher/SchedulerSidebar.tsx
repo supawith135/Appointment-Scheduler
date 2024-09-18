@@ -9,6 +9,14 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { Alert } from '@mui/material';
 
+interface TimeSlot {
+    ID: number;
+    slot_date: string;
+    slot_start_time: string;
+    slot_end_time: string;
+    title: string;
+}
+
 function SchedulerSidebar() {
     const today = dayjs().format('YYYY-MM-DD');
     const [availability, setAvailability] = React.useState<Record<string, DateRange<Dayjs>[]>>({
@@ -103,21 +111,44 @@ function SchedulerSidebar() {
         setSelectedDate(null);
     };
 
+    const generateTimeSlots = (date: string, startTime: Dayjs, endTime: Dayjs, title: string, durationMinutes: number): TimeSlot[] => {
+        const slots: TimeSlot[] = [];
+        let currentStartTime = startTime;
+        let id = 1;
+
+        while (currentStartTime.isBefore(endTime)) {
+            const slotEndTime = currentStartTime.add(durationMinutes, 'minute');
+            if (slotEndTime.isAfter(endTime)) break;
+
+            slots.push({
+                ID: id,
+                slot_date: `${date}T00:00:00Z`,
+                slot_start_time: currentStartTime.format('YYYY-MM-DDTHH:mm:00Z'),
+                slot_end_time: slotEndTime.format('YYYY-MM-DDTHH:mm:00Z'),
+                title: title,
+            });
+
+            currentStartTime = slotEndTime;
+            id++;
+        }
+
+        return slots;
+    };
+
     const handleConfirm = () => {
-        console.log('Title:', title);
-        console.log('Duration:', duration);
-    
-        const formattedAvailability = Object.entries(availability).map(([day, ranges]) => {
-            return {
-                day,
-                times: ranges.map(([start, end]) => ({
-                    from: start ? start.format('HH:mm') : 'Invalid start time',
-                    to: end ? end.format('HH:mm') : 'Invalid end time',
-                })),
-            };
+        const allTimeSlots: TimeSlot[] = [];
+
+        Object.entries(availability).forEach(([day, ranges]) => {
+            ranges.forEach(([start, end]) => {
+                if (start && end) {
+                    const slots = generateTimeSlots(day, start, end, title, durationMinutes);
+                    allTimeSlots.push(...slots);
+                }
+            });
         });
-    
-        console.log('Availability:', formattedAvailability);
+
+        console.log('Generated Time Slots:');
+        allTimeSlots.forEach(slot => console.log(JSON.stringify(slot, null, 2)));
     };
 
     return (

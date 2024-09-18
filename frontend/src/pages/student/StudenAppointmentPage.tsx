@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../../layout/Header'
 import StudentNavbar from '../../layout/StudentNavbar'
 import Footer from '../../layout/Footer'
-import AppointmentCalendar from '../../component/student/AppointmentCalendar'
+import AppointmentCalendar from '../../components/student/AppointmentCalendar'
 
 function StudentAppointmentPage() {
   return (

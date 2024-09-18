@@ -16,7 +16,7 @@ func main() {
     r := gin.Default()
     r.Use(CORSMiddleware())
 
-    r.POST("/signin", users.SignIn)
+    r.POST("/", users.LogIn)
 
     // Student routes
     students := r.Group("/student")
@@ -52,6 +52,30 @@ func main() {
         admins.GET("/timeslot/:id", admin.GetTimeSlotById)
     }
 
+	// //student
+    // r.GET("/student", student.GetStudentsList)
+    // r.GET("/student/:id", student.GetStudentById)
+    // r.PUT("/student/:id", student.UpdateStudentById)
+    // //techer
+    // r.GET("/techer", teacher.GetTeachersList)
+    // r.GET("/techer/:id", teacher.GetTeacherById)
+
+    // r.GET("/techer/timeslot", teacher.GetListTimeSlots)
+    // r.GET("/techer/timeslot/:id", teacher.GetTimeSlotById)
+    // r.POST("/techer/timeslot", teacher.CreateTimeSlot)
+    // r.PUT("/techer/timeslot/:id", teacher.UpdateTimeSlotById)
+    // r.DELETE("/techer/timeslot/:id", teacher.DeleteTimeSlotById)
+
+    // //admin
+    // r.GET("/admin/student", admin.GetStudentsList)
+    // r.GET("/admin/student/:id", admin.GetStudentById)
+
+    // r.GET("/admin/techer", admin.GetTeachersList)
+    // r.GET("/admin/techer/:id", admin.GetTeacherById)
+
+    // //ยังไม่ทำค้นหาโดยอาจารย์
+    // r.GET("/admin/timeslot", admin.GetListTimeSlots)
+    // r.GET("/admin/timeslot/:id", admin.GetTimeSlotById)
     r.Run()
 }
 func CORSMiddleware() gin.HandlerFunc {

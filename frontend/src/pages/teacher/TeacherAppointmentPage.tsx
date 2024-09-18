@@ -3,7 +3,7 @@ import Header from '../../layout/Header'
 import TeacherNavbar from '../../layout/TeacherNavbar'
 
 import Footer from '../../layout/Footer'
-import CalendarTeacher from '../../component/teacher/CalendarTeacher'
+import CalendarTeacher from '../../components/teacher/CalendarTeacher'
 
 function TeacherAppointmentPage() {
     return (

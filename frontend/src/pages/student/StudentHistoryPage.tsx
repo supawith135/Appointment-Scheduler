@@ -1,7 +1,7 @@
 import Header from '../../layout/Header';
 
 import Footer from '../../layout/Footer';
-import StudentHistoryTable from '../../component/student/StudentHistoryTable';
+import StudentHistoryTable from '../../components/student/StudentHistoryTable';
 import StudentNavbar from '../../layout/StudentNavbar';
 
 function StudentHistoryPage() {
