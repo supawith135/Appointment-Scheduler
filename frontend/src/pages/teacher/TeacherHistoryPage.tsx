@@ -2,8 +2,8 @@ import React from 'react';
 import Header from '../../layout/Header';
 import TeacherNavbar from '../../layout/TeacherNavbar';
 import Footer from '../../layout/Footer';
-import TeacherHistoryTable from '../../component/teacher/TeacherHistoryTable';
-import TeacherDashboard from '../../component/teacher/TeacherDashboard';
+import TeacherHistoryTable from '../../components/teacher/TeacherHistoryTable';
+import TeacherDashboard from '../../components/teacher/TeacherDashboard';
 
 function TeacherHistoryPage() {
     return (

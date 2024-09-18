@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../../layout/Header'
 import AdminNavbar from '../../layout/AdminNavbar'
 import Footer from '../../layout/Footer'
-import CalenderAdvisor from '../../component/admin/CalendarAdvisor'
+import CalenderAdvisor from '../../components/admin/CalendarAdvisor'
 
 function AppointAdvisor() {
     return (

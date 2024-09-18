@@ -16,7 +16,7 @@ type Authen struct {
 	Password string `json:"password"`
 }
 
-func SignIn(c *gin.Context) {
+func LogIn(c *gin.Context) {
 	var payload Authen
 	var user entity.Users
 
@@ -53,15 +53,15 @@ func SignIn(c *gin.Context) {
 	}
 
 	// เพิ่ม role เข้าไปใน GenerateToken
-	signedToken, err := jwtWrapper.GenerateToken(user.Email, roleName)
+	loginedToken, err := jwtWrapper.GenerateToken(user.Email, roleName)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error signing token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Loginedn token"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"token_type": "Bearer",
-		"token":      signedToken,
+		"token":      loginedToken,
 		"id":         user.ID,
 		"role":       roleName,
 	})

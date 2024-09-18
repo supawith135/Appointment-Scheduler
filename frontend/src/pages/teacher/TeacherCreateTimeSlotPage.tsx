@@ -1,10 +1,10 @@
 import Header from '../../layout/Header';
 import TeacherNavbar from '../../layout/TeacherNavbar';
 import Footer from '../../layout/Footer';
-import SchedulerSidebar from '../../component/teacher/SchedulerSidebar';
-import TimeSlot from '../../component/teacher/TimeSlot';
+import SchedulerSidebar from '../../components/teacher/SchedulerSidebar';
+import TimeSlot from '../../components/teacher/TimeSlot';
 import { useState } from 'react';
-import CreateTimeSlot from '../../component/teacher/CreateTimeSlot';
+import CreateTimeSlot from '../../components/teacher/CreateTimeSlot';
 
 function TeacherCreateTimeSlotPage() {
   // const [title, setTitle] = useState<string>('');

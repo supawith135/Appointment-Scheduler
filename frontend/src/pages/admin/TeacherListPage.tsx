@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../../layout/Header'
 import AdminNavbar from '../../layout/AdminNavbar'
-import TeacherListTable from '../../component/admin/TeacherListTable'
+import TeacherListTable from '../../components/admin/TeacherListTable'
 import Footer from '../../layout/Footer'
 
 function TeacherListPage() {

@@ -2,8 +2,7 @@ import React from 'react'
 import Header from '../../layout/Header'
 import TeacherNavbar from '../../layout/TeacherNavbar'
 import Footer from '../../layout/Footer'
-import TeacherHistoryTable from '../../component/teacher/TeacherHistoryTable'
-
+import TeacherHistoryTable from '../../components/teacher/TeacherHistoryTable'
 function StudentDetailsPage() {
   return (
     <div className="w-screen flex flex-col bg-white ">

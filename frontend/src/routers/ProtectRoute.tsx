@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 interface ProtectedRouteProps {
@@ -6,11 +5,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role }) => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const storedRole = localStorage.getItem('role');
 
-  if (user?.role !== role) {
+  // If no role or roles do not match, navigate to login
+  if (!storedRole || storedRole !== role) {
     return <Navigate to="/" />;
   }
+
+  // If roles match, render the children
   return <Outlet />;
 };
 

@@ -141,7 +141,7 @@ func seedData() {
 			AdvisorID:  nil,
 			Email:      "Admin@gmail.com",
 			UserName:   "Admin",
-			Password:   "a123456",
+			Password:   "admin123456",
 			GenderID:   uintPtr(1),
 		},
 		// Student
@@ -151,8 +151,8 @@ func seedData() {
 			RoleID:     uintPtr(1),
 			AdvisorID:  uintPtr(2),
 			Email:      "B6412345@gmail.com",
-			UserName:   "Student",
-			Password:   "a123456",
+			UserName:   "B6412345",
+			Password:   "b123456",
 			GenderID:   uintPtr(1),
 		},
 		{

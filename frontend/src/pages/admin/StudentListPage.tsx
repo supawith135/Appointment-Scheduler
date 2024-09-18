@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../../layout/Header'
 import AdminNavbar from '../../layout/AdminNavbar'
-import StudentListTable from '../../component/admin/StudentListTable'
+import StudentListTable from '../../components/admin/StudentListTable'
 import Footer from '../../layout/Footer'
 
 function StudentListPage() {
