@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../../layout/Header'
 import StudentNavbar from '../../layout/StudentNavbar'
 import Footer from '../../layout/Footer'
-import AppointmentCalendar from '../../components/student/AppointmentCalendar'
+import BookingCalendar from '../../components/student/BookingCalendar'
 
 function StudentAppointmentPage() {
   return (
@@ -19,7 +19,7 @@ function StudentAppointmentPage() {
               เลือกเวลาจองคิวนัดหมาย
             </p>
           </div>
-          <AppointmentCalendar />
+          <BookingCalendar />
         </div>
       </main>
       <Footer />

@@ -25,6 +25,13 @@ func main() {
         students.GET("", student.GetStudentsList)
         students.GET("/:id", student.GetStudentById)
         students.PUT("/:id", student.UpdateStudentById)
+
+        //booking
+        
+        students.POST("booking", student.CreateBooking)
+        students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
+        students.GET("/booking/:id", student.GetBookingByStudentID)
+
     }
 
     // Teacher routes

@@ -8,6 +8,8 @@ export interface BookingsInterface{
     booking_date?: Date;
 	booking_time?: Date;
 
+	title?: string;
+
 	status_id?: number;
 	status?: StatusesInterface;
 

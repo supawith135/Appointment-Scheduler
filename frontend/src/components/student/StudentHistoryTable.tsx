@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -6,31 +6,46 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Tooltip from '@mui/material/Tooltip';
-
-const rows = [
-    { id: 1, firstName: 'Aek', lastName: 'Chai', reasons: 'Discussion about project', status: 'รอการเข้าพบ' },
-    { id: 2, firstName: 'Somchai', lastName: 'Sukhum', reasons: 'Course counseling', status: 'รอการเข้าพบ' },
-    { id: 3, firstName: 'Anan', lastName: 'Praphat', reasons: 'Exam review', status: 'ไม่ได้เข้าพบ' },
-    { id: 4, firstName: 'Nicha', lastName: 'Wong', reasons: 'Career advice', status: 'เข้าพบสำเร็จ' },
-    { id: 5, firstName: 'Pim', lastName: 'Sawatdee', reasons: 'Personal issues', status: 'เข้าพบสำเร็จ' },
-    { id: 6, firstName: 'Kanya', lastName: 'Kiat', reasons: 'Research assistance', status: 'เข้าพบสำเร็จ' },
-    { id: 7, firstName: 'Lek', lastName: 'Thong', reasons: 'Scholarship inquiry', status: 'เข้าพบสำเร็จ' },
-];
+import { GetBookingByStudentID } from '../../services/https/student/booking';
+import { BookingsInterface } from '../../interfaces/IBookings';
 
 const StudentHistoryTable: React.FC = () => {
-    // Function to get the icon, color, and description based on status
-    const getStatusIconAndColor = (status: string): { icon: JSX.Element; color: string; description: string } => {
-        switch (status) {
-            case 'รอการเข้าพบ':
+    const [bookingsData, setBookingsData] = useState<BookingsInterface[]>([]);
+
+    // Function to get the icon, color, and description based on status_id
+    const getStatusIconAndColor = (statusId: number): { icon: JSX.Element; color: string; description: string } => {
+        switch (statusId) {
+            case 1:
                 return { icon: <AccessTimeIcon />, color: 'orange', description: 'รอการเข้าพบ' };
-            case 'เข้าพบสำเร็จ':
+            case 2:
                 return { icon: <CheckIcon />, color: 'green', description: 'เข้าพบสำเร็จ' };
-            case 'ไม่ได้เข้าพบ':
+            case 3:
                 return { icon: <ClearIcon />, color: 'red', description: 'ไม่ได้เข้าพบ' };
             default:
                 return { icon: <AccessTimeIcon />, color: 'gray', description: 'Unknown' };
         }
+    }; 
+
+    const getBookingByStudentID = async (id: string) => {
+        try {
+            const res = await GetBookingByStudentID(id);
+            if (res.status === 200) {
+                setBookingsData(res.data.data); // Access the correct data field
+                console.log("GetBookingByStudent data:", res.data.data);
+            } else {
+                console.error("Expected an array but got:", res.data);
+            }
+        } catch (error) {
+            console.error("Error getting booking by ID:", error);
+        }
     };
+
+    useEffect(() => {
+        const id = String(localStorage.getItem("id"));
+        if (id) {
+            getBookingByStudentID(id);
+        }
+    }, []);
 
     // Handle view details
     const handleViewDetails = (id: number) => {
@@ -49,22 +64,25 @@ const StudentHistoryTable: React.FC = () => {
         { field: 'id', headerName: 'ID', width: 70 },
         {
             field: 'fullName',
-            headerName: 'Full name',
-            description: 'This column has a value getter and is not sortable.',
+            headerName: 'Full Name',
+            description: 'Name of the student',
             sortable: false,
             width: 200,
-            valueGetter: (value, rows) => `${rows.firstName || ''} ${rows.lastName || ''}`,
         },
-        { field: 'reasons', headerName: 'Reasons', width: 300 },
+        {
+            field: 'reasons',
+            headerName: 'Reasons',
+            width: 300,
+        },
         {
             field: 'status',
             headerName: 'Status',
             width: 80,
             renderCell: (params) => {
-                const { icon, color, description } = getStatusIconAndColor(params.value as string);
+                const { icon, color, description } = getStatusIconAndColor(params.value as number);
                 return (
                     <Tooltip title={description} arrow>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color , marginTop: '16px'}}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color, marginTop: '16px' }}>
                             {icon}
                         </div>
                     </Tooltip>
@@ -82,14 +100,14 @@ const StudentHistoryTable: React.FC = () => {
                         <RemoveRedEyeOutlinedIcon
                             color="primary"
                             style={{ cursor: 'pointer', marginTop: '16px' }}
-                            onClick={() => handleViewDetails(params.row.id)} // Added onClick for view details
+                            onClick={() => handleViewDetails(params.row.id)}
                         />
                     </Tooltip>
                     <Tooltip title="Delete" arrow>
                         <DeleteIcon
                             color="error"
                             style={{ cursor: 'pointer', marginTop: '16px' }}
-                            onClick={() => handleDelete(params.row.id)} // Added onClick for delete action
+                            onClick={() => handleDelete(params.row.id)}
                         />
                     </Tooltip>
                 </div>
@@ -99,10 +117,15 @@ const StudentHistoryTable: React.FC = () => {
 
     return (
         <div className="border rounded-lg shadow-lg p-4 bg-white">
-            <h2 className="text-lg font-semibold mb-4">Appointment History</h2>
+            <h2 className="text-lg font-semibold mb-4">Booking History</h2>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
-                    rows={rows}
+                    rows={bookingsData.map((booking) => ({
+                        id: booking.ID ?? 0,
+                        fullName: booking.user?.full_name || 'Unknown',
+                        reasons: booking.title || 'No title',
+                        status: booking.status_id || 0, // Use status_id instead of status
+                    }))}
                     columns={columns}
                     initialState={{
                         pagination: {

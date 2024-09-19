@@ -36,7 +36,7 @@ function Login() {
         localStorage.setItem("role", res.data.role);  // Store role in localStorage
 
         const role = res.data.role;
-        
+
         setTimeout(() => {
           // Redirect based on role
           if (role === 'student') {
