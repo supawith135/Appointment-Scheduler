@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const StudentNavbar: React.FC = () => {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState<string>(location.pathname);
+  const [studentId, setStudentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Retrieve the id from localStorage
+    const id = localStorage.getItem('id');
+    setStudentId(id);
+  }, []);
 
   // Handle active link state based on the current path
   const handleLinkClick = (path: string) => {
@@ -15,11 +22,11 @@ const StudentNavbar: React.FC = () => {
       <div className='flex '>
         <ul 
           className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${
-            activeLink === '/Student/Appointment' ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
+            activeLink === `/Student/bookingAdvisor/${studentId}` ? 'border-ENGi-Red text-ENGi-Red' : 'border-white'
           }`}
-          onClick={() => handleLinkClick('/Student/Appointment')}
+          onClick={() => studentId && handleLinkClick(`/Student/bookingAdvisor/${studentId}`)}
         >
-          <Link to="/Student/Appointment" className="block">การจองคิวนัดหมาย</Link>
+          <Link to={`/Student/bookingAdvisor/${studentId}`} className="block">การจองคิวนัดหมาย</Link>
         </ul>
         <ul 
           className={`p-2 m-2 cursor-pointer border-b-2 duration-300 hover:border-ENGi-Red hover:text-ENGi-Red ${

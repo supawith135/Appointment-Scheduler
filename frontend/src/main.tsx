@@ -11,7 +11,7 @@ import AdminHomePage from './pages/admin/AdminHomePage'
 import StudentHistoryPage from './pages/student/StudentHistoryPage'
 import TeacherHistoryPage from './pages/teacher/TeacherHistoryPage'
 import AddStudent from './pages/admin/AddStudentPage'
-import StudenAppointmentPage from './pages/student/StudenAppointmentPage'
+import StudenAppointmentPage from './pages/student/StudenBookingPage'
 import TeacherCreateTimeSlotPage from './pages/teacher/TeacherCreateTimeSlotPage'
 import TeacherAppointmentPage from './pages/teacher/TeacherAppointmentPage'
 import AddTeacher from './pages/admin/AddTeacherPage'
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute role="student" />,
         children: [
           { path: '', element: <StudentHomePage /> },
-          { path: 'Appointment', element: <StudenAppointmentPage /> },
+          { path: 'bookingAdvisor/:id', element: <StudenAppointmentPage /> },
           { path: 'History', element: <StudentHistoryPage /> },
         ],
       },

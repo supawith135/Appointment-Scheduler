@@ -194,23 +194,143 @@ func seedData() {
 		{
 			UserID:        1,
 			SlotDate:      time.Date(2024, time.September, 16, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 16, 14, 0, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 16, 15, 30, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 16, 13, 0, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 16, 13, 30, 0, 0, thTimeZone),
 			Location:      "ห้องเรียน B",
 			Title:         "การประชุมทีมงาน",
 			IsAvailable:   false,
 		},
 		{
 			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 17, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 17, 11, 0, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 17, 12, 0, 0, 0, thTimeZone),
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 13, 0, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 13, 15, 0, 0, thTimeZone),
 			Location:      "ห้องเรียน C",
 			Title:         "การสัมมนา",
 			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 13, 15, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 13, 30, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 13, 30, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 13, 45, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 13, 45, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 13, 60, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 14, 15, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 14, 30, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 14, 30, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 14, 45, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 19, 14, 45, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 19, 14, 60, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   false,
+		},
+		//
+		
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 20, 13, 45, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 20, 13, 60, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 20, 16, 15, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 20, 16, 30, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 20, 16, 30, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   true,
+		},
+		{
+			UserID:        2,
+			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+			SlotStartTime: time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
+			SlotEndTime:   time.Date(2024, time.September, 20, 16, 60, 0, 0, thTimeZone),
+			Location:      "ห้องเรียน C",
+			Title:         "การสัมมนา",
+			IsAvailable:   false,
 		},
 	}
 	for _, timeSlot := range timeSlots {
 		db.Where(timeSlot).FirstOrCreate(&timeSlot)
 	}
+
+	
+	// bookings := []entity.Bookings{
+	// 	{
+	// 		Title:     "โครงงานคอมพิวเตอร์",
+	// 		StatusID:  uintPtr(1),
+	// 		TimeSlotID: uintPtr(1),
+	// 		UserID:    uintPtr(5),
+	// 	},
+	// 	{
+	// 		Title:     "ปรึกษาอาจารย์",
+	// 		StatusID:  uintPtr(1),
+	// 		TimeSlotID: uintPtr(2),
+	// 		UserID:    uintPtr(6),
+	// 	},
+	// 	{
+	// 		Title:     "วางแผนโปรเจค",
+	// 		StatusID:  uintPtr(1),
+	// 		TimeSlotID: uintPtr(3),
+	// 		UserID:    uintPtr(6),
+	// 	},
+	// }
+	
+	// for _, booking := range bookings {
+	// 	// Assuming TimeSlotID and UserID uniquely identify a booking
+	// 	db.Where("time_slot_id = ? AND user_id = ?", booking.TimeSlotID, booking.UserID).
+	// 		FirstOrCreate(&booking)
+	// }
 }
