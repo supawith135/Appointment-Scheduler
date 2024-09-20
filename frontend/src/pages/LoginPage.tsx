@@ -86,6 +86,8 @@ function Login() {
                 <p className='text-lx text-SUT-Grey mt-2'>นักศึกษา</p>
                 <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : B6412345</p>
                 <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : b123456</p>
+                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : DekDeeVstart</p>
+                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : a123456</p>
 
                 <p className='text-lx text-SUT-Grey mt-2'>แอดมิน</p>
                 <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Admin</p>

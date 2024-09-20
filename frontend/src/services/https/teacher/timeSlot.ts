@@ -16,7 +16,7 @@ const requestOptions = {
 async function GetListTimeSlots() {
 
     return await axios
-        .get(`${apiUrl}/techer`, requestOptions)
+        .get(`${apiUrl}/teacher`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -24,7 +24,7 @@ async function GetListTimeSlots() {
 async function GetTimeSlotById(id: string) {
 
     return await axios
-        .get(`${apiUrl}/techer/${id}`, requestOptions)
+        .get(`${apiUrl}/teacher/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -32,7 +32,7 @@ async function GetTimeSlotById(id: string) {
 async function CreateTimeSlot(data: TimeSlotsInterface) {
 
     return await axios
-        .post(`${apiUrl}/techer/timeslot`, data, requestOptions)
+        .post(`${apiUrl}/teacher/timeslot`, data, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -40,7 +40,7 @@ async function CreateTimeSlot(data: TimeSlotsInterface) {
 async function UpdateTimeSlotById(id: string, data: TimeSlotsInterface) {
 
     return await axios
-        .put(`${apiUrl}/techer/timeslot/${id}`, data, requestOptions)
+        .put(`${apiUrl}/teacher/timeslot/${id}`, data, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }

@@ -1,7 +1,7 @@
 // src/components/Calendar.tsx
 import React, { useState, useEffect } from 'react';
 
-import ModalTime from '../modal/ModalTime';
+import ModalTime from '../modal/BookingModalTime';
 import TimeSlotDay from './TimeSlotDay';
 interface DayInfo {
   day: string;

@@ -57,39 +57,90 @@ func GetTimeSlotById(c *gin.Context) {
 	})
 }
 
-// สร้างข้อมูล TimeSlot
-func CreateTimeSlot(c *gin.Context) {
+// // สร้างข้อมูล TimeSlot
+// func CreateTimeSlot(c *gin.Context) {
 
-	var timeSlot entity.TimeSlots
+// 	var timeSlot entity.TimeSlots
 
-	db := config.DB()
+// 	db := config.DB()
 
-	if err := c.ShouldBindJSON(&timeSlot); err != nil {
-		log.Printf("JSON binding error: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
+// 	if err := c.ShouldBindJSON(&timeSlot); err != nil {
+// 		log.Printf("JSON binding error: %v", err)
+// 		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+// 		return
+// 	}
 
-	var user entity.Users
-	result := db.First(&user, "id = ?", timeSlot.UserID)
-	if result.Error != nil {
-		log.Printf("Database query error: %v", result.Error)
-		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "UserID not found"})
-		return
-	}
+// 	var user entity.Users
+// 	result := db.First(&user, "id = ?", timeSlot.UserID)
+// 	if result.Error != nil {
+// 		log.Printf("Database query error: %v", result.Error)
+// 		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "UserID not found"})
+// 		return
+// 	}
 
-	result = db.Create(&timeSlot)
-	if result.Error != nil {
-		log.Printf("Database create error: %v", result.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to create time slot"})
-		return
-	}
+// 	result = db.Create(&timeSlot)
+// 	if result.Error != nil {
+// 		log.Printf("Database create error: %v", result.Error)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to create time slot"})
+// 		return
+// 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"status":  "success",
-		"message": "Time slot created successfully",
-		"data":    timeSlot,
-	})
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"status":  "success",
+// 		"message": "Time slot created successfully",
+// 		"data":    timeSlot,
+// 	})
+// }
+func CreateTimeSlot(c *gin.Context) { 
+    var timeSlot entity.TimeSlots
+    db := config.DB()
+
+    if err := c.ShouldBindJSON(&timeSlot); err != nil {
+        log.Printf("JSON binding error: %v", err)
+        c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+        return
+    }
+
+    var user entity.Users
+    result := db.First(&user, "id = ?", timeSlot.UserID)
+    if result.Error != nil {
+        log.Printf("Database query error: %v", result.Error)
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "UserID not found"})
+        return
+    }
+
+    // Check for overlapping time slots
+    var existingSlots []entity.TimeSlots
+    startTime := timeSlot.SlotStartTime
+    endTime := timeSlot.SlotEndTime
+    slotDate := timeSlot.SlotDate
+
+    result = db.Where("user_id = ? AND slot_date = ? AND ((slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time < ? AND slot_end_time > ?))", 
+        timeSlot.UserID, slotDate, endTime, endTime, startTime, startTime).Find(&existingSlots)
+
+    if result.Error != nil {
+        log.Printf("Database query error: %v", result.Error)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Error checking existing time slots"})
+        return
+    }
+
+    if len(existingSlots) > 0 {
+        c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "Time slot overlaps with existing slots"})
+        return
+    }
+
+    result = db.Create(&timeSlot)
+    if result.Error != nil {
+        log.Printf("Database create error: %v", result.Error)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to create time slot"})
+        return
+    }
+
+    c.JSON(http.StatusCreated, gin.H{
+        "status":  "success",
+        "message": "Time slot created successfully",
+        "data":    timeSlot,
+    })
 }
 
 func UpdateTimeSlotById(c *gin.Context) {
