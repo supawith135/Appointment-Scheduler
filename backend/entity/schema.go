@@ -63,7 +63,7 @@ type Bookings struct {
 
 	// BookingDate time.Time `gorm:"not null" json:"booking_date"`
 	// BookingTime time.Time `gorm:"not null" json:"booking_time"`
-	Title      string    `json:"title"`
+	Reason      string    `json:"reason"`
 	StatusID   *uint     `json:"status_id"`
 	Status     Statuses  `gorm:"foreignKey:StatusID;references:ID" json:"status"`
 	TimeSlotID *uint     `json:"time_slot_id"`

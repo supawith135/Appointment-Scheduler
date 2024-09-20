@@ -43,6 +43,7 @@ func uintPtr(i uint) *uint {
 // SetupDatabase sets up and initializes the database
 func SetupDatabase() {
 	dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=UTC"
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")

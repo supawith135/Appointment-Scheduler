@@ -5,7 +5,7 @@ const Authorization = localStorage.getItem("token");
 const Bearer = localStorage.getItem("token_type");
 
 import { UsersInterface } from "../../../interfaces/IUsers";
-
+import { BookingsInterface } from "../../../interfaces/IBookings";
 const requestOptions = {
     headers: {
         "Content-Type": "application/json",
@@ -28,26 +28,15 @@ async function GetBookingByStudentID(id: String) {
         .then((res) => res)
         .catch((e) => e.response);
 }
-//ได้ใช้
-// async function GetBookingByStudentIDSS(id: String) {
-//     const requestOptions = {
-//       method: "GET",
-//       headers: {
-//         Authorization: `${Bearer} ${Authorization}`,
-//       },
-//     };
-  
-//     let res = await fetch(`${apiUrl}/student/bookingAdvisor/${id}`, requestOptions)
-//       .then((response) => response.json())
-//       .then((res) => {
-//         if (res.data) {
-//           return res.data;
-//         } else {
-//           return false;
-//         }
-//       });
-//     return res;
-//   }
+
+async function CreateBooking(data: BookingsInterface) {
+
+    return await axios
+        .post(`${apiUrl}/student/booking`, data, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+
 async function UpdateStudentById(id: string, data: UsersInterface) {
 
     return await axios
@@ -58,7 +47,7 @@ async function UpdateStudentById(id: string, data: UsersInterface) {
 
 export {
     GetListBookingAdvisor,
-    // GetBookingByStudentIDSS,
     GetBookingByStudentID,
+    CreateBooking,
     UpdateStudentById,
 };

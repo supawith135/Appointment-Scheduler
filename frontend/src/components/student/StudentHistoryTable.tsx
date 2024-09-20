@@ -4,13 +4,23 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetter  } from '@mui/x-data-grid';
 import Tooltip from '@mui/material/Tooltip';
 import { GetBookingByStudentID } from '../../services/https/student/booking';
 import { BookingsInterface } from '../../interfaces/IBookings';
 
 const StudentHistoryTable: React.FC = () => {
     const [bookingsData, setBookingsData] = useState<BookingsInterface[]>([]);
+
+    // ฟังก์ชันเพื่อแปลงเวลาให้เป็นรูปแบบ "HH:MM"
+    const formatTime = (time: string | undefined) => {
+        if (!time) return '';
+        const date = new Date(time);
+        return date.toLocaleTimeString('th-TH', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      };
 
     // Function to get the icon, color, and description based on status_id
     const getStatusIconAndColor = (statusId: number): { icon: JSX.Element; color: string; description: string } => {
@@ -61,28 +71,72 @@ const StudentHistoryTable: React.FC = () => {
 
     // Define the columns with custom actions
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'id', headerName: 'ID', width: 30 },
+        // {
+        //     field: 'fullName',
+        //     headerName: 'Full Name',
+        //     description: 'Name of the student',
+        //     sortable: false,
+        //     width: 120,
+        // },
+        
         {
-            field: 'fullName',
-            headerName: 'Full Name',
-            description: 'Name of the student',
+            field: 'advisorName',
+            headerName: 'Advisor Name',
+            description: 'Name of the Advisor',
             sortable: false,
-            width: 200,
+            width: 120,
         },
         {
             field: 'reasons',
             headerName: 'Reasons',
-            width: 300,
+            description: 'Reasons',
+            width: 150,
+            
         },
+        {
+            field: 'location',
+            headerName: 'Location',
+            description: 'Location',
+            width: 100,
+            
+        },
+        {
+            field: 'date',
+            headerName: 'Date',
+            description: 'Date of the appointment',
+            sortable: false,
+            width: 120,
+            renderCell: (params) => {
+                // Convert slot_date to readable date format
+                const date = new Date(params.value);
+                return date.toLocaleDateString('th-TH', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                });
+            },
+        },
+        {
+            field: 'timeRange',
+            headerName: 'ช่วงเวลาพบ',
+            width: 115,
+            valueGetter: (value, row) => {
+              const startTime = row?.slot_start_time;
+              const endTime = row?.slot_end_time;
+              return `${formatTime(startTime)} - ${formatTime(endTime)} น.`;
+            }
+          },
         {
             field: 'status',
             headerName: 'Status',
-            width: 80,
+            width: 60,
+           
             renderCell: (params) => {
                 const { icon, color, description } = getStatusIconAndColor(params.value as number);
                 return (
                     <Tooltip title={description} arrow>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color, marginTop: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', color, marginTop: '16px' }}>
                             {icon}
                         </div>
                     </Tooltip>
@@ -92,7 +146,7 @@ const StudentHistoryTable: React.FC = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 150,
+            width: 80,
             sortable: false,
             renderCell: (params) => (
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -114,17 +168,22 @@ const StudentHistoryTable: React.FC = () => {
             ),
         },
     ];
+    
 
     return (
-        <div className="border rounded-lg shadow-lg p-4 bg-white">
+        <div className="border rounded-lg shadow-lg p-4 bg-white ">
             <h2 className="text-lg font-semibold mb-4">Booking History</h2>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
                     rows={bookingsData.map((booking) => ({
                         id: booking.ID ?? 0,
-                        fullName: booking.user?.full_name || 'Unknown',
-                        reasons: booking.title || 'No title',
-                        status: booking.status_id || 0, // Use status_id instead of status
+                        advisorName: booking.user?.advisor?.full_name || 'Unknown',
+                        reasons: booking.reason || 'No title',
+                        location: booking.time_slot?.location || 'No Location',
+                        date: booking?.time_slot?.slot_date,
+                        slot_start_time: booking.time_slot?.slot_start_time || '',
+                        slot_end_time: booking.time_slot?.slot_end_time || '',
+                        status: booking.status_id || 0,
                     }))}
                     columns={columns}
                     initialState={{

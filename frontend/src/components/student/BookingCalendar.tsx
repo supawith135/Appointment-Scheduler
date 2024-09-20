@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ModalTime from '../modal/ModalTime';
+import BookingModalTime from '../modal/BookingModalTime';
 import { message } from "antd";
 import { GetListBookingAdvisor } from '../../services/https/student/booking';
 import { useParams } from "react-router-dom";
@@ -28,6 +28,7 @@ interface CalendarDayProps {
   slots: BookingSlot[];
   onTimeSelect: (slot: BookingSlot) => void;
   currentDate: Date;
+  className?: string; // เพิ่ม className ที่นี่
 }
 
 function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: CalendarDayProps) {
@@ -48,7 +49,10 @@ function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: Cal
       {slots.length > 0 ? (
         slots.map((slot) => {
           const startTime = new Date(slot.slot_start_time);
-          const formattedTime = startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const formattedTime = startTime.toLocaleTimeString('th-TH', {
+            hour: 'numeric',
+            minute: 'numeric',
+          }) + ' น.'; // Append 'น.' for Thai time
 
           return (
             <button
@@ -87,7 +91,7 @@ function BookingCalendar() {
       let res = await GetListBookingAdvisor(id);
       if (res.status === 200) {
         setBookingSlots(res.data.data);
-        console.log("res.data: ",res.data.data);
+        console.log("res.data: ", res.data.data);
       } else {
         messageApi.open({
           type: "error",
@@ -132,7 +136,7 @@ function BookingCalendar() {
     for (let i = 0; i < 7; i++) {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
-      const daySlots = bookingSlots.filter(slot => 
+      const daySlots = bookingSlots.filter(slot =>
         new Date(slot.slot_date).toDateString() === day.toDateString()
       );
       weekDays.push({
@@ -165,6 +169,16 @@ function BookingCalendar() {
   if (isLoading) {
     return <div className="text-center p-4">กำลังโหลดข้อมูล...</div>;
   }
+  const thaiDayShortNames: { [key: string]: string } = {
+    'วันอาทิตย์': 'อา.',
+    'วันจันทร์': 'จ.',
+    'วันอังคาร': 'อ.',
+    'วันพุธ': 'พ.',
+    'วันพฤหัสบดี': 'พฤ.',
+    'วันศุกร์': 'ศ.',
+    'วันเสาร์': 'ส.',
+  };
+
 
   return (
     <div className="p-4">
@@ -192,31 +206,50 @@ function BookingCalendar() {
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-        {days.map(day => (
-          <BookingCalendayDay
-            key={`${day.day}-${day.date}`}
-            {...day}
-            currentDate={currentDate}
-            onTimeSelect={handleTimeSelection}
-          />
-        ))}
+        {days.map(day => {
+          const fullDayName = new Date(currentDate.getFullYear(), currentDate.getMonth(), day.date).toLocaleDateString('th-TH', { weekday: 'long' });
+
+          const shortDayName = thaiDayShortNames[fullDayName as string] || fullDayName;
+
+          return (
+            <BookingCalendayDay
+              key={`${day.day}-${day.date}`}
+              day={shortDayName}
+              date={day.date}
+              slots={day.slots}
+              currentDate={currentDate}
+              onTimeSelect={handleTimeSelection}
+            />
+          );
+        })}
       </div>
       {selectedSlot && (
         <p className="mt-4 text-center text-sm sm:text-lg font-semibold">
-          Selected time: {new Date(selectedSlot.slot_start_time).toLocaleString()}
+          Selected time: {new Date(selectedSlot.slot_start_time).toLocaleDateString('th-TH', {
+            weekday: 'long',  // Day in Thai, e.g., 'วันศุกร์'
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}, {new Date(selectedSlot.slot_start_time).toLocaleTimeString('th-TH', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false,  // Use 24-hour format
+          })} น.
         </p>
       )}
-      <ModalTime
+      <BookingModalTime
         isOpen={showModal}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         selectedTime={selectedSlot ? new Date(selectedSlot.slot_start_time).toLocaleString() : null}
+        slotDetails={selectedSlot}  // This already contains time_slot_id
       />
       {selectedReason && (
         <p className="mt-4 text-center text-sm sm:text-lg font-semibold">
           Submitted reason: {selectedReason}
         </p>
       )}
+
     </div>
   );
 }
