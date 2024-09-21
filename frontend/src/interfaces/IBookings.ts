@@ -12,7 +12,9 @@ export interface BookingsInterface {
 
     time_slot_id?: number;
     time_slot?: TimeSlotsInterface;
-	
+
+    comment?: string;
+    
     user_id?: number;
     user?: UsersInterface;
 }

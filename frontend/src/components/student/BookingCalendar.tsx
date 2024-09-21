@@ -131,14 +131,17 @@ function BookingCalendar() {
   const generateWeekDays = (date: Date) => {
     const startOfWeek = new Date(date);
     startOfWeek.setDate(date.getDate() - date.getDay());
-
+  
     const weekDays: DayInfo[] = [];
     for (let i = 0; i < 7; i++) {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
-      const daySlots = bookingSlots.filter(slot =>
-        new Date(slot.slot_date).toDateString() === day.toDateString()
-      );
+      
+      // Filter and sort the slots by slot_start_time in ascending order
+      const daySlots = bookingSlots
+        .filter(slot => new Date(slot.slot_date).toDateString() === day.toDateString())
+        .sort((a, b) => new Date(a.slot_start_time).getTime() - new Date(b.slot_start_time).getTime());
+  
       weekDays.push({
         day: day.toLocaleString('default', { weekday: 'short' }).toUpperCase(),
         date: day.getDate(),

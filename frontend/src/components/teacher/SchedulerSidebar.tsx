@@ -17,6 +17,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import { CreateTimeSlot } from '../../services/https/teacher/timeSlot';
+
 // import { message } from 'antd';
 import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
 
@@ -55,6 +56,14 @@ function SchedulerSidebar() {
         });
     };
 
+    const formatDateToThai = (date: Dayjs) => {
+        return date.format('D MMMM YYYY');
+    };
+
+    // ฟังก์ชันสำหรับการตรวจสอบวันที่
+    const shouldDisableDate = (date: Dayjs) => {
+        return date.isBefore(dayjs().startOf('day'));
+    };
     const handleDateChange = (date: Dayjs | null) => {
         if (date) {
             const dateString = date.format('YYYY-MM-DD');
@@ -70,7 +79,7 @@ function SchedulerSidebar() {
     };
 
     const isFormValid = () => {
-        return title && location && Object.keys(availability).length > 0;
+        return title && location && Object.keys(availability).length > 0 && !error;
     };
 
     const isTimeRangeValid = (start: Dayjs | null, end: Dayjs | null): boolean => {
@@ -84,6 +93,8 @@ function SchedulerSidebar() {
             end.diff(start, 'minute') % durationMinutes === 0
         );
     };
+
+
 
     const isTimeOverlapping = (day: string, index: number, newRange: DateRange<Dayjs>): boolean => {
         return availability[day].some((range, i) => {
@@ -99,20 +110,38 @@ function SchedulerSidebar() {
     const handleTimeChange = (day: string, index: number, type: 'start' | 'end', newValue: Dayjs | null) => {
         setAvailability((prev) => {
             const newRanges = [...prev[day]];
-            newRanges[index] = type === 'start' ? [newValue, newRanges[index][1]] : [newRanges[index][0], newValue];
+            const currentRange = newRanges[index];
+            let updatedRange: DateRange<Dayjs>;
 
-            if (!isTimeRangeValid(newRanges[index][0], newRanges[index][1])) {
+            if (type === 'start') {
+                updatedRange = [newValue, currentRange[1]];
+            } else {
+                updatedRange = [currentRange[0], newValue];
+            }
+
+            // Check if both start and end times are set
+            if (updatedRange[0] && updatedRange[1]) {
+                // Check if start time is the same as end time
+                if (updatedRange[0].isSame(updatedRange[1])) {
+                    setError("เวลาเริ่มต้นต้องมาก่อนเวลาสิ้นสุด");
+                    return prev; // Return the previous state without updating
+                }
+                // Check if start time is after end time
+                if (updatedRange[0].isAfter(updatedRange[1])) {
+                    setError("เวลาเริ่มต้นต้องมาก่อนเวลาสิ้นสุด");
+                    return prev; // Return the previous state without updating
+                }
+            }
+
+            if (!isTimeRangeValid(updatedRange[0], updatedRange[1])) {
                 setError(`ช่วงเวลาที่เลือกไม่สอดคล้องกับช่วงเวลา ${duration}`);
-            } else if (newRanges[index][0]?.isSame(newRanges[index][1])) {
-                setError("เวลาเริ่มต้นต้องมาก่อนเวลาสิ้นสุด");
-            } else if (isTimeOverlapping(day, index, newRanges[index])) {
+            } else if (isTimeOverlapping(day, index, updatedRange)) {
                 setError("ช่วงเวลานี้ซ้ำซ้อนกับช่วงเวลาอื่นในวันเดียวกัน");
             } else {
                 setError('');
             }
 
-            console.log(`เวลาเริ่ม: ${formatTimeToThai(newRanges[index][0])}`);
-            console.log(`เวลาสิ้นสุด: ${formatTimeToThai(newRanges[index][1])}`);
+            newRanges[index] = updatedRange;
 
             return {
                 ...prev,
@@ -122,10 +151,25 @@ function SchedulerSidebar() {
     };
 
     const addTimeRange = (day: string) => {
-        setAvailability((prev) => ({
-            ...prev,
-            [day]: [...prev[day], [dayjs().startOf('day'), dayjs().endOf('day')]],
-        }));
+        setAvailability((prev) => {
+            const newRanges = [...prev[day]];
+            const lastRange = newRanges[newRanges.length - 1];
+
+            if (lastRange && lastRange[1]) { // ตรวจสอบว่า lastRange และ lastRange[1] ไม่เป็น null
+                const newStart = lastRange[1]; // เริ่มจากเวลาสิ้นสุดของช่วงเวลาสุดท้าย
+                const newEnd = newStart.add(durationMinutes, 'minute'); // เพิ่มระยะเวลา (duration) ต่อไป
+
+                if (newStart.isBefore(dayjs().endOf('day'))) {
+                    // เพิ่มช่วงเวลาใหม่ถ้า newStart ยังไม่ถึงสิ้นวัน
+                    newRanges.push([newStart, newEnd]);
+                }
+            }
+
+            return {
+                ...prev,
+                [day]: newRanges,
+            };
+        });
     };
 
     const removeTimeRange = (day: string, index: number) => {
@@ -154,9 +198,9 @@ function SchedulerSidebar() {
 
             slots.push({
                 user_id: userId,
-                slot_date: `${date}T00:00:00+07:00`,
-                slot_start_time: currentStartTime.format('YYYY-MM-DDTHH:mm:ss[+07:00]'),
-                slot_end_time: slotEndTime.format('YYYY-MM-DDTHH:mm:ss[+07:00]'),
+                slot_date: new Date(`${date}T00:00:00+07:00`), // Convert to Date
+                slot_start_time: new Date(currentStartTime.format('YYYY-MM-DDTHH:mm:ss[+07:00]')), // Convert to Date
+                slot_end_time: new Date(slotEndTime.format('YYYY-MM-DDTHH:mm:ss[+07:00]')), // Convert to Date
                 title: title,
                 location: location,
                 is_available: true,
@@ -167,6 +211,45 @@ function SchedulerSidebar() {
 
         return slots;
     };
+
+    const getDisabledTimes = (day: string, index: number): Dayjs[] => {
+        const disabledTimes: Dayjs[] = [];
+
+        // เก็บเวลาที่เลือกในวันนั้น
+        const selectedRanges = availability[day].filter((_, i) => i !== index);
+
+        // เพิ่มช่วงเวลาที่เลือกทั้งหมดในวันนั้นเข้าไป
+        selectedRanges.forEach((range) => {
+            const [start, end] = range;
+
+            if (start && end) {
+                let current = start.clone();
+                while (current.isBefore(end)) {
+                    disabledTimes.push(current);
+                    current = current.add(15, 'minute'); // เพิ่มช่วงเวลา (15 นาที)
+                }
+            }
+        });
+
+        // เพิ่มเวลาทั้งหมดก่อนเวลาเริ่มต้นของช่วงเวลาที่เลือก
+        const currentRange = availability[day][index];
+        if (currentRange) {
+            const [start] = currentRange;
+            if (start) {
+                let current = dayjs().startOf('day'); // เริ่มจากเวลา 00:00
+                while (current.isBefore(start)) {
+                    disabledTimes.push(current);
+                    current = current.add(15, 'minute'); // เพิ่มช่วงเวลา (15 นาที)
+                }
+            }
+        }
+
+        // เพิ่ม 00:00 ให้เลือกได้
+        disabledTimes.push(dayjs().startOf('day')); // สามารถเลือก 00:00 ได้เสมอ
+
+        return disabledTimes;
+    };
+
 
     const handleConfirm = async () => {
         let hasError = false;
@@ -298,29 +381,33 @@ function SchedulerSidebar() {
                         </NativeSelect>
                     </FormControl>
                 </Box>
-                <div>
+                <div >
                     <h3 className="font-semibold mt-4">เวลาว่างทั่วไป</h3>
                     <p className="text-sm text-gray-600">กำหนดเวลาที่คุณมักจะว่างสำหรับการนัดหมาย</p>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="th">
                         {Object.keys(availability).map((day) => (
                             <div key={day} className="mt-4">
                                 <div className="flex flex-col">
-                                    <h4 className="text-md font-medium mb-2 items-center">{day}</h4>
+                                    <h4 className="text-md font-medium mb-2 items-center">{formatDateToThai(dayjs(day))}</h4>
                                     {availability[day].map((range, index) => (
-                                        <div key={index} className="flex mb-2">
-                                            <div className="flex-grow max-w-[150px]">
+                                        <div key={index} className="flex mb-2 items-center flex-row gap-4">
+                                            <div className="flex-grow max-w-[180px]">
                                                 <TimePicker
                                                     label="From"
                                                     value={range[0]}
                                                     onChange={(newValue) => handleTimeChange(day, index, 'start', newValue)}
+                                                    shouldDisableTime={(time) => getDisabledTimes(day, index).some(disabledTime => disabledTime.isSame(time, 'minute'))}
+
                                                 />
                                             </div>
-
-                                            <div className="flex-grow max-w-[150px]">
+                                            -
+                                            <div className="flex-grow max-w-[180px]">
                                                 <TimePicker
                                                     label="To"
                                                     value={range[1]}
                                                     onChange={(newValue) => handleTimeChange(day, index, 'end', newValue)}
+                                                    shouldDisableTime={(time) => getDisabledTimes(day, index).some(disabledTime => disabledTime.isSame(time, 'minute'))}
+
                                                 />
                                             </div>
                                             <div className='items-center ml-3 flex justify-center'>
@@ -332,25 +419,33 @@ function SchedulerSidebar() {
                                                     className="fill-red-500 ml-4 cursor-pointer size-5"
                                                 />
                                             </div>
+
                                         </div>
+
                                     ))}
+                                    {error && <Alert severity="error">{error}</Alert>}
                                 </div>
                             </div>
                         ))}
+
                         {!showCalendar && (
                             <button
                                 onClick={handleAddDateClick}
-                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2"
+                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded my-2"
                             >
                                 + เพิ่มวันที่
                             </button>
                         )}
                         {showCalendar && (
-                            <DateCalendar value={selectedDate} onChange={handleDateChange} />
+                            <DateCalendar
+                                value={selectedDate}
+                                onChange={handleDateChange}
+                                shouldDisableDate={shouldDisableDate} // ใช้ฟังก์ชันที่สร้างขึ้น
+                            />
                         )}
                     </LocalizationProvider>
                 </div>
-                {error && <Alert severity="error">{error}</Alert>}
+
                 <button
                     onClick={handleConfirm}
                     className={`text-white font-bold py-2 px-4 mt-2 rounded ${isFormValid() ? 'bg-blue-500 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}

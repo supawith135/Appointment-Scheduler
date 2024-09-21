@@ -106,7 +106,7 @@ func CreateBooking(c *gin.Context) {
 
 	// Check if the user exists
 	var user entity.Users
-	result := tx.First(&user, "id = ?", booking.UserID)
+	result := tx.First(&user, "id = ?", booking.StatusID)
 	if result.Error != nil {
 		tx.Rollback()
 		log.Printf("Database query error: %v", result.Error)

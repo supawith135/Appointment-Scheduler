@@ -44,7 +44,7 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
 
     const handleSubmit = async () => {
         if (!slotDetails) return; // ตรวจสอบว่า slotDetails มีอยู่
-    
+
         const values: BookingsInterface = {
             user_id: Number(localStorage.getItem("id")),
             time_slot_id: slotDetails.time_slot_id,
@@ -52,7 +52,7 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
             status_id: 1,
             // คุณสามารถเพิ่มฟิลด์อื่นๆ ที่จำเป็นได้ที่นี่
         };
-    
+
         let res = await CreateBooking(values);
         console.log(res);
         if (res.status === 201) {
@@ -72,7 +72,7 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
                 timer: 4000,
             });
         }
-    
+
         // Reset state and close modal
         setReason('');
         onClose();
@@ -93,7 +93,6 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
                         <h2 className="text-lg mb-4 text-red-700">{slotDetails.title}</h2>
                         <p className="mb-4 text-sm text-gray-600">
                             วันที่: {new Date(slotDetails.slot_date).toLocaleDateString('th-TH', {
-                                weekday: 'long',
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -111,7 +110,7 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
                             })} น.
                         </p>
 
-                        <p className="mb-2 text-sm text-gray-600">ที่ปรึกษา: {slotDetails.advisor_name}</p>
+                        <p className="mb-2 text-sm text-gray-600">อาจารย์: {slotDetails.advisor_name}</p>
                         <p className="mb-2 text-sm text-gray-600">สถานที่: {slotDetails.location}</p>
 
                     </>

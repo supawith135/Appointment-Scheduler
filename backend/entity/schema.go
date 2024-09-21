@@ -60,14 +60,12 @@ type TimeSlots struct {
 // Bookings represents a booking entity.
 type Bookings struct {
 	gorm.Model
-
-	// BookingDate time.Time `gorm:"not null" json:"booking_date"`
-	// BookingTime time.Time `gorm:"not null" json:"booking_time"`
-	Reason      string    `json:"reason"`
+	Reason     string    `json:"reason"`
 	StatusID   *uint     `json:"status_id"`
 	Status     Statuses  `gorm:"foreignKey:StatusID;references:ID" json:"status"`
 	TimeSlotID *uint     `json:"time_slot_id"`
 	TimeSlot   TimeSlots `gorm:"foreignKey:TimeSlotID;references:ID" json:"time_slot"`
+	Comment    string    `json:"comment"`
 	UserID     *uint     `json:"user_id"`
 	User       Users     `gorm:"foreignKey:UserID;references:ID" json:"user"`
 }
