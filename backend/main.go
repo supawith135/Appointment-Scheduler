@@ -2,89 +2,115 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-
-	"github.com/supawith135/Appointment-Scheduler/middlewares"
+	"github.com/robfig/cron/v3"
 	"github.com/supawith135/Appointment-Scheduler/config"
-	"github.com/supawith135/Appointment-Scheduler/controllers/users"
 	"github.com/supawith135/Appointment-Scheduler/controllers/admin"
+	"github.com/supawith135/Appointment-Scheduler/controllers/startCronJobControllers"
 	"github.com/supawith135/Appointment-Scheduler/controllers/student"
 	"github.com/supawith135/Appointment-Scheduler/controllers/teacher"
-
+	"github.com/supawith135/Appointment-Scheduler/controllers/users"
+	"github.com/supawith135/Appointment-Scheduler/middlewares"
+	"log"
 )
+
 func main() {
-    config.SetupDatabase()
-    r := gin.Default()
-    r.Use(CORSMiddleware())
+	config.SetupDatabase()
+	r := gin.Default()
+	r.Use(CORSMiddleware())
 
-    r.POST("/", users.LogIn)
+	// เรียกใช้ cron job
+	go startCronJob()
 
-    // Student routes
-    students := r.Group("/student")
-    students.Use(middlewares.Authorizes("student"))
-    {
-        students.GET("", student.GetStudentsList)
-        students.GET("/:id", student.GetStudentById)
-        students.PUT("/:id", student.UpdateStudentById)
+	r.POST("/", users.LogIn)
 
-        //booking
-        
-        students.POST("booking", student.CreateBooking)
-        students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
-        students.GET("/booking/:id", student.GetBookingByStudentID)
+	// Student routes
+	students := r.Group("/student")
+	students.Use(middlewares.Authorizes("student"))
+	{
+		students.GET("", student.GetStudentsList)
+		students.GET("/:id", student.GetStudentById)
+		students.PUT("/:id", student.UpdateStudentById)
 
-    }
+		//booking
+		students.POST("booking", student.CreateBooking)
+		students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
+		students.GET("/booking/:id", student.GetBookingByStudentID)
+	}
 
-    // Teacher routes
-    teachers := r.Group("/teacher")
-    teachers.Use(middlewares.Authorizes("teacher"))
-    {
-        teachers.GET("", teacher.GetTeachersList)
-        teachers.GET("/:id", teacher.GetTeacherById)
-        teachers.GET("/timeslot", teacher.GetListTimeSlots)
-        teachers.GET("/timeslot/:id", teacher.GetTimeSlotById)
-        teachers.POST("/timeslot", teacher.CreateTimeSlot)
-        teachers.PUT("/timeslot/:id", teacher.UpdateTimeSlotById)
-        teachers.DELETE("/timeslot/:id", teacher.DeleteTimeSlotById)
-    }
+	// Teacher routes
+	teachers := r.Group("/teacher")
+	teachers.Use(middlewares.Authorizes("teacher"))
+	{
+		teachers.GET("", teacher.GetTeachersList)
+		teachers.GET("/:id", teacher.GetTeacherById)
+		teachers.GET("/timeslot", teacher.GetListTimeSlots)
+		teachers.GET("/timeslot/:id", teacher.GetTimeSlotById)
+		teachers.POST("/timeslot", teacher.CreateTimeSlot)
+		// teachers.PUT("/timeslot/:id", teacher.UpdateTimeSlotById)
+		teachers.DELETE("/timeslot/:id", teacher.DeleteTimeSlotById)
 
-    // Admin routes
-    admins := r.Group("/admin")
-    admins.Use(middlewares.Authorizes("admin"))
-    {
-        admins.GET("/student", admin.GetStudentsList)
-        admins.GET("/student/:id", admin.GetStudentById)
-        admins.GET("/teacher", admin.GetTeachersList)
-        admins.GET("/teacher/:id", admin.GetTeacherById)
-        admins.GET("/timeslot", admin.GetListTimeSlots)
-        admins.GET("/timeslot/:id", admin.GetTimeSlotById)
-    }
+		//bookingListStudent
+		teachers.GET("/booking/student/:id", teacher.GetBookingStudentListByAdvisorID)
+		teachers.PATCH("/booking/student/:id", teacher.UpdateBookingStudentById)
+	}
 
-	// //student
-    // r.GET("/student", student.GetStudentsList)
-    // r.GET("/student/:id", student.GetStudentById)
-    // r.PUT("/student/:id", student.UpdateStudentById)
-    // //techer
-    // r.GET("/techer", teacher.GetTeachersList)
-    // r.GET("/techer/:id", teacher.GetTeacherById)
+	// Admin routes
+	admins := r.Group("/admin")
+	admins.Use(middlewares.Authorizes("admin"))
+	{
+		admins.GET("/student", admin.GetStudentsList)
+		admins.GET("/student/:id", admin.GetStudentById)
+		admins.GET("/teacher", admin.GetTeachersList)
+		admins.GET("/teacher/:id", admin.GetTeacherById)
+		admins.GET("/timeslot", admin.GetListTimeSlots)
+		admins.GET("/timeslot/:id", admin.GetTimeSlotById)
 
-    // r.GET("/techer/timeslot", teacher.GetListTimeSlots)
-    // r.GET("/techer/timeslot/:id", teacher.GetTimeSlotById)
-    // r.POST("/techer/timeslot", teacher.CreateTimeSlot)
-    // r.PUT("/techer/timeslot/:id", teacher.UpdateTimeSlotById)
-    // r.DELETE("/techer/timeslot/:id", teacher.DeleteTimeSlotById)
+	}
+	
+	r.Run("localhost:8080")
 
-    // //admin
-    // r.GET("/admin/student", admin.GetStudentsList)
-    // r.GET("/admin/student/:id", admin.GetStudentById)
-
-    // r.GET("/admin/techer", admin.GetTeachersList)
-    // r.GET("/admin/techer/:id", admin.GetTeacherById)
-
-    // //ยังไม่ทำค้นหาโดยอาจารย์
-    // r.GET("/admin/timeslot", admin.GetListTimeSlots)
-    // r.GET("/admin/timeslot/:id", admin.GetTimeSlotById)
-    r.Run()
+	// r.Run();
+	// ใช้ select {} เพื่อรอให้ goroutine ทำงานโดยไม่ปิดโปรแกรม
+	select {}
 }
+
+// ฟังก์ชันที่ใช้ Cron job อัปเดตสถานะ
+func startCronJob() {
+	c := cron.New()
+
+	// AddFunc("56 23 * * *")
+	// นาที (Minute): ตัวแรก 0 หมายถึงการรันในนาทีที่ 56
+	// ชั่วโมง (Hour): ตัวที่สอง 0 หมายถึงการรันในชั่วโมงที่ 23
+	// วันของเดือน (Day of Month): ตัวที่สาม * หมายถึงทุกวันของเดือน
+	// เดือน (Month): ตัวที่สี่ * หมายถึงทุกเดือน
+	// วันของสัปดาห์ (Day of Week): ตัวที่ห้า * หมายถึงทุกวันในสัปดาห์
+	// ตั้งค่า cron ให้รันเวลา 00:00 ของทุกวัน
+	c.AddFunc("0 0 * * *", func() {
+		log.Println("Running UpdateTimeSlotsAvailability...")
+
+		// เรียกใช้ฟังก์ชันอัปเดต time slots availability
+		err := startCronJobControllers.UpdateTimeSlotsAvailability()
+		if err != nil {
+			log.Printf("Error updating time slots availability: %v", err)
+		} else {
+			log.Println("Time slots availability updated successfully.")
+		}
+	})
+	// Job สำหรับอัปเดตสถานะของ Bookings ให้รันทุก ๆ 2 ชั่วโมง
+	c.AddFunc("0 */1 * * *", func() {
+		log.Println("Running UpdateBookingsStatus...")
+		err := startCronJobControllers.UpdateBookingsStatus()
+		if err != nil {
+			log.Printf("Error updating bookings status: %v", err)
+		} else {
+			log.Println("Bookings status availability updated successfully.")
+		}
+	})
+
+	// เริ่มต้น cron job
+	c.Start()
+}
+
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")

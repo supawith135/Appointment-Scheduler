@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	// "log"
-	"time"
+	_ "time"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
@@ -83,9 +83,9 @@ func seedData() {
 
 	// Seed Status data
 	statuses := []entity.Statuses{
+		{Status: "รอการเข้าพบ"},
+		{Status: "เข้าพบสำเร็จ"},
 		{Status: "ไม่ได้เข้าพบ"},
-		{Status: "เข้าพบแล้ว"},
-		{Status: "เลื่อนการนัดหมาย"},
 	}
 	for _, status := range statuses {
 		db.FirstOrCreate(&status, &entity.Statuses{Status: status.Status})
@@ -181,131 +181,140 @@ func seedData() {
 	}
 
 	// Seed TimeSlot data
-	thTimeZone := time.FixedZone("ICT", 7*3600)
-	timeSlots := []entity.TimeSlots{
-		{
-			UserID:        1,
-			SlotDate:      time.Date(2024, time.September, 15, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 15, 9, 0, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 15, 10, 30, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน A",
-			Title:         "การประชุมรายงาน",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        1,
-			SlotDate:      time.Date(2024, time.September, 16, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 16, 13, 0, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 16, 13, 30, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน B",
-			Title:         "การประชุมทีมงาน",
-			IsAvailable:   false,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 13, 0, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 13, 15, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 13, 15, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 13, 30, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 13, 30, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 13, 45, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 13, 45, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 13, 60, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 14, 15, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 14, 30, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 14, 30, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 14, 45, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 19, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 19, 14, 45, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 19, 14, 60, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   false,
-		},
-		//
+	// thTimeZone := time.FixedZone("ICT", 7*3600)
+	// timeSlots := []entity.TimeSlots{
+	// 	{
+	// 		UserID:        1,
+	// 		SlotDate:      time.Date(2024, time.September, 24, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 24, 9, 0, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 24, 10, 30, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน A",
+	// 		Title:         "การประชุมรายงาน",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        1,
+	// 		SlotDate:      time.Date(2024, time.September, 25, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 25, 13, 0, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 25, 13, 30, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน B",
+	// 		Title:         "การประชุมทีมงาน",
+	// 		IsAvailable:   false,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 23, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 23, 13, 0, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 23, 13, 15, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 23, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 23, 13, 15, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 23, 13, 30, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 24, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 24, 13, 30, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 24, 13, 45, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 24, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 24, 13, 45, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 24, 13, 60, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 23, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 23, 14, 15, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 23, 14, 30, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 23, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 23, 14, 30, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 23, 14, 45, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 24, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 24, 14, 45, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 24, 14, 60, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   false,
+	// 	},
+	// 	//
 		
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 20, 13, 45, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 20, 13, 60, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 20, 16, 15, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 20, 16, 30, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 20, 16, 30, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   true,
-		},
-		{
-			UserID:        2,
-			SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
-			SlotStartTime: time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
-			SlotEndTime:   time.Date(2024, time.September, 20, 16, 60, 0, 0, thTimeZone),
-			Location:      "ห้องเรียน C",
-			Title:         "การสัมมนา",
-			IsAvailable:   false,
-		},
-	}
-	for _, timeSlot := range timeSlots {
-		db.Where(timeSlot).FirstOrCreate(&timeSlot)
-	}
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 20, 13, 45, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 20, 13, 60, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 20, 16, 15, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 20, 16, 30, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 20, 16, 30, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 20, 16, 60, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// 	{
+	// 		UserID:        2,
+	// 		SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
+	// 		SlotStartTime: time.Date(2024, time.September, 20, 16, 45, 0, 0, thTimeZone),
+	// 		SlotEndTime:   time.Date(2024, time.September, 20, 16, 60, 0, 0, thTimeZone),
+	// 		Location:      "ห้องเรียน C",
+	// 		Title:         "การสัมมนา",
+	// 		IsAvailable:   true,
+	// 	},
+	// }
+	// for _, timeSlot := range timeSlots {
+	// 	db.Where(timeSlot).FirstOrCreate(&timeSlot)
+	// }
 
 	
 	// bookings := []entity.Bookings{

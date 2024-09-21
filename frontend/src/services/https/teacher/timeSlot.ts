@@ -40,7 +40,7 @@ async function CreateTimeSlot(data: TimeSlotsInterface) {
 async function UpdateTimeSlotById(id: string, data: TimeSlotsInterface) {
 
     return await axios
-        .put(`${apiUrl}/teacher/timeslot/${id}`, data, requestOptions)
+        .put(`${apiUrl}/teacher/timeslot${id}`, data, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }

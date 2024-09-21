@@ -23,7 +23,12 @@ go get -u gorm.io/driver/postgres
 ```
 go get -u github.com/gin-gonic/gin
 ```
-<h3 align="left">Install  bcrypt</h3>
+<h3 align="left">Install cron : startCronJob </h3>
+
+```
+go get github.com/robfig/cron/v3@v3.0.0
+```
+<h3 align="left">Install bcrypt</h3>
 
 ```
 go get golang.org/x/crypto/bcrypt

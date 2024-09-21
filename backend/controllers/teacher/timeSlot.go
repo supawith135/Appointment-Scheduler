@@ -115,8 +115,8 @@ func CreateTimeSlot(c *gin.Context) {
     endTime := timeSlot.SlotEndTime
     slotDate := timeSlot.SlotDate
 
-    result = db.Where("user_id = ? AND slot_date = ? AND ((slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time < ? AND slot_end_time > ?))", 
-        timeSlot.UserID, slotDate, endTime, endTime, startTime, startTime).Find(&existingSlots)
+    result = db.Where("user_id = ? AND slot_date = ? AND ((slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time = ?))", 
+        timeSlot.UserID, slotDate, endTime, endTime, startTime, startTime, startTime).Find(&existingSlots)
 
     if result.Error != nil {
         log.Printf("Database query error: %v", result.Error)
@@ -125,7 +125,7 @@ func CreateTimeSlot(c *gin.Context) {
     }
 
     if len(existingSlots) > 0 {
-        c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "Time slot overlaps with existing slots"})
+        c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "Time slot overlaps with existing slots or start time is the same as an existing slot"})
         return
     }
 
@@ -143,43 +143,44 @@ func CreateTimeSlot(c *gin.Context) {
     })
 }
 
-func UpdateTimeSlotById(c *gin.Context) {
-	var timeSlot entity.TimeSlots
 
-	TimeSlotID := c.Param("id")
+// func UpdateTimeSlotById(c *gin.Context) {
+// 	var timeSlot entity.TimeSlots
 
-	db := config.DB()
+// 	TimeSlotID := c.Param("id")
 
-	// ค้นหา TimeSlot ที่ต้องการอัพเดท
-	result := db.First(&timeSlot, TimeSlotID)
-	if result.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  "error",
-			"message": "Time slot not found",
-		})
-		return
-	}
+// 	db := config.DB()
 
-	// แปลงข้อมูล JSON ที่ส่งมาเป็นโครงสร้าง TimeSlots
-	if err := c.ShouldBindJSON(&timeSlot); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status":  "error","message": "Bad request, unable to parse payload",})
-		return
-	}
+// 	// ค้นหา TimeSlot ที่ต้องการอัพเดท
+// 	result := db.First(&timeSlot, TimeSlotID)
+// 	if result.Error != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"status":  "error",
+// 			"message": "Time slot not found",
+// 		})
+// 		return
+// 	}
 
-	// บันทึกการเปลี่ยนแปลง
-	result = db.Save(&timeSlot)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status":  "error","message": "Failed to update time slot",})
-		return
-	}
+// 	// แปลงข้อมูล JSON ที่ส่งมาเป็นโครงสร้าง TimeSlots
+// 	if err := c.ShouldBindJSON(&timeSlot); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"status":  "error","message": "Bad request, unable to parse payload",})
+// 		return
+// 	}
 
-	// ส่งข้อมูลที่อัพเดทแล้วกลับไป
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-		"message": "Time slot updated successfully",
-		"data":    timeSlot,
-	})
-}
+// 	// บันทึกการเปลี่ยนแปลง
+// 	result = db.Save(&timeSlot)
+// 	if result.Error != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"status":  "error","message": "Failed to update time slot",})
+// 		return
+// 	}
+
+// 	// ส่งข้อมูลที่อัพเดทแล้วกลับไป
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":  "success",
+// 		"message": "Time slot updated successfully",
+// 		"data":    timeSlot,
+// 	})
+// }
 
 // ลบข้อมูล TimeSlot โดย ID
 func DeleteTimeSlotById(c *gin.Context) {
