@@ -66,6 +66,21 @@ npm install @mui/material @emotion/react @emotion/styled
 ```
 npm i -D daisyui@latest
 ```
+<h3 align="left">Install framer-motion</h3>
+
+```
+npm install framer-motion
+```
+<h3 align="left">Install react-hot-toast</h3>
+
+```
+npm install react-hot-toast
+```
+<h3 align="left">Install react-feather</h3>
+
+```
+npm install react-feather
+```
 <h3 align="left">Run Frontend</h3>
 
 ```

@@ -56,7 +56,7 @@ func GetListBookingAdvisorById(c *gin.Context) {
 }
 
 // ดึงข้อมูล Timeslot โดย ID
-func GetBookingByStudentID(c *gin.Context) {
+func GetBookingByStudentId(c *gin.Context) {
 	// Get the user_id from the URL parameters
 	UserID := c.Param("id")
 
@@ -149,5 +149,78 @@ func CreateBooking(c *gin.Context) {
 		"status":  "success",
 		"message": "Booking created successfully",
 		"data":    booking,
+	})
+}
+
+func GetBookingById(c *gin.Context) {
+
+	BookingID := c.Param("id")
+
+	var booking entity.Bookings
+
+	db := config.DB()
+
+	results := db.Preload("User").Preload("Status").Preload("TimeSlot").First(&booking, BookingID)
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	if booking.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Booking not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Booking retrieved successfully",
+		"data":    booking,
+	})
+}
+// ลบข้อมูล TimeSlot โดย ID
+func DeleteBookingById(c *gin.Context) {
+	id := c.Param("id")
+
+	db := config.DB()
+
+	// Begin a transaction
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var booking entity.Bookings
+
+	// First, find the booking
+	if err := tx.First(&booking, id).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Booking not found"})
+		return
+	}
+
+	// Delete the booking
+	result := tx.Delete(&booking)
+	if result.Error != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to delete booking"})
+		return
+	}
+
+	// Update the corresponding time slot to set IsAvailable to true
+	var timeslot entity.TimeSlots
+	if err := tx.Model(&timeslot).Where("id = ?", booking.TimeSlotID).Update("is_available", true).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to update time slot availability"})
+		return
+	}
+
+	// Commit the transaction
+	tx.Commit()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Booking deleted successfully, time slot updated",
 	})
 }
