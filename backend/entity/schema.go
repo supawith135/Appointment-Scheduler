@@ -55,6 +55,7 @@ type TimeSlots struct {
 	Location      string    `json:"location"`
 	Title         string    `json:"title"`
 	IsAvailable   bool      `json:"is_available"`
+
 }
 
 // Bookings represents a booking entity.

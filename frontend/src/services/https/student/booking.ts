@@ -24,7 +24,7 @@ async function GetListBookingAdvisor(id: string) {
 async function GetBookingByStudentID(id: String) {
 
     return await axios
-        .get(`${apiUrl}/student/booking/${id}`, requestOptions)
+        .get(`${apiUrl}/student/bookingStudent/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -44,10 +44,17 @@ async function UpdateStudentById(id: string, data: UsersInterface) {
         .then((res) => res)
         .catch((e) => e.response);
 }
+async function DeleteBookingById(id: string) {
 
+    return await axios
+        .delete(`${apiUrl}/student/booking/${id}`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 export {
     GetListBookingAdvisor,
     GetBookingByStudentID,
     CreateBooking,
     UpdateStudentById,
+    DeleteBookingById
 };

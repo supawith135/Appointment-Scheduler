@@ -9,14 +9,16 @@ import { BookingsInterface } from '../../interfaces/IBookings';
 import { UpdateBookingStudentById } from '../../services/https/teacher/listBookingStudent';
 import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
-import {  CheckCircle ,XCircle } from 'react-feather'; // เพิ่ม import icons
+import { CheckCircle, XCircle, Delete} from 'react-feather'; // เพิ่ม import icons
+import { CheckCircle as Clock, Warning, Cancel} from '@mui/icons-material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { CheckCircle as Clock, Warning , Cancel } from '@mui/icons-material';
-interface BookingDetailsModalProps {
+import { DeleteBookingById } from '../../services/https/student/booking';
+interface BookingDetailsStudentModelProps {
     open: boolean;
     onClose: () => void;
     bookingDetails: BookingsInterface;
 }
+
 
 const theme = createTheme({
     typography: {
@@ -51,69 +53,62 @@ const formatTime = (timeString: string) => {
     return time.toLocaleTimeString('th-TH', options);
 };
 
-const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose, bookingDetails }) => {
-    const [comment, setComment] = useState<string>('');
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({ open, onClose, bookingDetails }) => {
+    const [comment, setComment] = useState<string>(bookingDetails?.comment || '');
 
     const handleSubmit = async () => {
         const id = String(bookingDetails.ID);
-        const updatedValues: BookingsInterface = {
-            ...bookingDetails,
-            comment,
-        };
-
         toast.promise(
-            UpdateBookingStudentById(id, updatedValues),
-            {
-                loading: 'กำลังบันทึกข้อมูล...',
-                success: (res) => {
-                    if (res.status === 200) {
-                        setTimeout(() => window.location.reload(), 2000);
-                        return (
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <CheckCircle color="green" size={20} style={{ marginRight: '8px' }} />
-                                <span>บันทึกข้อมูลสำเร็จ</span>
-                            </div>
-                        );
-                    } else {
-                        throw new Error('Unexpected response status');
-                    }
-                },
-                error: (err) => (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <XCircle color="red" size={20} style={{ marginRight: '8px' }} />
-                        <span>เกิดข้อผิดพลาดในการบันทึกข้อมูล</span>
-                    </div>
-                ),
+            DeleteBookingById(id),
+          {
+            loading: 'กำลังยกเลิกการจอง...',
+            success: (res) => {
+              if (res.status === 200) {
+                setTimeout(() => window.location.reload(), 2000);
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <CheckCircle color="green" size={20} style={{ marginRight: '8px' }} />
+                    <span>ยกเลิกการจองสำเร็จ</span>
+                  </div>
+                );
+              } else {
+                throw new Error('Unexpected response status');
+              }
             },
-            {
-                style: {
-                    minWidth: '250px',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                },
-                success: {
-                    duration: 5000,
-                    icon: '🎉',
-                },
-                error: {
-                    duration: 5000,
-                    icon: '❌',
-                },
-            }
+            error: (err) => (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <XCircle color="red" size={20} style={{ marginRight: '8px' }} />
+                <span>เกิดข้อผิดพลาดในการยกเลิกข้อมูล</span>
+              </div>
+            ),
+          },
+          {
+            style: {
+              minWidth: '250px',
+              backgroundColor: '#333',
+              color: '#fff',
+            },
+            success: {
+              duration: 5000,
+              icon: '🎉',
+            },
+            error: {
+              duration: 5000,
+              icon: '❌',
+            },
+          }
         );
     };
-    React.useEffect(() => {
-        if (bookingDetails) {
-            setComment(bookingDetails.comment || '');
-            setIsEditing(bookingDetails.comment ? false : true); // ถ้า comment มีอยู่ ให้ set isEditing เป็น false
+    const handleCancelBooking = () => {
+        if (canCancelBooking) {
+            handleSubmit()
+            // // ฟังก์ชันการยกเลิกการจองที่คุณต้องการเรียกใช้
+            // toast.success('ยกเลิกการจองสำเร็จ');
+            // สมมติว่าเรียก API ยกเลิกการจองที่นี่
+        } else {
+            // toast.error('ไม่สามารถยกเลิกการจองได้');
         }
-    }, [bookingDetails]);
-
-    const handleEdit = () => {
-        setIsEditing(true);
     };
-
     const getStatusProps = (status: string) => {
         switch (status) {
             case 'รอการเข้าพบ':
@@ -127,7 +122,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
         }
     };
     const statusProps = getStatusProps(bookingDetails?.status?.status || "");
-
+    const canCancelBooking = bookingDetails?.status?.status === 'รอการเข้าพบ';
     const slotDate = bookingDetails?.time_slot?.slot_date;
     const slotStartTime = bookingDetails?.time_slot?.slot_start_time;
     const slotEndTime = bookingDetails?.time_slot?.slot_end_time;
@@ -146,7 +141,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                             top: '50%',
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
-                            width: 450,
+                            width: 380,
                             bgcolor: 'background.paper',
                             boxShadow: 24,
                             borderRadius: 4,
@@ -175,18 +170,12 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                                 color="primary"
                                 sx={{ mb: 2 }}
                             />
-
                             <Divider sx={{ my: 2 }} />
-
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>รหัสนักศึกษา:</strong> {bookingDetails?.user?.user_name}
+                                <strong>อาจารย์ :</strong> {bookingDetails?.user?.advisor?.full_name}
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>ชื่อ-สกุล:</strong> {bookingDetails?.user?.full_name}
-                            </Typography>
-
-                            <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>สถานที่นัดหมาย:</strong> {bookingDetails?.time_slot?.location}
+                                <strong>สถานที่นัดหมาย :</strong> {bookingDetails?.time_slot?.location}
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
                                 <strong>เหตุผลที่เข้าพบ:</strong> {bookingDetails?.reason}
@@ -197,39 +186,31 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                             </Typography>
                             <Divider sx={{ my: 2 }} />
                             <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold', mt: 2, mb: 1 }}>
-                                ความคิดเห็นอาจารย์
+                                ความคิดเห็นอาจารย์ :
                             </Typography>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={3}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                variant="outlined"
-                                sx={{ mb: 2 }}
-                                InputProps={{
-                                    readOnly: !isEditing, // ใช้สถานะ isEditing เพื่อควบคุมความสามารถในการแก้ไข
-                                }}
-                            />
-
-                            {!isEditing && bookingDetails?.status?.status && (
-                                <Button variant="outlined" onClick={handleEdit}>
-                                    แก้ไขข้อความ
-                                </Button>
-                            )}
+                            <Typography variant="body1" sx={{ mb: 1 }}>
+                                {bookingDetails?.comment || "ยังไม่แสดงความคิดเห็น"}
+                            </Typography>
+                            {/* <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  variant="outlined"
+                  sx={{ mb: 2 }}
+                /> */}
 
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-                                <Button variant="outlined" onClick={onClose} color="error">
-                                    ยกเลิก
-                                </Button>
                                 <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={handleSubmit}
-                                    sx={{color : 'white'}}
+                                    variant="outlined"
+                                    onClick={handleCancelBooking}
+                                    color="error"
+                                    disabled={!canCancelBooking} // Disable button if not allowed to cancel
                                 >
-                                    แสดงความคิดเห็น
+                                    ยกเลิกการจอง
                                 </Button>
+
                             </Box>
                             {/* </Paper> */}
                         </motion.div>
@@ -241,4 +222,4 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
     );
 };
 
-export default BookingDetailsModal;
+export default BookingDetailsStudentModel;

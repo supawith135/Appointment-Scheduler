@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import { DataGridPremium, GridToolbarContainer, GridToolbarExport, GridColDef, GridCsvExportOptions } from '@mui/x-data-grid-premium';
 import { BookingsInterface } from '../../interfaces/IBookings';
@@ -21,6 +22,11 @@ function CustomToolbar() {
         </GridToolbarContainer>
     );
 }
+const theme = createTheme({
+    typography: {
+        fontFamily: '"Noto Sans", "Noto Sans Thai", sans-serif',
+    },
+});
 
 const TeacherHistoryTable: React.FC = () => {
     const navigate = useNavigate();
@@ -41,7 +47,7 @@ const TeacherHistoryTable: React.FC = () => {
         }
     };
 
-    
+
     const formatTime = (time: string | undefined) => {
         if (!time) return '';
         const date = new Date(time);
@@ -101,44 +107,52 @@ const TeacherHistoryTable: React.FC = () => {
 
     // Define the columns with custom actions
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 30 },
+        { field: 'id', headerName: 'ID', width: 30 ,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
+        },
         {
             field: 'student_id',
-            headerName: 'Student ID',
-            description: 'Name of the student',
+            headerName: 'รหัสนักศักษา',
+            description: 'รหัสนักศักษา',
             sortable: false,
-            width: 120,
+            width : 120,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
+            
         },
 
         {
             field: 'student_name',
-            headerName: 'Student Name',
-            description: 'Name of the student',
+            headerName: 'ชื่อนักศึกษา',
+            description: 'รายชื่อนักศึกษา',
             sortable: false,
-            width: 120,
+            width : 140,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
         },
 
 
         {
             field: 'reasons',
-            headerName: 'Reasons',
-            description: 'Reasons',
-            width: 150,
+            headerName: 'เหตุผลเข้าพบ',
+            description: 'รายละเอียดเหตุผลเข้าพบ',
+            width : 150,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
         },
         {
             field: 'location',
-            headerName: 'Location',
-            description: 'Location',
-            width: 100,
+            headerName: 'สถานที่นัดหมาย',
+            description: 'สถานที่เข้าพบอาจารย์',
+            width : 140,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
         },
         {
             field: 'date',
-            headerName: 'Date',
-            description: 'Date of the appointment',
+            headerName: 'วันที่เข้าพบอาจารย์',
+            description: 'วันที่เข้าพบอาจารย์',
             sortable: false,
-            width: 120,
+            width : 150,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
             renderCell: (params) => {
                 // Convert slot_date to readable date format
                 const date = new Date(params.value);
@@ -152,7 +166,9 @@ const TeacherHistoryTable: React.FC = () => {
         {
             field: 'timeRange',
             headerName: 'ช่วงเวลาพบ',
-            width: 115,
+            description: 'ช่วงเวลาเข้าพบอาจารย์',
+            width : 130,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
             valueGetter: (value, row) => {
                 const startTime = row?.slot_start_time;
                 const endTime = row?.slot_end_time;
@@ -162,33 +178,41 @@ const TeacherHistoryTable: React.FC = () => {
         {
             field: 'comment',
             headerName: 'ความคิดเห็นอาจารย์',
-            description: 'Location',
-            width: 200,
+            description: 'รายละเอียดความคิดเห็นของอาจารย์',
+            width : 170,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
         },
         {
             field: 'status',
-            headerName: 'Status',
-            width: 60,
+            headerName: 'สถานะ',
+            description: 'สถานะเข้าพบ',
+            width : 100,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
             renderCell: (params) => {
                 const { icon, color, description } = getStatusIconAndColor(params.value as string);
                 return (
-                    <Tooltip title={description} arrow>
-                        <div style={{ display: 'flex', alignItems: 'center', color, marginTop: '16px' }}>
-                            {icon}
-                        </div>
-                    </Tooltip>
+                    <div style={{ display: 'flex' }}>
+                        <Tooltip title={description} arrow>
+                            <div style={{ cursor: 'pointer', color }}>
+                                {icon}
+                            </div>
+                        </Tooltip>
+                    </div>
+
                 );
             },
         },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 80,
+            description: 'Actions!',
             sortable: false,
+            width : 100,
+            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
             renderCell: (params) => (
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex' }}>
                     <Tooltip title="View Details" arrow>
                         <RemoveRedEyeOutlinedIcon
                             color="primary"
@@ -212,47 +236,50 @@ const TeacherHistoryTable: React.FC = () => {
         <div className="border rounded-lg shadow-lg p-4 bg-white">
             <h2 className="text-lg font-semibold mb-4">Appointment History</h2>
             <div style={{ height: 400, width: '100%' }}>
-                <DataGridPremium
-                    rows={bookingsData.map((booking) => ({
-                        id: booking.ID ?? 0,
-                        student_id: booking.user?.user_name || 'Unknown',
-                        student_name: booking.user?.full_name || 'Unknown',
-                        reasons: booking.reason || 'No title',
-                        location: booking.time_slot?.location || 'No Location',
-                        comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
-                        date: booking?.time_slot?.slot_date,
-                        slot_start_time: booking.time_slot?.slot_start_time || '',
-                        slot_end_time: booking.time_slot?.slot_end_time || '',
-                        status: booking.status?.status || "unknow",
-                    }))}
-                    columns={columns}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection
-                    onCellClick={handleCellClick}
-                    sx={{
-                        '& .MuiDataGrid-cell': {
-                            fontFamily: 'Noto Sans, Noto Sans Thai',
-                        },
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f5f5f5',
-                            fontWeight: 'bold',
-                        },
-                        '& .MuiDataGrid-row:hover': {
-                            backgroundColor: '#e0f7fa',
-                        },
-                        '& .MuiDataGrid-columnSeparator--sideRight': {
-                            display: 'none',
-                        },
-                    }}
-                />
+                <ThemeProvider theme={theme}>
+                    <DataGridPremium
+                        rows={bookingsData.map((booking) => ({
+                            id: booking.ID ?? 0,
+                            student_id: booking.user?.user_name || 'Unknown',
+                            student_name: booking.user?.full_name || 'Unknown',
+                            reasons: booking.reason || 'No title',
+                            location: booking.time_slot?.location || 'No Location',
+                            comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
+                            date: booking?.time_slot?.slot_date,
+                            slot_start_time: booking.time_slot?.slot_start_time || '',
+                            slot_end_time: booking.time_slot?.slot_end_time || '',
+                            status: booking.status?.status || "unknow",
+                        }))}
+                        columns={columns}
+                        slots={{
+                            toolbar: CustomToolbar,
+                        }}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 5 },
+                            },
+                        }}
+                        pageSizeOptions={[5, 10]}
+                        checkboxSelection
+                        onCellClick={handleCellClick}
+                        sx={{
+                            '& .MuiDataGrid-cell': {
+                                fontFamily: 'Noto Sans, Noto Sans Thai',
+                            },
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#f5f5f5',
+                                fontWeight: 'bold',
+                            },
+                            '& .MuiDataGrid-row:hover': {
+                                backgroundColor: '#e0f7fa',
+                            },
+                            '& .MuiDataGrid-columnSeparator--sideRight': {
+                                display: 'none',
+                            },
+                        }}
+                    />
+                </ThemeProvider>
+
             </div>
             <BookingDetailsModal
                 open={isModalOpen}

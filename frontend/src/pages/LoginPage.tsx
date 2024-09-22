@@ -1,72 +1,57 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LogInInterface } from '../interfaces/ILogIn';
 import { LogIn } from '../services/https/logIn/logIn';
 import LoginHeader from "../layout/LoginHeader";
 import Footer from "../layout/Footer";
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { CheckCircle, XCircle, User, Lock, AlertCircle } from 'lucide-react';
 
-const Alert = MuiAlert;
+type NotificationType = 'success' | 'error' | 'warning';
 
 function Login() {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [open, setOpen] = useState<boolean>(false);
-  const [severity, setSeverity] = useState<'success' | 'error'>('success');
-  const [message, setMessage] = useState<string>('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [notification, setNotification] = useState<{ show: boolean; message: string; type: NotificationType }>({ show: false, message: '', type: 'success' });
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    if (!username || !password) {
+      showNotification('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน', 'warning');
+      return;
+    }
+
     const values: LogInInterface = { user_name: username, password: password };
 
     try {
       const res = await LogIn(values);
       if (res.status === 200) {
-        // Show success notification
-        setMessage('Sign-in Successful');
-        setSeverity('success');
-        setOpen(true);
-
+        showNotification('เข้าสู่ระบบสำเร็จ!', 'success');
         localStorage.setItem("isLogin", "true");
         localStorage.setItem("token_type", res.data.token_type);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("id", res.data.id);
-        localStorage.setItem("role", res.data.role);  // Store role in localStorage
-
-        const role = res.data.role;
+        localStorage.setItem("role", res.data.role);
 
         setTimeout(() => {
-          // Redirect based on role
-          if (role === 'student') {
-            navigate('/Student');
-          } else if (role === 'teacher') {
-            navigate('/Teacher');
-          } else if (role === 'admin') {
-            navigate('/Admin');
-          } else {
-            navigate('/');  // Fallback in case of unknown role
-          }
+          const role = res.data.role;
+          if (role === 'student') navigate('/Student');
+          else if (role === 'teacher') navigate('/Teacher');
+          else if (role === 'admin') navigate('/Admin');
+          else navigate('/');
         }, 2000);
       } else {
-        // Show error notification
-        setMessage(res.data.error || 'An error occurred during login');
-        setSeverity('error');
-        setOpen(true);
-        setError(res.data.error);
+        showNotification(res.data.error || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ', 'error');
       }
     } catch (error) {
-      // Handle unexpected errors
-      setMessage('An unexpected error occurred. Please try again.');
-      setSeverity('error');
-      setOpen(true);
-      setError('An unexpected error occurred. Please try again.');
+      showNotification('เกิดข้อผิดพลาดที่ไม่คาดคิด โปรดลองอีกครั้ง', 'error');
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const showNotification = (message: string, type: NotificationType) => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
   };
 
   return (
@@ -76,7 +61,12 @@ function Login() {
         <div className='flex flex-grow bg-white'>
           <div className='my-auto flex flex-col gap-y-4 m-auto'>
             <div className='flex flex-col-reverse sm:flex-row justify-center gap-6'>
-              <div className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
+              {/* Instructions panel (unchanged) */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
                 <p className='text-center text-2xl text-ENGi-Red'>วิธีการเข้าสู่ระบบ</p>
                 {/* Instructions for different user roles */}
                 <p className='text-lx text-SUT-Grey mt-2'>อาจารย์</p>
@@ -92,66 +82,91 @@ function Login() {
                 <p className='text-lx text-SUT-Grey mt-2'>แอดมิน</p>
                 <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Admin</p>
                 <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : admin123456</p>
-              </div>
-              <div className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
-                <p className='text-center text-2xl text-ENGi-Red'>กรุณาเข้าสู่ระบบ</p>
-                <div className='mb-4'>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className='bg-white shadow-2xl rounded-md p-5 box-border w-96'
+              >
+                <p className='text-center text-2xl text-ENGi-Red mb-6'>กรุณาเข้าสู่ระบบ</p>
+                <div className='mb-4 relative'>
                   <label htmlFor='username' className='block text-lx text-gray-500 mb-2'>
                     ชื่อผู้ใช้
                   </label>
-                  <input
-                    type='text'
-                    placeholder='กรุณากรอกชื่อผู้ใช้......'
-                    id='username'
-                    name='username'
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className='w-full p-2 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red'
-                  />
+                  <div className='relative'>
+                    <User className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400' size={20} />
+                    <input
+                      type='text'
+                      placeholder='กรุณากรอกชื่อผู้ใช้......'
+                      id='username'
+                      name='username'
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className='w-full p-2 pl-10 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red'
+                    />
+                  </div>
                 </div>
-                <div className='mb-4'>
+                <div className='mb-4 relative'>
                   <label htmlFor='password' className='block text-lx text-gray-500 mb-2'>
                     รหัสผ่าน
                   </label>
-                  <input
-                    type='password'
-                    placeholder='กรุณากรอกรหัสผ่าน......'
-                    id='password'
-                    name='password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className='w-full p-2 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red'
-                  />
+                  <div className='relative'>
+                    <Lock className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400' size={20} />
+                    <input
+                      type='password'
+                      placeholder='กรุณากรอกรหัสผ่าน......'
+                      id='password'
+                      name='password'
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className='w-full p-2 pl-10 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red'
+                    />
+                  </div>
                 </div>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <div className='flex justify-center'>
-                  <button
-                    className="border border-red-700 rounded-md px-5 py-2 text-ENGi-Red hover:bg-ENGi-Red hover:text-white"
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="border border-red-700 rounded-md px-5 py-2 text-ENGi-Red hover:bg-ENGi-Red hover:text-white transition duration-300"
                     onClick={handleLogin}
                   >
                     เข้าสู่ระบบ
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
         <Footer />
       </div>
 
-      {/* MUI Snackbar for notifications */}
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Position Snackbar at top-right
-      >
-        <Alert onClose={handleClose} variant="filled" severity={severity}>
-          {message}
-        </Alert>
-      </Snackbar>
+      {/* Animated Notification */}
+      <AnimatePresence>
+        {notification.show && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className={`fixed top-4 right-4 p-4 rounded-md shadow-lg ${
+              notification.type === 'success' ? 'bg-green-500' : 
+              notification.type === 'error' ? 'bg-red-500' : 'bg-yellow-500'
+            } text-white flex items-center`}
+          >
+            {notification.type === 'success' ? (
+              <CheckCircle className="mr-2" size={24} />
+            ) : notification.type === 'error' ? (
+              <XCircle className="mr-2" size={24} />
+            ) : (
+              <AlertCircle className="mr-2" size={24} />
+            )}
+            {notification.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
-
 export default Login;

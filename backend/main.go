@@ -34,7 +34,9 @@ func main() {
 		//booking
 		students.POST("booking", student.CreateBooking)
 		students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
-		students.GET("/booking/:id", student.GetBookingByStudentID)
+		students.GET("/bookingStudent/:id", student.GetBookingByStudentId)
+		students.GET("/booking/:id", student.GetBookingById)
+		students.DELETE("/booking/:id", student.DeleteBookingById)
 	}
 
 	// Teacher routes
@@ -52,6 +54,9 @@ func main() {
 		//bookingListStudent
 		teachers.GET("/booking/student/:id", teacher.GetBookingStudentListByAdvisorID)
 		teachers.PATCH("/booking/student/:id", teacher.UpdateBookingStudentById)
+
+		//statisticalData
+		teachers.GET("/statisticalData/:id", teacher.GetTeachersStatisticsById)
 	}
 
 	// Admin routes
