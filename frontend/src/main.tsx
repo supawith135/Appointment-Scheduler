@@ -20,6 +20,7 @@ import TecherListPage from './pages/admin/TeacherListPage'
 import AppointAdvisor from './pages/admin/AppointmentAdvisor'
 import { LicenseInfo } from '@mui/x-license';
 import StudentDetailsPage from './pages/teacher/StudentDetailsPage'
+import StudentProfile from './pages/student/StudentProfile'
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
   // {
@@ -59,7 +60,8 @@ const router = createBrowserRouter([
         element: <ProtectedRoute role="student" />,
         children: [
           { path: '', element: <StudentHomePage /> },
-          { path: 'bookingAdvisor/:id', element: <StudenAppointmentPage /> },
+          { path: 'Profile', element: <StudentProfile /> },
+          { path: 'bookingAdvisor', element: <StudenAppointmentPage /> },
           { path: 'History', element: <StudentHistoryPage /> },
         ],
       },

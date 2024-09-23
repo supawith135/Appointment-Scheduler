@@ -79,7 +79,6 @@ func GetBookingStudentListByAdvisorID(c *gin.Context) {
 // 	})
 // }
 
-
 func UpdateBookingStudentById(c *gin.Context) {
 
 	var booking entity.Bookings
@@ -110,7 +109,7 @@ func UpdateBookingStudentById(c *gin.Context) {
 	// บันทึกการเปลี่ยนแปลง
 	result = db.Save(&booking)
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status":  "error","message": "Failed to update student",})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to update student"})
 		return
 	}
 	// ใช้คำสั่ง SQL เพื่ออัพเดท StatusID
@@ -139,3 +138,32 @@ func UpdateBookingStudentById(c *gin.Context) {
 	})
 
 }
+
+// calender teacher ยังไม่ได้เทส
+// func GetBookingsForTeacherByid(c *gin.Context) {
+// 	userID := c.Param("id")
+
+// 	var bookings []entity.Bookings
+
+// 	db := config.DB()
+
+// 	// Perform the query with GORM joins and condition
+// 	results := db.Preload("TimeSlot.User").
+// 		Joins("JOIN time_slots ON bookings.time_slot_id = time_slots.id").
+// 		Joins("JOIN users ON time_slots.user_id = users.id").
+// 		Where("users.role_id = ? AND time_slots.user_id = ?", 2, userID).
+// 		Find(&bookings)
+
+// 	// Check for errors
+// 	if results.Error != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+// 		return
+// 	}
+
+// 	// Return bookings in JSON format
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"status":  "success",
+// 		"message": "Bookings retrieved successfully",
+// 		"data":    bookings,
+// 	})
+// }

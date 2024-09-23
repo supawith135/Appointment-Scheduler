@@ -1,14 +1,8 @@
-import React from 'react'
-import Header from '../../layout/Header'
-import AdminNavbar from '../../layout/AdminNavbar'
 import TeacherListTable from '../../components/admin/TeacherListTable'
-import Footer from '../../layout/Footer'
-
+import FrontLayout from '../../components/layouts/FrontLayout'
 function TeacherListPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Header />
-      <AdminNavbar/>
+    <FrontLayout>
       <main className="flex-grow p-4 sm:p-6 lg:p-10 bg-white">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl md:text-3xl  text-center mb-6 text-red-700">
@@ -17,8 +11,7 @@ function TeacherListPage() {
           <TeacherListTable />
         </div>
       </main>
-      <Footer />
-    </div>
+    </FrontLayout>
   )
 }
 

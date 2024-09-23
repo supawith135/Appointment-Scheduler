@@ -1,22 +1,13 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-import Header from '../../layout/Header';
-
-import Footer from '../../layout/Footer';
-import TeacherNavbar from '../../layout/TeacherNavbar';
-
+import FrontLayout from '../../components/layouts/FrontLayout'
 function TeacherHomePage() {
     return (
-        <div className="min-h-screen flex flex-col bg-white">
-            <Header />
-            <TeacherNavbar />
+        <FrontLayout>
             <div className='flex flex-grow m-auto'>
                 <div className='text-2xl m-auto '>
                     Tacher HomePage
                 </div>
             </div>
-            <Footer />
-        </div>
+        </FrontLayout>
     );
 }
 

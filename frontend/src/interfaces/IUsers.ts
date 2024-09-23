@@ -22,4 +22,9 @@ export interface UsersInterface {
     gender_id?: number;
     gender?: GendersInterface;
 
+    image?: string;
+	facebook?: string;
+	line?: string;
+	contact_number?: string;
+
 }
