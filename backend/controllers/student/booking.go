@@ -224,3 +224,36 @@ func DeleteBookingById(c *gin.Context) {
 		"message": "Booking deleted successfully, time slot updated",
 	})
 }
+
+func GetTimeSlotsByTeacherId(c *gin.Context) {
+    TeacherID := c.Param("id") // ดึง user_id จาก URL parameter
+
+    var timeSlots []entity.TimeSlots
+
+    // ดึง Database connection
+    db := config.DB()
+
+    // Query ข้อมูล time_slots ที่มี user_id ตรงกับที่ระบุ และ Preload ตาราง Users
+    results := db.Preload("User").Preload("User.Position").Preload("User.Role").Preload("User.Gender").Preload("User.Advisor").
+        Where("user_id = ?", TeacherID).Find(&timeSlots)
+
+    // ตรวจสอบว่ามีข้อผิดพลาดใน query หรือไม่
+    if results.Error != nil {
+        log.Printf("Database query error: %v", results.Error)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+        return
+    }
+
+    // ตรวจสอบว่าข้อมูลว่างหรือไม่ (กรณีที่ไม่มี TimeSlots)
+    if len(timeSlots) == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No time slots found for this user"})
+        return
+    }
+
+    // ส่งผลลัพธ์ในรูปแบบ JSON เมื่อมีข้อมูล
+    c.JSON(http.StatusOK, gin.H{
+        "status":  "success",
+        "message": "Time slots retrieved successfully",
+        "data":    timeSlots,
+    })
+}

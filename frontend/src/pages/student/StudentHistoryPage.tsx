@@ -8,7 +8,6 @@ function StudentHistoryPage() {
           <h1 className="text-2xl md:text-3xl  text-center mb-6 text-red-700">
             ประวัติการจองคิวหมายของนักศึกษา
           </h1>
-          
         </div>
         <div className='m-auto w-full sm:w-full lg:w-4/5'>
         <StudentHistoryTable />          

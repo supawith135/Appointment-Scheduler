@@ -32,7 +32,7 @@ async function GetStudentById(id: string) {
 async function GetTeachersList() {
 
     return await axios
-        .get(`${apiUrl}/admin/techer`, requestOptions)
+        .get(`${apiUrl}/admin/teacher`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -40,7 +40,7 @@ async function GetTeachersList() {
 async function GetTeacherById(id: string) {
 
     return await axios
-        .get(`${apiUrl}/admin/techer/${id}`, requestOptions)
+        .get(`${apiUrl}/admin/teacher/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }// Stusent

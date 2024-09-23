@@ -29,14 +29,19 @@ func main() {
 	{
 		students.GET("", student.GetStudentsList)
 		students.GET("/:id", student.GetStudentById)
-		students.PUT("/:id", student.UpdateStudentById)
+		students.PATCH("/:id", student.UpdateStudentById)
 
 		//booking
 		students.POST("booking", student.CreateBooking)
 		students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
 		students.GET("/bookingStudent/:id", student.GetBookingByStudentId)
 		students.GET("/booking/:id", student.GetBookingById)
+		students.GET("/bookingTeacher/:id", student.GetTimeSlotsByTeacherId)
 		students.DELETE("/booking/:id", student.DeleteBookingById)
+
+		//teacher
+		
+		students.GET("/teacher", student.GetTeachersList)
 	}
 
 	// Teacher routes
@@ -45,6 +50,7 @@ func main() {
 	{
 		teachers.GET("", teacher.GetTeachersList)
 		teachers.GET("/:id", teacher.GetTeacherById)
+		teachers.PATCH("/:id", teacher.UpdateTeacherById)
 		teachers.GET("/timeslot", teacher.GetListTimeSlots)
 		teachers.GET("/timeslot/:id", teacher.GetTimeSlotById)
 		teachers.POST("/timeslot", teacher.CreateTimeSlot)
@@ -63,13 +69,16 @@ func main() {
 	admins := r.Group("/admin")
 	admins.Use(middlewares.Authorizes("admin"))
 	{
+		admins.GET("/:id", admin.GetAdminById)
+		admins.PATCH("/:id", admin.UpdateAdminById)
 		admins.GET("/student", admin.GetStudentsList)
 		admins.GET("/student/:id", admin.GetStudentById)
 		admins.GET("/teacher", admin.GetTeachersList)
 		admins.GET("/teacher/:id", admin.GetTeacherById)
 		admins.GET("/timeslot", admin.GetListTimeSlots)
 		admins.GET("/timeslot/:id", admin.GetTimeSlotById)
-
+		admins.GET("/booking/teacher/:id", admin.GetBookingStudentListByTeacherID)
+	
 	}
 	
 	r.Run("localhost:8080")

@@ -1,6 +1,6 @@
 import CalenderAdvisor from '../../components/admin/CalendarAdvisor'
 import FrontLayout from '../../components/layouts/FrontLayout'
-function AppointAdvisor() {
+function AppointmentTeacherPage() {
     return (
         <FrontLayout>
             <main className="flex-grow p-4 sm:p-6 lg:p-10 bg-white">
@@ -14,4 +14,4 @@ function AppointAdvisor() {
         </FrontLayout>
     )
 }
-export default AppointAdvisor
+export default AppointmentTeacherPage

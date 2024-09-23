@@ -4,7 +4,6 @@ const apiUrl = "http://localhost:8080";
 const Authorization = localStorage.getItem("token");
 const Bearer = localStorage.getItem("token_type");
 
-
 const requestOptions = {
 
     headers: {
@@ -12,33 +11,21 @@ const requestOptions = {
         Authorization: `${Bearer} ${Authorization}`,
     },
 };
-
-async function GetTeachersList() {
+async function UpdateAdminById(id: string, data: UsersInterface) {
 
     return await axios
-        .get(`${apiUrl}/teacher`, requestOptions)
+        .patch(`${apiUrl}/admin/${id}`, data, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
-
-async function GetTeacherById(id: string) {
+async function GetAdminById(id: string) {
 
     return await axios
-        .get(`${apiUrl}/teacher/${id}`, requestOptions)
+        .get(`${apiUrl}/admin/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
-async function UpdateTeacherById(id: string, data: UsersInterface) {
-
-    return await axios
-        .patch(`${apiUrl}/teacher/${id}`, data, requestOptions)
-        .then((res) => res)
-        .catch((e) => e.response);
-}
-
-
 export {
-    GetTeachersList,
-    GetTeacherById,
-    UpdateTeacherById,
+    GetAdminById,
+    UpdateAdminById
 };

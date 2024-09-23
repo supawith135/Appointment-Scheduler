@@ -33,7 +33,14 @@ async function GetStudentById(id: string) {
 async function UpdateStudentById(id: string, data: UsersInterface) {
 
     return await axios
-        .put(`${apiUrl}/student/${id}`, data, requestOptions)
+        .patch(`${apiUrl}/student/${id}`, data, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+async function GetTeachersList() {
+
+    return await axios
+        .get(`${apiUrl}/student/teacher`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -42,4 +49,5 @@ export {
     GetStudentsList,
     GetStudentById,
     UpdateStudentById,
+    GetTeachersList
 };

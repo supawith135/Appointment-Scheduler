@@ -7,58 +7,73 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import sutLogoWhite from '../../assets/ENGi Lettermark-EN-White.png'
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import sutLogoWhite from '../../assets/ENGi Lettermark-EN-White.png';
 import { useNavigate } from 'react-router-dom';
+import { UsersInterface } from '../../interfaces/IUsers';
+import { GetStudentById } from '../../services/https/student/student';
+import { GetTeacherById } from '../../services/https/teacher/teacher';
+import { GetAdminById } from '../../services/https/admin/admin';
 
 function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [userData, setUserData] = React.useState<UsersInterface | null>(null);
+    const navigate = useNavigate();
+
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
     };
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
 
-    const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.clear();
         navigate('/');
     };
 
-    const handleMenuClick = (setting: string) => {
+    const getUserById = async (id: string) => {
         const role = localStorage.getItem("role");
-        let baseRoute = '';
-        switch (role) {
-          case 'student':
-            baseRoute = '/Student';
-            break;
-          case 'teacher':
-            baseRoute = '/Teacher'; // There was a typo in your original code ('Taecher'), I corrected it
-            break;
-          case 'admin':
-            baseRoute = '/Admin';
-            break;
-          default:
-            break;
+        try {
+            let res;
+            if (role === 'student') {
+                res = await GetStudentById(id);
+            } else if (role === 'teacher') {
+                res = await GetTeacherById(id);
+            } else if (role === 'admin') {
+                res = await GetAdminById(id);
+            }
+
+            if (res && res.status === 200) {
+                setUserData(res.data.data);
+            } else {
+                console.error("Error getting user data: ", res.data);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
         }
+    };
+
+    const id = String(localStorage.getItem('id'));
+    React.useEffect(() => {
+        getUserById(id);
+    }, [id]);
+
+    const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+    const handleMenuClick = (setting: string) => {
         if (setting === 'Logout') {
-          handleLogout();
+            handleLogout();
         } else {
-          navigate(`${baseRoute}/${setting}`);
-          handleCloseUserMenu();
+            const role = localStorage.getItem("role");
+            const baseRoute = role === 'student' ? '/Student' : role === 'teacher' ? '/Teacher' : '/Admin';
+            navigate(`${baseRoute}/${setting}`);
+            handleCloseUserMenu();
         }
-      };
+    };
+
     return (
         <AppBar position="static" sx={{ background: "#800020" }}>
             <Container maxWidth="xl">
@@ -78,25 +93,23 @@ function ResponsiveAppBar() {
                             textDecoration: 'none',
                         }}
                     >
-                        <img src={sutLogoWhite} alt='sutLogoWhite' className='max-w-56 ml-10 ' />
+                        <img
+                            src={sutLogoWhite}
+                            alt='sutLogoWhite'
+                            className='max-w-56 ml-10'
+                            onClick={() => {
+                                const role = localStorage.getItem("role");
+                                const baseRoute = role === 'student' ? '/Student' : role === 'teacher' ? '/Teacher' : '/Admin';
+                                navigate(baseRoute);
+                            }}
+                            style={{ cursor: 'pointer' }}
+                        />
                     </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                    </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                {page}
-                            </Button>
-                        ))}
-                    </Box>
+                    <Box sx={{ flexGrow: 1 }} /> {/* เพิ่ม Box นี้เพื่อใช้เป็นพื้นที่ว่าง */}
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <Avatar alt="User Avatar" src={userData?.image} />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -127,4 +140,5 @@ function ResponsiveAppBar() {
         </AppBar>
     );
 }
+
 export default ResponsiveAppBar;

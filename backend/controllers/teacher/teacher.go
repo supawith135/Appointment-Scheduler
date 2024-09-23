@@ -56,3 +56,41 @@ func GetTeacherById(c *gin.Context) {
 	})
 }
 
+func UpdateTeacherById(c *gin.Context) {
+
+	var user entity.Users
+
+	UserID := c.Param("id")
+
+	db := config.DB()
+
+	// ค้นหา userID ที่ต้องการอัพเดท
+	result := db.First(&user, UserID)
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  "error",
+			"message": "Teacher ID not found",
+		})
+		return
+	}
+
+	// แปลงข้อมูล JSON ที่ส่งมาเป็นโครงสร้าง user
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status":  "error","message": "Bad request, unable to parse payload",})
+		return
+	}
+
+	// บันทึกการเปลี่ยนแปลง
+	result = db.Save(&user)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status":  "error","message": "Failed to update Teacher",})
+		return
+	}
+
+	// ส่งข้อมูลที่อัพเดทแล้วกลับไป
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Teacher updated successfully",
+		"data":    user,
+	})
+}
