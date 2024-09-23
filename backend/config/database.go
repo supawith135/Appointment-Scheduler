@@ -39,6 +39,9 @@ func hashPassword(password string) (string, error) {
 func uintPtr(i uint) *uint {
 	return &i
 }
+func strtPtr(i string) *string {
+	return &i
+}
 
 // SetupDatabase sets up and initializes the database
 func SetupDatabase() {

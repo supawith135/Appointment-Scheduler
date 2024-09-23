@@ -14,13 +14,13 @@ const studentNavItems: NavItem[] = [
 ];
 
 const teacherNavItems: NavItem[] = [
-  { path: '/Teacher/Appointment', label: 'การนัดหมาย' },
+  { path: '/Teacher', label: 'การนัดหมาย' },
   { path: '/Teacher/CreateTimeSlot', label: 'สร้างเวลานัดหมาย' },
   { path: '/Teacher/History', label: 'ประวัติจองคิว' },
 ];
 
 const adminNavItems: NavItem[] = [
-  { path: '/Admin/AddStudentPage', label: 'การนัดหมายอาจารย์' },
+  // { path: '/Admin/AddStudentPage', label: 'การนัดหมายอาจารย์' },
   { 
     path: '#', 
     label: 'นักศึกษา',

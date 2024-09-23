@@ -33,28 +33,36 @@ func GetListTimeSlots(c *gin.Context) {
 // ดึงข้อมูล Timeslot โดย ID
 func GetTimeSlotById(c *gin.Context) {
 
-	ID := c.Param("id")
+	TeacherID := c.Param("id") // ดึง user_id จาก URL parameter
 
-	var timeSlot entity.TimeSlots
+    var timeSlots []entity.TimeSlots
 
-	db := config.DB()
+    // ดึง Database connection
+    db := config.DB()
 
-	results := db.Preload("User").Find(&timeSlot, ID)
-	if results.Error != nil {
-		log.Printf("Database query error: %v", results.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
-		return
-	}
+    // Query ข้อมูล time_slots ที่มี user_id ตรงกับที่ระบุ และ Preload ตาราง Users
+    results := db.Preload("User").Preload("User.Position").Preload("User.Role").Preload("User.Gender").Preload("User.Advisor").
+        Where("user_id = ?", TeacherID).Find(&timeSlots)
 
-	if timeSlot.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "TimeSlot not found"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-		"message": "Time slot retrieved successfully",
-		"data":    timeSlot,
-	})
+    // ตรวจสอบว่ามีข้อผิดพลาดใน query หรือไม่
+    if results.Error != nil {
+        log.Printf("Database query error: %v", results.Error)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+        return
+    }
+
+    // ตรวจสอบว่าข้อมูลว่างหรือไม่ (กรณีที่ไม่มี TimeSlots)
+    if len(timeSlots) == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No time slots found for this user"})
+        return
+    }
+
+    // ส่งผลลัพธ์ในรูปแบบ JSON เมื่อมีข้อมูล
+    c.JSON(http.StatusOK, gin.H{
+        "status":  "success",
+        "message": "Time slots retrieved successfully",
+        "data":    timeSlots,
+    })
 }
 
 // // สร้างข้อมูล TimeSlot

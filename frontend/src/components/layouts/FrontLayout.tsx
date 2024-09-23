@@ -11,7 +11,7 @@ function FrontLayout({ children }: Props) {
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       <Navbar />
-      <div className="flex-grow">
+      <div className="flex-grow bg-white">
         <div className="h-full sm:pt-20 lg:pt-8">
           {children}
         </div>

@@ -80,7 +80,6 @@ func GetTeachersList(c *gin.Context) {
 		"data":    users,
 	})
 }
-
 // ดึงข้อมูลรายชื่ออาจารย์ด้วย ID
 func GetTeacherById(c *gin.Context) {
 

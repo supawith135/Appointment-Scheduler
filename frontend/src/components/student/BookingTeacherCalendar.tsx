@@ -1,35 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import BookingModalTime from '../modal/BookingModalTime';
+import BookingModalTimeTeacher from '../modal/BookingModalTimeTeacher';
 import { message } from "antd";
-import { GetListBookingAdvisor } from '../../services/https/student/booking';
+import { GetListBookingTeacherById } from '../../services/https/student/booking';
+import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
 import { useParams } from "react-router-dom";
-
-interface BookingSlot {
-  time_slot_id: number;
-  slot_date: string;
-  slot_start_time: string;
-  slot_end_time: string;
-  is_available: boolean;
-  title: string;
-  location: string;
-  advisor_name: string;
-}
 
 interface DayInfo {
   day: string;
   date: number;
-  slots: BookingSlot[];
+  slots: TimeSlotsInterface[];
   isSelected?: boolean;
 }
 
 interface CalendarDayProps {
   day: string;
   date: number;
-  slots: BookingSlot[];
-  onTimeSelect: (slot: BookingSlot) => void;
+  slots: TimeSlotsInterface[];
+  onTimeSelect: (slot: TimeSlotsInterface) => void;
   currentDate: Date;
-  className?: string; // เพิ่ม className ที่นี่
+  className?: string;
 }
 
 function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: CalendarDayProps) {
@@ -58,7 +48,7 @@ function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: Cal
       </motion.p>
       {slots.length > 0 ? (
         slots.map((slot) => {
-          const startTime = new Date(slot.slot_start_time);
+          const startTime = new Date(slot.slot_start_time!);
           const formattedTime = startTime.toLocaleTimeString('th-TH', {
             hour: 'numeric',
             minute: 'numeric',
@@ -66,7 +56,7 @@ function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: Cal
 
           return (
             <motion.button
-              key={slot.time_slot_id}
+              key={slot.ID}
               className={`block w-full ${slot.is_available ? 'bg-gray-200 hover:bg-blue-500 hover:text-white' : 'bg-red-200 cursor-not-allowed'} rounded-md py-1 px-3 mb-2 text-sm transition-colors duration-300 ease-in-out`}
               onClick={() => slot.is_available && onTimeSelect(slot)}
               disabled={!slot.is_available}
@@ -84,24 +74,39 @@ function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: Cal
   );
 }
 
-function BookingCalendar() {
+function BookingTeacherCalendar() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [days, setDays] = useState<DayInfo[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState<BookingSlot | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlotsInterface | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
-  const [bookingSlots, setBookingSlots] = useState<BookingSlot[]>([]);
+  const [bookingSlots, setBookingSlots] = useState<TimeSlotsInterface[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // const { id } = useParams<{ id: string }>();
   const [messageApi, contextHolder] = message.useMessage();
+  const [screenSize, setScreenSize] = useState(window.innerWidth);
 
-  const getListBookingAdvisor = async (id: string) => {
-    
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const getDaysToShow = () => {
+    if (screenSize < 640) return 2; // iPhone
+    if (screenSize < 768) return 3; // iPad portrait
+    if (screenSize < 1024) return 4; // iPad landscape
+    return 7; // Larger screens
+  };
+  
+  const getListBookingTeacherById = async (id: string) => {
     setIsLoading(true);
     try {
-      let res = await GetListBookingAdvisor(id);
+      let res = await GetListBookingTeacherById(id);
       if (res.status === 200) {
         setBookingSlots(res.data.data);
         console.log("res.data: ", res.data.data);
@@ -122,12 +127,12 @@ function BookingCalendar() {
     }
   };
 
+  const { id } = useParams<{ id: string }>();
   useEffect(() => {
-    const id = String(localStorage.getItem('id'))
     if (id) {
-      getListBookingAdvisor(id);
+      getListBookingTeacherById(id);
     }
-  }, [messageApi]);
+  }, [messageApi, id]);
 
   useEffect(() => {
     generateWeekDays(currentDate);
@@ -142,61 +147,36 @@ function BookingCalendar() {
     }
   }, [isModalOpen]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      generateWeekDays(currentDate); // เรียกฟังก์ชันอีกครั้งเมื่อขนาดหน้าจอเปลี่ยน
-    };
-  
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [currentDate, bookingSlots]);
-
   const navigateDate = (direction: 'prev' | 'next') => {
-    const screenWidth = window.innerWidth;
-    let numDays = 2; // ค่าเริ่มต้นสำหรับมือถือ
-  
-    if (screenWidth >= 768 && screenWidth < 1024) { // ไอแพด
-      numDays = 4;
-    } else if (screenWidth >= 1024) { // โน๊ตบุค
-      numDays = 7;
-    }
-  
+    const numDays = getDaysToShow();
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() + (direction === 'next' ? numDays : -numDays));
     setCurrentDate(newDate);
   };
 
   const generateWeekDays = (date: Date) => {
-  const weekDays: DayInfo[] = [];
-  const screenWidth = window.innerWidth; // ตรวจสอบขนาดหน้าจอ
-  let numDays = 2; // ค่าเริ่มต้นสำหรับมือถือ
+    const weekDays: DayInfo[] = [];
+    const numDays = getDaysToShow();
 
-  if (screenWidth >= 768 && screenWidth < 1024) { // ไอแพด
-    numDays = 4;
-  } else if (screenWidth >= 1024) { // โน๊ตบุค
-    numDays = 7;
-  }
+    for (let i = 0; i < numDays; i++) {
+      const day = new Date(date);
+      day.setDate(date.getDate() + i);
+      
+      const daySlots = bookingSlots
+        .filter(slot => new Date(slot.slot_date!).toDateString() === day.toDateString())
+        .sort((a, b) => new Date(a.slot_start_time!).getTime() - new Date(b.slot_start_time!).getTime());
 
-  for (let i = 0; i < numDays; i++) { // แสดงตามจำนวนวันที่กำหนด
-    const day = new Date(date);
-    day.setDate(date.getDate() + i);
-    
-    const daySlots = bookingSlots
-      .filter(slot => new Date(slot.slot_date).toDateString() === day.toDateString())
-      .sort((a, b) => new Date(a.slot_start_time).getTime() - new Date(b.slot_start_time).getTime());
+      weekDays.push({
+        day: day.toLocaleString('default', { weekday: 'short' }).toUpperCase(),
+        date: day.getDate(),
+        slots: daySlots,
+        isSelected: i === 0,
+      });
+    }
+    setDays(weekDays);
+  };
 
-    weekDays.push({
-      day: day.toLocaleString('default', { weekday: 'short' }).toUpperCase(),
-      date: day.getDate(),
-      slots: daySlots,
-      isSelected: i === 0,
-    });
-  }
-  setDays(weekDays);
-};
-
-
-  const handleTimeSelection = (slot: BookingSlot) => {
+  const handleTimeSelection = (slot: TimeSlotsInterface) => {
     setSelectedSlot(slot);
     setIsModalOpen(true);
   };
@@ -210,6 +190,7 @@ function BookingCalendar() {
   if (isLoading) {
     return <div className="text-center p-4">กำลังโหลดข้อมูล...</div>;
   }
+  
   const thaiDayShortNames: { [key: string]: string } = {
     'วันอาทิตย์': 'อา.',
     'วันจันทร์': 'จ.',
@@ -219,7 +200,6 @@ function BookingCalendar() {
     'วันศุกร์': 'ศ.',
     'วันเสาร์': 'ส.',
   };
-
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
@@ -259,13 +239,13 @@ function BookingCalendar() {
         </motion.button>
       </motion.div>
       <motion.div 
-        className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4"
         initial={{ opacity: 0 , y : -20}}
         animate={{ opacity: 1 , y : 0}}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <AnimatePresence>
-          {days.slice(0, window.innerWidth < 640 ? 2 : 7).map(day => { // Check screen size for day display
+          {days.map(day => {
             const fullDayName = new Date(currentDate.getFullYear(), currentDate.getMonth(), day.date).toLocaleDateString('th-TH', { weekday: 'long' });
             const shortDayName = thaiDayShortNames[fullDayName as string] || fullDayName;
 
@@ -296,23 +276,23 @@ function BookingCalendar() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Selected time: {new Date(selectedSlot.slot_start_time).toLocaleDateString('th-TH', {
+          Selected time: {new Date(selectedSlot.slot_start_time!).toLocaleDateString('th-TH', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-          })}, {new Date(selectedSlot.slot_start_time).toLocaleTimeString('th-TH', {
+          })}, {new Date(selectedSlot.slot_start_time!).toLocaleTimeString('th-TH', {
             hour: 'numeric',
             minute: 'numeric',
             hour12: false,
           })} น.
         </motion.p>
       )}
-      <BookingModalTime
+      <BookingModalTimeTeacher
         isOpen={showModal}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        selectedTime={selectedSlot ? new Date(selectedSlot.slot_start_time).toLocaleString() : null}
+        selectedTime={selectedSlot ? new Date(selectedSlot.slot_start_time!).toLocaleString() : null}
         slotDetails={selectedSlot}
       />
       {selectedReason && (
@@ -329,4 +309,4 @@ function BookingCalendar() {
   );
 }
 
-export default BookingCalendar;
+export default BookingTeacherCalendar;

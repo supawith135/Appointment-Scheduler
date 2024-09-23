@@ -4,22 +4,14 @@ import { CreateBooking } from '../../services/https/student/booking';
 import { BookingsInterface } from '../../interfaces/IBookings';
 import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom';
+import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
 
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (reason: string) => void;
     selectedTime: string | null;
-    slotDetails: {
-        time_slot_id: number;
-        slot_date: string;
-        slot_start_time: string;
-        slot_end_time: string;
-        is_available: boolean;
-        title: string;
-        location: string;
-        advisor_name: string;
-    } | null;
+    slotDetails: TimeSlotsInterface | null;
 }
 
 const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDetails }) => {
@@ -47,7 +39,7 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
 
         const values: BookingsInterface = {
             user_id: Number(localStorage.getItem("id")),
-            time_slot_id: slotDetails.time_slot_id,
+            time_slot_id: slotDetails.ID,
             reason,
             status_id: 1,
         };
@@ -113,22 +105,23 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDe
                             >
                                 <h2 className="text-2xl font-bold mb-4 text-red-700">{slotDetails.title}</h2>
                                 <p className="mb-3 text-gray-700">
-                                    <span className="font-semibold">วันที่:</span> {new Date(slotDetails.slot_date).toLocaleDateString('th-TH', {
+                                    <span className="font-semibold">วันที่:</span> {new Date(slotDetails.slot_date!).toLocaleDateString('th-TH', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric',
                                     })}
+                                    
                                 </p>
                                 <p className="mb-3 text-gray-700">
-                                    <span className="font-semibold">เวลา:</span> {new Date(slotDetails.slot_start_time).toLocaleTimeString('th-TH', {
+                                    <span className="font-semibold">เวลา:</span> {new Date(slotDetails.slot_start_time!).toLocaleTimeString('th-TH', {
                                         hour: '2-digit',
                                         minute: '2-digit',
-                                    })} – {new Date(slotDetails.slot_end_time).toLocaleTimeString('th-TH', {
+                                    })} – {new Date(slotDetails.slot_end_time!).toLocaleTimeString('th-TH', {
                                         hour: '2-digit',
                                         minute: '2-digit',
                                     })} น.
                                 </p>
-                                <p className="mb-3 text-gray-700"><span className="font-semibold">อาจารย์:</span> {}{slotDetails.advisor_name}</p>
+                                <p className="mb-3 text-gray-700"><span className="font-semibold">อาจารย์:</span> {slotDetails.user?.position?.position_name} {slotDetails.user?.full_name}</p>
                                 <p className="mb-6 text-gray-700"><span className="font-semibold">สถานที่:</span> {slotDetails.location}</p>
                             </motion.div>
                         )}

@@ -99,3 +99,21 @@ func UpdateStudentById(c *gin.Context) {
 		"data":    user,
 	})
 }
+func GetTeachersList(c *gin.Context) {
+	var users []entity.Users
+
+	db := config.DB()
+
+	results := db.Preload("Position").Preload("Role").Preload("Advisor").Preload("Gender").Where("role_id = ?", 2).Find(&users)
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Teachers retrieved successfully",
+		"data":    users,
+	})
+}

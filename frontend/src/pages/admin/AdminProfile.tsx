@@ -1,17 +1,17 @@
+import { GetAdminById, UpdateAdminById } from '../../services/https/admin/admin';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Facebook, MessageCircle, Phone, Upload, X, Check, Edit2, MapPin } from 'lucide-react';
 import FrontLayout from '../../components/layouts/FrontLayout';
 import { ToastContainer, toast } from 'react-toastify'; // เพิ่มนี้
 import 'react-toastify/dist/ReactToastify.css'; // เพิ่มนี้
-import { UpdateStudentById, GetStudentById } from '../../services/https/student/student';
 import { UsersInterface } from '../../interfaces/IUsers';
 
 
-const StudentProfile: React.FC = () => {
+const AdminProfile: React.FC = () => {
   const [imageString, setImageString] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [studentData, setStudentData] = useState<UsersInterface | null>(null);
+  const [adminData, setadminData] = useState<UsersInterface | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -26,39 +26,39 @@ const StudentProfile: React.FC = () => {
     }
   };
 
-  const getStudentById = async (id: string) => {
+  const getAdminById = async (id: string) => {
     try {
-      const res = await GetStudentById(id);
+      const res = await GetAdminById(id);
       if (res.status === 200) {
-        setStudentData(res.data.data);
+        setadminData(res.data.data);
         setImageString(res.data.data.image || null);
       } else {
-        console.error("Error getting student data: ", res.data);
+        console.error("Error getting admin data: ", res.data);
       }
     } catch (error) {
-      console.error("Error fetching student data:", error);
+      console.error("Error fetching admin data:", error);
     }
   }
 
   const id = String(localStorage.getItem('id'));
   useEffect(() => {
-    getStudentById(id);
+    getAdminById(id);
   }, [id]);
 
   const handleConfirm = async () => {
-    if (!studentData) return;
+    if (!adminData) return;
 
     const value: UsersInterface = {
       ID: Number(id),
-      facebook: studentData.facebook,
-      line: studentData.line,
-      contact_number: studentData.contact_number,
+      facebook: adminData.facebook,
+      line: adminData.line,
+      contact_number: adminData.contact_number,
       image: imageString as string,
-      location: studentData.location
+      location: adminData.location
     };
 
     try {
-      const res = await UpdateStudentById(id, value);
+      const res = await UpdateAdminById(id, value);
       if (res.status === 200) {
         console.log("Update Data",res.data)
         toast.success('Profile updated successfully!'); // เปลี่ยนการแจ้งเตือน
@@ -87,7 +87,7 @@ const StudentProfile: React.FC = () => {
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            Student Profile
+            admin Profile
           </motion.h2>
 
           <div className="mb-6">
@@ -124,7 +124,7 @@ const StudentProfile: React.FC = () => {
             </label>
           </div>
 
-          {studentData && (
+          {adminData && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -136,8 +136,8 @@ const StudentProfile: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Facebook"
-                    value={studentData.facebook || ''}
-                    onChange={(e) => setStudentData({ ...studentData, facebook: e.target.value })}
+                    value={adminData.facebook || ''}
+                    onChange={(e) => setadminData({ ...adminData, facebook: e.target.value })}
                     className="flex-grow border-b-2 border-gray-300 focus:border-[#1877F2] outline-none p-2 transition duration-300 bg-white text-black"
                   />
                 </div>
@@ -146,8 +146,8 @@ const StudentProfile: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Line"
-                    value={studentData.line || ''}
-                    onChange={(e) => setStudentData({ ...studentData, line: e.target.value })}
+                    value={adminData.line || ''}
+                    onChange={(e) => setadminData({ ...adminData, line: e.target.value })}
                     className="flex-grow border-b-2 border-gray-300 focus:border-[#00C300] outline-none p-2 transition duration-300 bg-white text-black"
                   />
                 </div>
@@ -156,8 +156,8 @@ const StudentProfile: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Contact Number"
-                    value={studentData.contact_number || ''}
-                    onChange={(e) => setStudentData({ ...studentData, contact_number: e.target.value })}
+                    value={adminData.contact_number || ''}
+                    onChange={(e) => setadminData({ ...adminData, contact_number: e.target.value })}
                     className="flex-grow border-b-2 border-gray-300 focus:border-red-500 outline-none p-2 transition duration-300 bg-white text-black"
                   />
                 </div>
@@ -166,8 +166,8 @@ const StudentProfile: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Location"
-                    value={studentData.location || ''}
-                    onChange={(e) => setStudentData({ ...studentData, location: e.target.value })}
+                    value={adminData.location || ''}
+                    onChange={(e) => setadminData({ ...adminData, location: e.target.value })}
                     className="flex-grow border-b-2 border-gray-300 focus:border-orange-700 outline-none p-2 transition duration-300 bg-white text-black"
                   />
                 </div>
@@ -221,4 +221,4 @@ const StudentProfile: React.FC = () => {
   );
 }
 
-export default StudentProfile;
+export default AdminProfile;

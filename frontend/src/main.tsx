@@ -11,16 +11,19 @@ import AdminHomePage from './pages/admin/AdminHomePage'
 import StudentHistoryPage from './pages/student/StudentHistoryPage'
 import TeacherHistoryPage from './pages/teacher/TeacherHistoryPage'
 import AddStudent from './pages/admin/AddStudentPage'
-import StudenAppointmentPage from './pages/student/StudenBookingPage'
+import StudenAppointmentPage from './pages/student/StudentBookingAdvisorPage'
 import TeacherCreateTimeSlotPage from './pages/teacher/TeacherCreateTimeSlotPage'
 import TeacherAppointmentPage from './pages/teacher/TeacherAppointmentPage'
 import AddTeacher from './pages/admin/AddTeacherPage'
 import StudentListPage from './pages/admin/StudentListPage'
 import TecherListPage from './pages/admin/TeacherListPage'
-import AppointAdvisor from './pages/admin/AppointmentAdvisor'
+import AppointmentTeacherPage from './pages/admin/AppointmentTeacherPage'
 import { LicenseInfo } from '@mui/x-license';
 import StudentDetailsPage from './pages/teacher/StudentDetailsPage'
 import StudentProfile from './pages/student/StudentProfile'
+import AdminProfile from './pages/admin/AdminProfile'
+import TeacherProfile from './pages/teacher/TeacherProfile'
+import StudentBookingTeacherPage from './pages/student/StudentBookingTeacherPage'
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
   // {
@@ -47,12 +50,13 @@ const router = createBrowserRouter([
         path: '/Teacher',
         element: <ProtectedRoute role="teacher" />,
         children: [
-          { path: '', element: <TeacherHomePage /> },
-          { path: 'A', element: <TeacherCreateTimeSlotPage /> },
-          { path: 'Appointment', element: <TeacherAppointmentPage /> },
+          // { path: '', element: <TeacherHomePage /> },
+          // { path: 'A', element: <TeacherCreateTimeSlotPage /> },
+          { path: '', element: <TeacherAppointmentPage /> },
           { path: 'CreateTimeSlot', element: <TeacherCreateTimeSlotPage /> },
           { path: 'History', element: <TeacherHistoryPage /> },
           { path: 'StudentDetails/:id', element: <StudentDetailsPage /> },
+          { path: 'Profile', element: <TeacherProfile /> },
         ],
       },
       {
@@ -63,6 +67,7 @@ const router = createBrowserRouter([
           { path: 'Profile', element: <StudentProfile /> },
           { path: 'bookingAdvisor', element: <StudenAppointmentPage /> },
           { path: 'History', element: <StudentHistoryPage /> },
+          { path: 'bookingTeacher/:id', element: <StudentBookingTeacherPage /> },
         ],
       },
       {
@@ -74,7 +79,8 @@ const router = createBrowserRouter([
           { path: 'AddTeacher', element: <AddTeacher /> },
           { path: 'StudentList', element: <StudentListPage /> },
           { path: 'TeacherList', element: <TecherListPage /> },
-          { path: 'AddStudentPage', element: <AppointAdvisor /> },
+          { path: 'bookingTeacher/:id', element: <AppointmentTeacherPage /> },
+          { path: 'Profile', element: <AdminProfile /> },
         ],
       },
     ],

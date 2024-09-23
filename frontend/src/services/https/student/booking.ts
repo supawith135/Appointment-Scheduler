@@ -21,6 +21,14 @@ async function GetListBookingAdvisor(id: string) {
         .catch((e) => e.response);
 }
 
+async function GetListBookingTeacherById(id: string) {
+
+    return await axios
+        .get(`${apiUrl}/student/bookingTeacher/${id}`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+
 async function GetBookingByStudentID(id: String) {
 
     return await axios
@@ -56,5 +64,6 @@ export {
     GetBookingByStudentID,
     CreateBooking,
     UpdateStudentById,
-    DeleteBookingById
+    DeleteBookingById,
+    GetListBookingTeacherById
 };

@@ -26,5 +26,6 @@ export interface UsersInterface {
 	facebook?: string;
 	line?: string;
 	contact_number?: string;
+    location?: string;
 
 }

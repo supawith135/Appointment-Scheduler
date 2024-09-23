@@ -17,7 +17,6 @@ function AddTeacherPage() {
   };
 
   return (
-    <div className='bg-white'>
       <FrontLayout>
         <div className='flex flex-grow flex-col p-4 md:p-8 lg:p-10'>
           <div className='mx-auto p-2 md:p-10 lg:p-12 shadow-xl rounded-md  w-full max-w-4xl'>
@@ -102,7 +101,6 @@ function AddTeacherPage() {
                   <MenuItem value={20}>รองศาสตราจารย์</MenuItem>
                   <MenuItem value={30}>ผู้ช่วยศาสตราจารย์</MenuItem>
                   <MenuItem value={30}>อาจารย์</MenuItem>
-
                 </Select>
               </FormControl>
             </div>
@@ -138,9 +136,7 @@ function AddTeacherPage() {
             </div>
           </div>
         </div>
-     
       </FrontLayout>
-    </div>
 
   );
 }

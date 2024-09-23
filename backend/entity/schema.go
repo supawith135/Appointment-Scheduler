@@ -21,6 +21,7 @@ type Users struct {
 	Facebook      *string   `gorm:"type:text" json:"facebook"`
 	Line          *string   `gorm:"type:text" json:"line"`
 	ContactNumber *string   `gorm:"type:text" json:"contact_number"`
+	Location      *string   `gorm:"type:text" json:"location"`
 	UserName      string    `gorm:"uniqueIndex;not null" json:"user_name"`
 	Password      string    `json:"password"`
 	GenderID      *uint     `json:"gender_id"`

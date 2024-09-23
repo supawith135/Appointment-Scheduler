@@ -1,6 +1,7 @@
-import BookingCalendar from '../../components/student/BookingCalendar'
+import BookingCalendar from '../../components/student/BookingAdvisorCalendar'
 import FrontLayout from '../../components/layouts/FrontLayout'
-function StudentAppointmentPage() {
+import BookingTeacherCalendar from '../../components/student/BookingTeacherCalendar'
+function StudentBookingTeacherPage() {
   return (
     <FrontLayout>
       <main className="flex-grow p-4 sm:p-6 lg:p-10 items-center bg-white ">
@@ -13,11 +14,11 @@ function StudentAppointmentPage() {
               เลือกเวลาจองคิวนัดหมาย
             </p>
           </div>
-          <BookingCalendar />
+          <BookingTeacherCalendar />
         </div>
       </main>
     </FrontLayout>
   )
 }
 
-export default StudentAppointmentPage
+export default StudentBookingTeacherPage
