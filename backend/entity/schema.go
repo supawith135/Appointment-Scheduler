@@ -9,18 +9,22 @@ import (
 // Users represents a user entity.
 type Users struct {
 	gorm.Model
-	PositionID *uint     `json:"position_id"`
-	Position   Positions `gorm:"foreignKey:PositionID;references:ID" json:"position"`
-	FullName   string    `gorm:"uniqueIndex;not null" json:"full_name"`
-	RoleID     *uint     `json:"role_id"`
-	Role       Roles     `gorm:"foreignKey:RoleID;references:ID" json:"role"`
-	AdvisorID  *uint     `json:"advisor_id"`
-	Advisor    *Users    `gorm:"foreignKey:AdvisorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"advisor"`
-	Email      string    `gorm:"uniqueIndex;not null" json:"email"`
-	UserName   string    `gorm:"uniqueIndex;not null" json:"user_name"`
-	Password   string    `json:"password"`
-	GenderID   *uint     `json:"gender_id"`
-	Gender     Genders   `gorm:"foreignKey:GenderID;references:ID" json:"gender"`
+	PositionID    *uint     `json:"position_id"`
+	Position      Positions `gorm:"foreignKey:PositionID;references:ID" json:"position"`
+	FullName      string    `gorm:"uniqueIndex;not null" json:"full_name"`
+	RoleID        *uint     `json:"role_id"`
+	Role          Roles     `gorm:"foreignKey:RoleID;references:ID" json:"role"`
+	AdvisorID     *uint     `json:"advisor_id"`
+	Advisor       *Users    `gorm:"foreignKey:AdvisorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"advisor"`
+	Email         string    `gorm:"uniqueIndex;not null" json:"email"`
+	Image         *string   `gorm:"type:text" json:"image"`
+	Facebook      *string   `gorm:"type:text" json:"facebook"`
+	Line          *string   `gorm:"type:text" json:"line"`
+	ContactNumber *string   `gorm:"type:text" json:"contact_number"`
+	UserName      string    `gorm:"uniqueIndex;not null" json:"user_name"`
+	Password      string    `json:"password"`
+	GenderID      *uint     `json:"gender_id"`
+	Gender        Genders   `gorm:"foreignKey:GenderID;references:ID" json:"gender"`
 }
 
 // Positions represents a position entity.
@@ -55,7 +59,6 @@ type TimeSlots struct {
 	Location      string    `json:"location"`
 	Title         string    `json:"title"`
 	IsAvailable   bool      `json:"is_available"`
-
 }
 
 // Bookings represents a booking entity.

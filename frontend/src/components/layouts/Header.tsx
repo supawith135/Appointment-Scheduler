@@ -1,6 +1,6 @@
 import React from 'react'
-import sutLogoWhite from '../assets/SUT_Engineering_Eng_wh-1.png'
-import Menu from '../components/Menu'
+import sutLogoWhite from '../../assets/ENGi Lettermark-EN-White.png'
+
 // import Logout from '../components/Logout'
 import { useNavigate } from 'react-router-dom'
 
@@ -37,7 +37,7 @@ function HeaderPage() {
                         Test
                     </div>
                 </div>
-                <Menu/>
+                {/* <Menu/> */}
             </div>
         </div>
     )

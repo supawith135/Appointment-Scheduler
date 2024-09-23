@@ -1,27 +1,8 @@
-import Header from '../../layout/Header';
-import TeacherNavbar from '../../layout/TeacherNavbar';
-import Footer from '../../layout/Footer';
 import SchedulerSidebar from '../../components/teacher/SchedulerSidebar';
-import TimeSlot from '../../components/teacher/TimeSlot';
-import { useState } from 'react';
-import CreateTimeSlot from '../../components/teacher/CreateTimeSlot';
-
+import FrontLayout from '../../components/layouts/FrontLayout';
 function TeacherCreateTimeSlotPage() {
-  // const [title, setTitle] = useState<string>('');
-  // const [duration, setDuration] = useState<string>('1 hour');
-  // const [availability, setAvailability] = useState<{ [key: string]: string }>({
-  //   Sun: 'Unavailable',
-  //   Mon: '09:00 - 17:00',
-  //   Tue: '09:00 - 17:00',
-  //   Wed: '09:00 - 17:00',
-  //   Thu: '09:00 - 17:00',
-  //   Fri: '09:00 - 17:00',
-  // });
-
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Header />
-      <TeacherNavbar />
+    <FrontLayout>
       <main className="flex-grow p-4 sm:p-6 lg:p-10 bg-white ">
         <div className="flex flex-col lg:flex-row lg:space-x-6">
           <div className="lg:w-1/3 w-full">
@@ -32,8 +13,7 @@ function TeacherCreateTimeSlotPage() {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+    </FrontLayout>
   );
 }
 

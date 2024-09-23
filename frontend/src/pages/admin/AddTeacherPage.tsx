@@ -1,13 +1,9 @@
-import React from 'react';
-import Header from '../../layout/Header';
-import Footer from '../../layout/Footer';
-import NavbarV2 from '../../layout/AdminNavbar';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
-
+import FrontLayout from '../../components/layouts/FrontLayout'
 function AddTeacherPage() {
   const [name, setName] = useState('');
   const [advisor, setAdvisor] = useState('');
@@ -22,9 +18,7 @@ function AddTeacherPage() {
 
   return (
     <div className='bg-white'>
-      <div className="min-w-screen min-h-screen flex flex-col ">
-        <Header />
-        <NavbarV2 />
+      <FrontLayout>
         <div className='flex flex-grow flex-col p-4 md:p-8 lg:p-10'>
           <div className='mx-auto p-2 md:p-10 lg:p-12 shadow-xl rounded-md  w-full max-w-4xl'>
             <div className='text-red-700 text-3xl md:text-4xl my-2 text-center'>เพิ่มรายชื่ออาจารย์</div>
@@ -144,8 +138,8 @@ function AddTeacherPage() {
             </div>
           </div>
         </div>
-        <Footer />
-      </div>
+     
+      </FrontLayout>
     </div>
 
   );

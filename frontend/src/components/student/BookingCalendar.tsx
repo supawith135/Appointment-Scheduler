@@ -94,10 +94,11 @@ function BookingCalendar() {
   const [bookingSlots, setBookingSlots] = useState<BookingSlot[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
   const [messageApi, contextHolder] = message.useMessage();
 
   const getListBookingAdvisor = async (id: string) => {
+    
     setIsLoading(true);
     try {
       let res = await GetListBookingAdvisor(id);
@@ -122,10 +123,11 @@ function BookingCalendar() {
   };
 
   useEffect(() => {
+    const id = String(localStorage.getItem('id'))
     if (id) {
       getListBookingAdvisor(id);
     }
-  }, [id, messageApi]);
+  }, [messageApi]);
 
   useEffect(() => {
     generateWeekDays(currentDate);

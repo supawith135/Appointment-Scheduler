@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogInInterface } from '../interfaces/ILogIn';
 import { LogIn } from '../services/https/logIn/logIn';
-import LoginHeader from "../layout/LoginHeader";
-import Footer from "../layout/Footer";
+import LoginHeader from "../components/shared/LoginHeader";
+import Footer from "../components/shared/Footer";
 import { CheckCircle, XCircle, User, Lock, AlertCircle } from 'lucide-react';
 
 type NotificationType = 'success' | 'error' | 'warning';
@@ -12,15 +12,27 @@ type NotificationType = 'success' | 'error' | 'warning';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [notification, setNotification] = useState<{ show: boolean; message: string; type: NotificationType }>({ show: false, message: '', type: 'success' });
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!username || !password) {
-      showNotification('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน', 'warning');
-      return;
+    let hasError = false;
+    if (!username) {
+      setUsernameError('กรุณากรอกชื่อผู้ใช้');
+      hasError = true;
+    } else {
+      setUsernameError('');
     }
+    if (!password) {
+      setPasswordError('กรุณากรอกรหัสผ่าน');
+      hasError = true;
+    } else {
+      setPasswordError('');
+    }
+
+    if (hasError) return;
 
     const values: LogInInterface = { user_name: username, password: password };
 
@@ -52,6 +64,16 @@ function Login() {
   const showNotification = (message: string, type: NotificationType) => {
     setNotification({ show: true, message, type });
     setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
+  };
+
+  const inputVariants = {
+    error: { x: [0, -10, 10, -10, 10, 0], transition: { duration: 0.5 } },
+    normal: { x: 0 },
+  };
+
+  const iconVariants = {
+    hover: { rotate: [0, -10, 10, -10, 10, 0], transition: { duration: 0.5 } },
+    tap: { scale: 0.9 },
   };
 
   return (
@@ -96,36 +118,55 @@ function Login() {
                     ชื่อผู้ใช้
                   </label>
                   <div className='relative'>
-                    <User className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400' size={20} />
-                    <input
+                    <motion.div
+                      variants={iconVariants}
+                      whileHover="hover"
+                      whileTap="tap"
+                      className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400'
+                    >
+                      <User size={20} />
+                    </motion.div>
+                    <motion.input
+                      variants={inputVariants}
+                      animate={usernameError ? "error" : "normal"}
                       type='text'
                       placeholder='กรุณากรอกชื่อผู้ใช้......'
                       id='username'
                       name='username'
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className='w-full p-2 pl-10 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red'
+                      className={`w-full p-2 pl-10 bg-white border ${usernameError ? 'border-red-500' : 'border-red-700'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red`}
                     />
                   </div>
+                  {usernameError && <p className="text-red-500 text-sm mt-1">{usernameError}</p>}
                 </div>
                 <div className='mb-4 relative'>
                   <label htmlFor='password' className='block text-lx text-gray-500 mb-2'>
                     รหัสผ่าน
                   </label>
                   <div className='relative'>
-                    <Lock className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400' size={20} />
-                    <input
+                    <motion.div
+                      variants={iconVariants}
+                      whileHover="hover"
+                      whileTap="tap"
+                      className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400'
+                    >
+                      <Lock size={20} />
+                    </motion.div>
+                    <motion.input
+                      variants={inputVariants}
+                      animate={passwordError ? "error" : "normal"}
                       type='password'
                       placeholder='กรุณากรอกรหัสผ่าน......'
                       id='password'
                       name='password'
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className='w-full p-2 pl-10 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red'
+                      className={`w-full p-2 pl-10 bg-white border ${passwordError ? 'border-red-500' : 'border-red-700'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ENGi-Red`}
                     />
                   </div>
+                  {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
                 </div>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
                 <div className='flex justify-center'>
                   <motion.button
                     whileHover={{ scale: 1.05 }}

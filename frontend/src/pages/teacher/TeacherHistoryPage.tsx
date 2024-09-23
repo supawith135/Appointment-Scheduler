@@ -1,15 +1,10 @@
-import React from 'react';
-import Header from '../../layout/Header';
-import TeacherNavbar from '../../layout/TeacherNavbar';
-import Footer from '../../layout/Footer';
 import TeacherHistoryTable from '../../components/teacher/TeacherHistoryTable';
 import TeacherDashboard from '../../components/teacher/TeacherDashboard';
-
+import FrontLayout from '../../components/layouts/FrontLayout'
 function TeacherHistoryPage() {
     return (
-        <div className="w-screen flex flex-col bg-white">
-            <Header />
-            <TeacherNavbar />
+        <FrontLayout>
+
             <div className="flex flex-grow flex-col  my-4 gap-3">
                 <div className='m-auto w-full sm:w-full lg:w-4/5'>
                     <TeacherDashboard />   
@@ -18,8 +13,7 @@ function TeacherHistoryPage() {
                     <TeacherHistoryTable />           
                 </div>
             </div>  
-            <Footer />  
-        </div>
+        </FrontLayout>
     );
 }
 
