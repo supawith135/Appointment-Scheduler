@@ -28,7 +28,7 @@ services:
       dockerfile: Dockerfile
     container_name: go_sample_api
     ports:
-      - "8080:8000"
+      - "7070:8000"
     environment:
       - DB_HOST=pgdb
       - DB_PORT=5432

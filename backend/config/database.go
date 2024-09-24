@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	// "log"
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
@@ -53,23 +53,23 @@ func uintPtr(i uint) *uint {
 func SetupDatabase() {
 
 	// โหลดค่าจากไฟล์ .env
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	// // Read database configuration from .env file
-	// host := os.Getenv("DB_HOST")
-	// port := os.Getenv("DB_PORT") // Convert port to int
-	// user := os.Getenv("DB_USER")
-	// password := os.Getenv("DB_PASSWORD") // Convert port to int
-	// dbname := os.Getenv("DB_NAME")
-	// timezone := os.Getenv("DB_TIMEZONE")
-	// sslmode := os.Getenv("DB_SSLMODE")
+	// Read database configuration from .env file
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT") // Convert port to int
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD") // Convert port to int
+	dbname := os.Getenv("DB_NAME")
+	timezone := os.Getenv("DB_TIMEZONE")
+	sslmode := os.Getenv("DB_SSLMODE")
 
-	// // Configure your PostgreSQL database details here
-	// dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
-	// 	host, port, user, password, dbname, sslmode , timezone)
+	// Configure your PostgreSQL database details here
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
+		host, port, user, password, dbname, sslmode , timezone)
 
 	// New logger for detailed SQL logging
 	newLogger := logger.New(
@@ -80,13 +80,11 @@ func SetupDatabase() {
 		  Colorful:      true,        // Enable color
 		},
 	  )
-	dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=Asia/Bangkok"
 	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=UTC"
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: newLogger,
-	})
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger,})
 	if err != nil {
-		log.Fatalf("Failed to connect to the database: %v", err)
+		panic("failed to connect database")
 	}
 	
 	db = database
