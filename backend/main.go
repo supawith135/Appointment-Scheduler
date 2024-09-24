@@ -84,7 +84,7 @@ func main() {
 	
 	}
 	
-	r.Run("localhost:8080")
+	r.Run()
 
 	// r.Run();
 	// ใช้ select {} เพื่อรอให้ goroutine ทำงานโดยไม่ปิดโปรแกรม
