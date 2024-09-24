@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	// "log"
-	"github.com/joho/godotenv"
+	_"github.com/joho/godotenv"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
