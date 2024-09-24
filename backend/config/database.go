@@ -53,10 +53,10 @@ func uintPtr(i uint) *uint {
 func SetupDatabase() {
 
 	// โหลดค่าจากไฟล์ .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// Read database configuration from .env file
 	// host := os.Getenv("DB_HOST")
@@ -70,7 +70,7 @@ func SetupDatabase() {
 	// Configure your PostgreSQL database details here
 	// dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
 	// 	host, port, user, password, dbname, sslmode , timezone)
-	dsn := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s timezone=%s connect_timeout=%s",
+	dsn := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s timezone=%s ",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
@@ -78,7 +78,6 @@ func SetupDatabase() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_SSLMODE"),
 		os.Getenv("DB_TIMEZONE"),
-		os.Getenv("DB_CONNECT_TIMEOUT"),
 	)
 	// New logger for detailed SQL logging
 	newLogger := logger.New(
