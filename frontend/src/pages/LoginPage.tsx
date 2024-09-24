@@ -94,6 +94,8 @@ function Login() {
                 <p className='text-lx text-SUT-Grey mt-2'>อาจารย์</p>
                 <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Sompong</p>
                 <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : a123456</p>
+                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Alia</p>
+                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : a123456</p>
 
                 <p className='text-lx text-SUT-Grey mt-2'>นักศึกษา</p>
                 <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : B6412345</p>

@@ -28,6 +28,24 @@ func GetTeachersList(c *gin.Context) {
 		"data":    users,
 	})
 }
+func GetPositionsList(c *gin.Context) { 
+	var positions []entity.Positions
+
+	db := config.DB()
+
+	results := db.Find(&positions)
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Positions retrieved successfully",
+		"data":    positions,
+	})
+}
 
 // ดึงข้อมูลรายชื่ออาจารย์ด้วย ID
 func GetTeacherById(c *gin.Context) {
