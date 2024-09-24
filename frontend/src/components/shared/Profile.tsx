@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Facebook, MessageCircle, Phone, Upload, X, Mail, MapPin } from 'lucide-react';
-import FrontLayout from '../../components/layouts/FrontLayout';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UsersInterface } from '../../interfaces/IUsers';

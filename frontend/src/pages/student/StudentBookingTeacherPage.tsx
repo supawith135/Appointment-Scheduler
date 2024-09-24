@@ -1,4 +1,3 @@
-import BookingCalendar from '../../components/student/BookingAdvisorCalendar'
 import FrontLayout from '../../components/layouts/FrontLayout'
 import BookingTeacherCalendar from '../../components/student/BookingTeacherCalendar'
 function StudentBookingTeacherPage() {

@@ -1,5 +1,3 @@
-import { id } from 'date-fns/locale';
-import React, { useState } from 'react';
 import { ScheduleMeeting } from 'react-schedule-meeting';
 
 

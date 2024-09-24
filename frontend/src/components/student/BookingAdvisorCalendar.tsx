@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BookingModalTime from '../modal/BookingModalTime';
 import { message } from "antd";
 import { GetListBookingAdvisor } from '../../services/https/student/booking';
-import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 

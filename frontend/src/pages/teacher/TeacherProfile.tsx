@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import FrontLayout from '../../components/layouts/FrontLayout';
 import 'react-toastify/dist/ReactToastify.css'; // เพิ่มนี้
 import Profile from '../../components/shared/Profile';

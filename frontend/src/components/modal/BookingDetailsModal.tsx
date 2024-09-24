@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     Modal, Box, Typography, IconButton, Button, TextField,
-    Fade, Paper, Divider, Chip
+    Fade, Divider, Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
 import {  CheckCircle ,XCircle } from 'react-feather'; // เพิ่ม import icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { CheckCircle as Clock, Warning , Cancel } from '@mui/icons-material';
+import { CheckCircle as Clock , Cancel } from '@mui/icons-material';
 interface BookingDetailsModalProps {
     open: boolean;
     onClose: () => void;
@@ -79,7 +79,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                         throw new Error('Unexpected response status');
                     }
                 },
-                error: (err) => (
+                error: () => (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <XCircle color="red" size={20} style={{ marginRight: '8px' }} />
                         <span>เกิดข้อผิดพลาดในการบันทึกข้อมูล</span>

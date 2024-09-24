@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Scheduler } from "@aldabil/react-scheduler";
-import { GetBookingStudentListByAdvisorID } from '../../services/https/teacher/listBookingStudent';
 import { BookingsInterface } from '../../interfaces/IBookings';
 import { GetBookingStudentListByTeacherID } from '../../services/https/admin/listBookingTeacher';
-import { colors } from '@mui/material';
 import { SxProps } from '@mui/system';
-import { motion } from 'framer-motion';
+
 
 interface EventInterface {
     event_id: number;

@@ -22,7 +22,7 @@ interface ModalProps {
     } | null;
 }
 
-const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, selectedTime, slotDetails }) => {
+const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, slotDetails }) => {
     const [reason, setReason] = useState('');
     const modalRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
