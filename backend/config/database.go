@@ -3,23 +3,29 @@ package config
 import (
 	"fmt"
 	// "log"
-	_ "time"
+	"github.com/joho/godotenv"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"log"
+	"os"
+	"time"
+	_"strconv"
+	"gorm.io/gorm/logger"
 )
 
 // Global database instance
 var db *gorm.DB
 
 // DB returns the global database instance
-// func DB() *gorm.DB {
-// 	if db == nil {
-// 		log.Fatal("Database connection is not initialized")
-// 	}
-// 	return db
-// }
+//
+//	func DB() *gorm.DB {
+//		if db == nil {
+//			log.Fatal("Database connection is not initialized")
+//		}
+//		return db
+//	}
 func DB() *gorm.DB {
 
 	return db
@@ -39,18 +45,48 @@ func hashPassword(password string) (string, error) {
 func uintPtr(i uint) *uint {
 	return &i
 }
-func strtPtr(i string) *string {
-	return &i
-}
+// func strtPtr(i string) *string {
+// 	return &i
+// }
 
 // SetupDatabase sets up and initializes the database
 func SetupDatabase() {
-	dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+
+	// โหลดค่าจากไฟล์ .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Read database configuration from .env file
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT") // Convert port to int
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD") // Convert port to int
+	dbname := os.Getenv("DB_NAME")
+	timezone := os.Getenv("DB_TIMEZONE")
+	sslmode := os.Getenv("DB_SSLMODE")
+
+	// Configure your PostgreSQL database details here
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
+		host, port, user, password, dbname, sslmode , timezone)
+
+	// New logger for detailed SQL logging
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+		  SlowThreshold: time.Second, // Slow SQL threshold
+		  LogLevel:      logger.Info, // Log level
+		  Colorful:      true,        // Enable color
+		},
+	  )
+	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=Asia/Bangkok"
 	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=UTC"
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger,})
 	if err != nil {
 		panic("failed to connect database")
 	}
+	
 	db = database
 
 	// Drop and migrate tables
@@ -68,7 +104,6 @@ func seedData() {
 	genders := []entity.Genders{
 		{GenderName: "ชาย"},
 		{GenderName: "หญิง"},
-		
 	}
 	for _, gender := range genders {
 		db.FirstOrCreate(&gender, &entity.Genders{GenderName: gender.GenderName})
@@ -288,7 +323,7 @@ func seedData() {
 	// 		IsAvailable:   false,
 	// 	},
 	// 	//
-		
+
 	// 	{
 	// 		UserID:        2,
 	// 		SlotDate:      time.Date(2024, time.September, 20, 0, 0, 0, 0, thTimeZone),
@@ -339,7 +374,6 @@ func seedData() {
 	// 	db.Where(timeSlot).FirstOrCreate(&timeSlot)
 	// }
 
-	
 	// bookings := []entity.Bookings{
 	// 	{
 	// 		Title:     "โครงงานคอมพิวเตอร์",
@@ -360,7 +394,7 @@ func seedData() {
 	// 		UserID:    uintPtr(6),
 	// 	},
 	// }
-	
+
 	// for _, booking := range bookings {
 	// 	// Assuming TimeSlotID and UserID uniquely identify a booking
 	// 	db.Where("time_slot_id = ? AND user_id = ?", booking.TimeSlotID, booking.UserID).
