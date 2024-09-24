@@ -59,18 +59,27 @@ func SetupDatabase() {
 	}
 
 	// Read database configuration from .env file
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT") // Convert port to int
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD") // Convert port to int
-	dbname := os.Getenv("DB_NAME")
-	timezone := os.Getenv("DB_TIMEZONE")
-	sslmode := os.Getenv("DB_SSLMODE")
+	// host := os.Getenv("DB_HOST")
+	// port := os.Getenv("DB_PORT") // Convert port to int
+	// user := os.Getenv("DB_USER")
+	// password := os.Getenv("DB_PASSWORD") // Convert port to int
+	// dbname := os.Getenv("DB_NAME")
+	// timezone := os.Getenv("DB_TIMEZONE")
+	// sslmode := os.Getenv("DB_SSLMODE")
 
 	// Configure your PostgreSQL database details here
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
-		host, port, user, password, dbname, sslmode , timezone)
-
+	// dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
+	// 	host, port, user, password, dbname, sslmode , timezone)
+	dsn := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s timezone=%s connect_timeout=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_SSLMODE"),
+		os.Getenv("DB_TIMEZONE"),
+		os.Getenv("DB_CONNECT_TIMEOUT"),
+	)
 	// New logger for detailed SQL logging
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer

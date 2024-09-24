@@ -37,6 +37,7 @@ services:
       - DB_NAME=appointment
       - DB_TIMEZONE=Asia/Bangkok
       - DB_SSLMODE=disable
+      - DB_CONNECT_TIMEOUT=5
     depends_on:
       - pgdb
     restart: always

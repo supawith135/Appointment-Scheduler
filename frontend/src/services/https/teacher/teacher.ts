@@ -1,6 +1,8 @@
 import axios from "axios";
 import { UsersInterface } from "../../../interfaces/IUsers";
-const apiUrl = "http://localhost:8080";
+const apiUrl = process.env.NODE_ENV === 'production' 
+    ? "https://appointment-scheduler-mrls.onrender.com" 
+    : "http://localhost:8080";
 const Authorization = localStorage.getItem("token");
 const Bearer = localStorage.getItem("token_type");
 
