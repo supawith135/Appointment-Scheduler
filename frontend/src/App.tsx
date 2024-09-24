@@ -7,6 +7,7 @@ function App() {
       <div className="flex flex-col h-screen">
         <Outlet />
       </div>
+      <div></div>
     </>
   )
 }
