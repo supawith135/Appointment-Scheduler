@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	// "log"
-	"github.com/joho/godotenv"
+	_"github.com/joho/godotenv"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
@@ -53,10 +53,10 @@ func uintPtr(i uint) *uint {
 func SetupDatabase() {
 
 	// โหลดค่าจากไฟล์ .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// Read database configuration from .env file
 	// host := os.Getenv("DB_HOST")
