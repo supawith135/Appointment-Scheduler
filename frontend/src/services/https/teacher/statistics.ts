@@ -1,5 +1,4 @@
 import axios from "axios";
-import { BookingsInterface } from "../../../interfaces/IBookings";
 
 const apiUrl = "http://localhost:8080";
 const Authorization = localStorage.getItem("token");

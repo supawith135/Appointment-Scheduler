@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GetTeachersList } from '../../services/https/admin/listUsers';
 import { UsersInterface } from '../../interfaces/IUsers';
-import { Facebook, MessageCircle, Phone, Upload, X, Check, Edit2, MapPin, Mail } from 'lucide-react';
+import {  Phone, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 function ListTeacherCPE() {

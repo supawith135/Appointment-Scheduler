@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
+import { DataGrid, GridColDef} from '@mui/x-data-grid';
 import Tooltip from '@mui/material/Tooltip';
 import { GetBookingByStudentID } from '../../services/https/student/booking';
 import { BookingsInterface } from '../../interfaces/IBookings';
@@ -78,17 +77,17 @@ const StudentHistoryTable: React.FC = () => {
         setSelectedBooking(null);
     };
 
-    // Handle delete action
-    const handleDelete = (id: number) => {
-        console.log(`Delete appointment ID: ${id}`);
-        // Implement your delete logic here
-    };
-    // Handle cell click
-    const handleCellClick = (params: any) => {
-        if (params.field === 'fullName') {
-            setTimeout(() => window.location.reload(), 2000);
-        }
-    };
+    // // Handle delete action
+    // const handleDelete = (id: number) => {
+    //     console.log(`Delete appointment ID: ${id}`);
+    //     // Implement your delete logic here
+    // };
+    // // Handle cell click
+    // const handleCellClick = (params: any) => {
+    //     if (params.field === 'fullName') {
+    //         setTimeout(() => window.location.reload(), 2000);
+    //     }
+    // };
     // Define the columns with custom actions
     const columns: GridColDef[] = [
         {
@@ -150,7 +149,7 @@ const StudentHistoryTable: React.FC = () => {
             description: 'ช่วงเวลาเข้าพบอาจารย์',
             width : 130,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
-            valueGetter: (value, row) => {
+            valueGetter: (_, row) => {
                 const startTime = row?.slot_start_time;
                 const endTime = row?.slot_end_time;
                 return `${formatTime(startTime)} - ${formatTime(endTime)} น.`;

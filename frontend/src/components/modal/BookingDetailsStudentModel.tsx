@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-    Modal, Box, Typography, IconButton, Button, TextField,
-    Fade, Paper, Divider, Chip
+    Modal, Box, Typography, IconButton, Button, 
+    Fade, Divider, Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BookingsInterface } from '../../interfaces/IBookings';
-import { UpdateBookingStudentById } from '../../services/https/teacher/listBookingStudent';
+
 import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
-import { CheckCircle, XCircle, Delete} from 'react-feather'; // เพิ่ม import icons
-import { CheckCircle as Clock, Warning, Cancel} from '@mui/icons-material';
+import { CheckCircle, XCircle} from 'react-feather'; // เพิ่ม import icons
+import { CheckCircle as Clock,  Cancel} from '@mui/icons-material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { DeleteBookingById } from '../../services/https/student/booking';
 interface BookingDetailsStudentModelProps {
@@ -54,7 +54,7 @@ const formatTime = (timeString: string) => {
 };
 
 const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({ open, onClose, bookingDetails }) => {
-    const [comment, setComment] = useState<string>(bookingDetails?.comment || '');
+
 
     const handleSubmit = async () => {
         const id = String(bookingDetails.ID);
@@ -75,7 +75,7 @@ const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({
                 throw new Error('Unexpected response status');
               }
             },
-            error: (err) => (
+            error: () => (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <XCircle color="red" size={20} style={{ marginRight: '8px' }} />
                 <span>เกิดข้อผิดพลาดในการยกเลิกข้อมูล</span>

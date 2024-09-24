@@ -48,13 +48,13 @@ function SchedulerSidebar() {
 
     dayjs.locale('th'); // Set the locale to Thai
 
-    const formatTimeToThai = (time: Dayjs | null) => {
-        if (!time) return '';
-        return time.toDate().toLocaleTimeString('th-TH', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
+    // const formatTimeToThai = (time: Dayjs | null) => {
+    //     if (!time) return '';
+    //     return time.toDate().toLocaleTimeString('th-TH', {
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //     });
+    // };
 
     const formatDateToThai = (date: Dayjs) => {
         return date.format('D MMMM YYYY');

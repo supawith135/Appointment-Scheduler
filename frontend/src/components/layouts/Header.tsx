@@ -1,8 +1,8 @@
-import React from 'react'
+
 import sutLogoWhite from '../../assets/ENGi Lettermark-EN-White.png'
 
 // import Logout from '../components/Logout'
-import { useNavigate } from 'react-router-dom'
+
 
 function HeaderPage() {
     // const navigate = useNavigate();

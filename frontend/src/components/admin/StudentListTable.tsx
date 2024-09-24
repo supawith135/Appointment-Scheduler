@@ -53,7 +53,7 @@ const StudentListTable: React.FC = () => {
             description: 'This column has a value getter and is not sortable.',
             sortable: false,
             width: 200,
-            valueGetter: (value, rows) => `${rows.firstName || ''} ${rows.lastName || ''}`,
+            valueGetter: (_, rows) => `${rows.firstName || ''} ${rows.lastName || ''}`,
         },
         { field: 'reasons', headerName: 'Reasons', width: 300 },
         {

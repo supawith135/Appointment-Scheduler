@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -93,10 +92,10 @@ const TeacherHistoryTable: React.FC = () => {
     };
 
     // Handle delete action
-    const handleDelete = (id: number) => {
-        console.log(`Delete appointment ID: ${id}`);
-        // Implement your delete logic here
-    };
+    // const handleDelete = (id: number) => {
+    //     console.log(`Delete appointment ID: ${id}`);
+    //     // Implement your delete logic here
+    // };
 
     // Handle cell click
     const handleCellClick = (params: any) => {
@@ -169,7 +168,7 @@ const TeacherHistoryTable: React.FC = () => {
             description: 'ช่วงเวลาเข้าพบอาจารย์',
             width : 130,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
-            valueGetter: (value, row) => {
+            valueGetter: (_, row) => {
                 const startTime = row?.slot_start_time;
                 const endTime = row?.slot_end_time;
                 return `${formatTime(startTime)} - ${formatTime(endTime)} น.`;
