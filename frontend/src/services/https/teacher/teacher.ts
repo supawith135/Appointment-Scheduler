@@ -20,6 +20,13 @@ async function GetTeachersList() {
         .then((res) => res)
         .catch((e) => e.response);
 }
+async function GetPositionsList() {
+
+    return await axios
+        .get(`${apiUrl}/teacher/positions`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 
 async function GetTeacherById(id: string) {
 
@@ -41,4 +48,6 @@ export {
     GetTeachersList,
     GetTeacherById,
     UpdateTeacherById,
+    GetPositionsList
+
 };

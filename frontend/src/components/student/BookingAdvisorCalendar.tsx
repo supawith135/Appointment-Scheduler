@@ -4,6 +4,8 @@ import BookingModalTime from '../modal/BookingModalTime';
 import { message } from "antd";
 import { GetListBookingAdvisor } from '../../services/https/student/booking';
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 
 interface BookingSlot {
   time_slot_id: number;
@@ -93,8 +95,7 @@ function BookingAdvisorCalendar() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [bookingSlots, setBookingSlots] = useState<BookingSlot[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // const { id } = useParams<{ id: string }>();
+  
   const [messageApi, contextHolder] = message.useMessage();
   const [screenSize, setScreenSize] = useState(window.innerWidth);
 
@@ -114,14 +115,16 @@ function BookingAdvisorCalendar() {
     return 7; // Larger screens
   };
   
+  // Fetch data logic...
   const getListBookingAdvisor = async (id: string) => {
-    
     setIsLoading(true);
     try {
       let res = await GetListBookingAdvisor(id);
       if (res.status === 200) {
         setBookingSlots(res.data.data);
-        console.log("res.data: ", res.data.data);
+        if (res.data.data.length === 0) {
+          toast.info("ไม่มีข้อมูลการจองในขณะนี้"); // Show toast if no booking slots are found
+        }
       } else {
         messageApi.open({
           type: "error",
@@ -240,6 +243,7 @@ function BookingAdvisorCalendar() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      <ToastContainer /> {/* Add ToastContainer here */}
       {contextHolder}
       <motion.div 
         className="flex justify-between items-center mb-6 sm:mb-10"

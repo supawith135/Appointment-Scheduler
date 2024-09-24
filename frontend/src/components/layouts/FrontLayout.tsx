@@ -12,7 +12,7 @@ function FrontLayout({ children }: Props) {
       <Header />
       <Navbar />
       <div className="flex-grow bg-white">
-        <div className="h-full sm:pt-20 lg:pt-8">
+        <div >
           {children}
         </div>
       </div>

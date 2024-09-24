@@ -25,6 +25,7 @@ async function GetAdminById(id: string) {
         .then((res) => res)
         .catch((e) => e.response);
 }
+
 export {
     GetAdminById,
     UpdateAdminById

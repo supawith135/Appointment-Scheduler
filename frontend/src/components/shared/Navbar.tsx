@@ -30,7 +30,7 @@ const adminNavItems: NavItem[] = [
     ]
   },
   { 
-    path: '#', 
+    path: '', 
     label: 'อาจารย์',
     children: [
       { path: '/Admin/AddTeacher', label: 'เพิ่มรายชื่ออาจารย์' },

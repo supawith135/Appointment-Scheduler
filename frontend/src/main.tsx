@@ -24,6 +24,9 @@ import StudentProfile from './pages/student/StudentProfile'
 import AdminProfile from './pages/admin/AdminProfile'
 import TeacherProfile from './pages/teacher/TeacherProfile'
 import StudentBookingTeacherPage from './pages/student/StudentBookingTeacherPage'
+import StudentAccountPage from './pages/student/StudentAccountPage'
+import TeacherAccountPage from './pages/teacher/TeacherAccountPage'
+import AdminAccountPage from './pages/admin/AdminAccountPage'
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
   // {
@@ -57,6 +60,7 @@ const router = createBrowserRouter([
           { path: 'History', element: <TeacherHistoryPage /> },
           { path: 'StudentDetails/:id', element: <StudentDetailsPage /> },
           { path: 'Profile', element: <TeacherProfile /> },
+          { path: 'Account', element: <TeacherAccountPage /> },
         ],
       },
       {
@@ -68,6 +72,8 @@ const router = createBrowserRouter([
           { path: 'bookingAdvisor', element: <StudenAppointmentPage /> },
           { path: 'History', element: <StudentHistoryPage /> },
           { path: 'bookingTeacher/:id', element: <StudentBookingTeacherPage /> },
+          { path: 'Account', element: <StudentAccountPage /> },
+          
         ],
       },
       {
@@ -81,6 +87,8 @@ const router = createBrowserRouter([
           { path: 'TeacherList', element: <TecherListPage /> },
           { path: 'bookingTeacher/:id', element: <AppointmentTeacherPage /> },
           { path: 'Profile', element: <AdminProfile /> },
+          { path: 'Account', element: <AdminAccountPage /> },
+          
         ],
       },
     ],

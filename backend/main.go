@@ -63,6 +63,9 @@ func main() {
 
 		//statisticalData
 		teachers.GET("/statisticalData/:id", teacher.GetTeachersStatisticsById)
+
+		//position
+		teachers.GET("/positions", teacher.GetPositionsList)
 	}
 
 	// Admin routes
