@@ -15,13 +15,13 @@ COPY . .
 
 
 # Docker on Render
-# ENV DB_HOST=dpg-crpa7lu8ii6s73ceichg-a
-# ENV DB_PORT=5432
-# ENV DB_NAME=appointment_0xca
-# ENV DB_USER=appointment_user
-# ENV DB_PASSWORD=dCbCVWQJSvN9EUKpiI7PQYWIO20pAo0e
-# ENV DB_SSLMODE=disable
-# ENV DB_TIMEZONE=Asia/Bangkok
+ENV DB_HOST=dpg-crpa7lu8ii6s73ceichg-a
+ENV DB_PORT=5432
+ENV DB_NAME=appointment_0xca
+ENV DB_USER=appointment_user
+ENV DB_PASSWORD=dCbCVWQJSvN9EUKpiI7PQYWIO20pAo0e
+ENV DB_SSLMODE=disable
+ENV DB_TIMEZONE=Asia/Bangkok
 
 # Build the Go app
 RUN go build -o main 
