@@ -61,7 +61,8 @@ function ResponsiveAppBar() {
         getUserById(id);
     }, [id]);
 
-    const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+    const settings = ['Profile', 'Account', 'Logout'];
+    // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
     const handleMenuClick = (setting: string) => {
         if (setting === 'Logout') {

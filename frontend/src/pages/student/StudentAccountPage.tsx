@@ -11,6 +11,8 @@ const StudentAccountPage = () => {
     const [teachers, setTeachers] = useState<UsersInterface[]>([]);
     const [fullName, setFullName] = useState('');
     const [advisorId, setAdvisorId] = useState<number | ''>('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const id = String(localStorage.getItem('id'));
 
@@ -44,10 +46,18 @@ const StudentAccountPage = () => {
         setLoading(true);
         if (!studentData) return;
 
+        // Password validation
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match. Please try again.');
+            setLoading(false);
+            return;
+        }
+
         const value: UsersInterface = {
             ID: Number(id),
             full_name: fullName,
             advisor_id: advisorId ? advisorId : undefined,
+            ...(password && { password }), // Only include password if it is filled
         };
 
         try {
@@ -82,11 +92,11 @@ const StudentAccountPage = () => {
                     <h1 className="text-red-700 text-3xl md:text-4xl mb-8 text-center font-bold">ข้อมูลนักศึกษา</h1>
 
                     <div className="space-y-6">
+                        {/* Student Username */}
                         <div>
                             <div className="mb-2">
-                                <label className="text-xl font-bold text-gray-700 mb-2">รหัสนักศึกษา</label>
+                                <label className="text-xl font-bold text-gray-700 mb-2">ชื่อผู้ใช้ </label>
                             </div>
-
                             <input
                                 type="text"
                                 value={studentData?.user_name || ''}
@@ -94,7 +104,33 @@ const StudentAccountPage = () => {
                                 className="w-full p-3 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-600"
                             />
                         </div>
-
+                        {/* Password Input */}
+                        <div>
+                            <div className="mb-2">
+                                <label className="text-xl font-bold text-gray-700 mb-2">รหัสผ่านใหม่</label>
+                            </div>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="กรอกรหัสผ่านใหม่"
+                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+                            />
+                        </div>
+                        {/* Confirm Password Input */}
+                        <div>
+                            <div className="mb-2">
+                                <label className="text-xl font-bold text-gray-700 mb-2">ยืนยันรหัสผ่านใหม่</label>
+                            </div>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="ยืนยันรหัสผ่านใหม่"
+                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+                            />
+                        </div>
+                        {/* Student Full Name */}
                         <div>
                             <div className="mb-2">
                                 <label className="text-xl font-bold text-gray-700 mb-2">ชื่อนักศึกษา</label>
@@ -107,6 +143,7 @@ const StudentAccountPage = () => {
                                 className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
                             />
                         </div>
+                        {/* Advisor Selection */}
                         <div>
                             <div className="mb-2">
                                 <label className="text-xl font-bold text-gray-700 mb-2">อาจารย์ที่ปรึกษา</label>
@@ -124,6 +161,8 @@ const StudentAccountPage = () => {
                                 ))}
                             </select>
                         </div>
+
+                        
                     </div>
 
                     <motion.div

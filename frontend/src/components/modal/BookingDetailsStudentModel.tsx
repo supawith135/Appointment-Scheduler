@@ -170,13 +170,14 @@ const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({
                                 color="primary"
                                 sx={{ mb: 2 }}
                             />
+                            <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
+                                <strong>สถานที่นัดหมาย :</strong> {bookingDetails?.time_slot?.location}
+                            </Typography>
                             <Divider sx={{ my: 2 }} />
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
                                 <strong>อาจารย์ :</strong> {bookingDetails?.user?.advisor?.full_name}
                             </Typography>
-                            <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>สถานที่นัดหมาย :</strong> {bookingDetails?.time_slot?.location}
-                            </Typography>
+                            
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
                                 <strong>เหตุผลที่เข้าพบ:</strong> {bookingDetails?.reason}
                             </Typography>

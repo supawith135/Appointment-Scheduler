@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 function AdminAccountPage() {
     const [adminData, setAdminData] = useState<UsersInterface | null>(null);
     const [fullName, setFullName] = useState('');
+    const [newPassword, setNewPassword] = useState(''); // New password
+    const [confirmPassword, setConfirmPassword] = useState(''); // Confirm password
     const [loading, setLoading] = useState(false);
     const id = String(localStorage.getItem('id'));
 
@@ -18,16 +20,14 @@ function AdminAccountPage() {
             if (res.status === 200) {
                 setAdminData(res.data.data);
                 setFullName(res.data.data.full_name || '');
-           
             } else {
-                throw new Error('Failed to fetch teacher data');
+                throw new Error('Failed to fetch admin data');
             }
         } catch (error) {
-            console.error("Error fetching teacher data:", error);
-            toast.error('ไม่สามารถดึงข้อมูลอาจารย์ได้ กรุณาลองใหม่อีกครั้ง');
+            console.error("Error fetching admin data:", error);
+            toast.error('ไม่สามารถดึงข้อมูลแอดมินได้ กรุณาลองใหม่อีกครั้ง');
         }
     };
-
 
     useEffect(() => {
         getAdminById(id);
@@ -37,9 +37,16 @@ function AdminAccountPage() {
         setLoading(true);
         if (!adminData) return;
 
+        if (newPassword !== confirmPassword) {
+            toast.error('รหัสผ่านไม่ตรงกัน กรุณากรอกใหม่');
+            setLoading(false);
+            return;
+        }
+
         const value: UsersInterface = {
             ID: Number(id),
             full_name: fullName,
+            password: newPassword // Include password in the update request
         };
 
         try {
@@ -85,9 +92,32 @@ function AdminAccountPage() {
                                 className="w-full p-3 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-600"
                             />
                         </div>
+                        {/* New password input */}
                         <div>
-                          
+                            <div className="mb-2">
+                                <label className="text-xl font-bold text-gray-700 mb-2">รหัสผ่านใหม่</label>
+                            </div>
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+                            />
                         </div>
+
+                        {/* Confirm password input */}
+                        <div>
+                            <div className="mb-2">
+                                <label className="text-xl font-bold text-gray-700 mb-2">ยืนยันรหัสผ่านใหม่</label>
+                            </div>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+                            />
+                        </div>
+                        
                         <div>
                             <div className="mb-2">
                                 <label className="text-xl font-bold text-gray-700 mb-2">ชื่อแอดมิน</label>
@@ -100,8 +130,8 @@ function AdminAccountPage() {
                                 className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
                             />
                         </div>
-                        <div>
-                        </div>
+
+                        
                     </div>
 
                     <motion.div

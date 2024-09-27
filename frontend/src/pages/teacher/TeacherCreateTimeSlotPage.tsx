@@ -1,5 +1,7 @@
 import SchedulerSidebar from '../../components/teacher/SchedulerSidebar';
 import FrontLayout from '../../components/layouts/FrontLayout';
+// import AppointmentScheduler from '../../components/teacher/AppointmentScheduler';
+import TimeSlot from '../../components/teacher/TimeSlot';
 function TeacherCreateTimeSlotPage() {
   return (
     <FrontLayout>
@@ -8,8 +10,14 @@ function TeacherCreateTimeSlotPage() {
           <div className="lg:w-1/3 w-full">
             <SchedulerSidebar />
           </div>
-          <div className="lg:w-2/3 w-full mt-6 lg:mt-0">
+          {/* <div className="lg:w-2/3 w-full mt-6 lg:mt-0"> */}
             {/* <CreateTimeSlot /> */}
+          {/* </div> */}
+          <div>
+            {/* <AppointmentScheduler/> */}
+          </div>
+          <div>
+            <TimeSlot/>
           </div>
         </div>
       </main>

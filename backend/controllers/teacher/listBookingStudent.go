@@ -160,10 +160,45 @@ func UpdateBookingStudentById(c *gin.Context) {
 // 		return
 // 	}
 
-// 	// Return bookings in JSON format
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"status":  "success",
-// 		"message": "Bookings retrieved successfully",
-// 		"data":    bookings,
-// 	})
-// }
+//		// Return bookings in JSON format
+//		c.JSON(http.StatusOK, gin.H{
+//			"status":  "success",
+//			"message": "Bookings retrieved successfully",
+//			"data":    bookings,
+//		})
+//	}
+func GetBookingByUserName(c *gin.Context) {
+    // Get the user_name from the URL parameters
+    userName := c.Param("user_name") // Adjust the parameter name as needed
+
+    var bookings []entity.Bookings
+
+    // Get the database connection
+    db := config.DB()
+
+    // Perform the database query
+    results := db.Preload("User").Preload("TimeSlot").Preload("Status").
+        Joins("JOIN users ON users.id = bookings.user_id").
+        Where("users.user_name = ?", userName).
+        Find(&bookings)
+
+    // Check if there's any error in the query
+    if results.Error != nil {
+        log.Printf("Database query error: %v", results.Error)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+        return
+    }
+
+    // Check if any bookings were found
+    if len(bookings) == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "bookings not found"})
+        return
+    }
+
+    // Return the retrieved bookings in JSON format
+    c.JSON(http.StatusOK, gin.H{
+        "status":  "success",
+        "message": "Bookings retrieved successfully",
+        "data":    bookings,
+    })
+}

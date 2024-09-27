@@ -1,5 +1,6 @@
-import TeacherHistoryTable from '../../components/teacher/TeacherHistoryTable'
 import FrontLayout from '../../components/layouts/FrontLayout'
+import StudentDetail from '../../components/shared/StudentDetail'
+import StudentBookingTable from '../../components/teacher/StudentBookingTable'
 function StudentDetailsPage() {
     return (
         <FrontLayout>
@@ -10,19 +11,9 @@ function StudentDetailsPage() {
                         Student Details Page
                     </h1>
                 </div>
-                <div className='flex shadow-sm m-auto p-3 rounded-sm bg-white'>
-                    <div className=''>
-                        <p className='text-black font-bold'>ข้อมูลนักศึกษา
-                            <li className='font-medium text-black'>B6432140 สมชาย แก่นดี</li>
-                        </p >
-                        <p className='text-black font-bold mt-4'>อาจารย์ที่ปรึกษา
-                            <li className='font-medium text-black'>อ.ยิ่งยง แก้วงาม</li>
-                        </p>
-                    </div>
-
-                </div>
+              <StudentDetail/>
                 <div className='m-auto w-full sm:w-full lg:w-4/5'>
-                    <TeacherHistoryTable />
+                    <StudentBookingTable />
                 </div>
             </div>
         </FrontLayout>

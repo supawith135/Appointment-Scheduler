@@ -10,9 +10,11 @@ import 'react-toastify/dist/ReactToastify.css';
 function TeacherAccountPage() {
     const [teacherData, setTeacherData] = useState<UsersInterface | null>(null);
     const [fullName, setFullName] = useState('');
-    const [location, setLocation] = useState(''); // State สำหรับที่อยู่
+    const [location, setLocation] = useState('');
     const [loading, setLoading] = useState(false);
-    const [positions, setPositions] = useState<PositionsInterface[]>([]);
+    const [_ , setPositions] = useState<PositionsInterface[]>([]);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const id = String(localStorage.getItem('id'));
 
     const getTeacherById = async (id: string) => {
@@ -21,7 +23,7 @@ function TeacherAccountPage() {
             if (res.status === 200) {
                 setTeacherData(res.data.data);
                 setFullName(res.data.data.full_name || '');
-                setLocation(res.data.data.location || ''); // ตั้งค่าที่อยู่
+                setLocation(res.data.data.location || '');
             } else {
                 throw new Error('Failed to fetch teacher data');
             }
@@ -54,11 +56,18 @@ function TeacherAccountPage() {
         setLoading(true);
         if (!teacherData) return;
 
+        if (newPassword !== confirmPassword) {
+            toast.error('รหัสผ่านไม่ตรงกัน กรุณาลองใหม่อีกครั้ง');
+            setLoading(false);
+            return;
+        }
+
         const value: UsersInterface = {
             ID: Number(id),
             full_name: fullName,
-            location, // รวมที่อยู่ในการส่งข้อมูล
+            location,
             position_id: teacherData.position_id,
+            password: newPassword, // Add password field to the update data
         };
 
         try {
@@ -93,9 +102,10 @@ function TeacherAccountPage() {
                     <h1 className="text-red-700 text-3xl md:text-4xl mb-8 text-center font-bold">ข้อมูลอาจารย์</h1>
 
                     <div className="space-y-6">
+                        {/* Existing fields */}
                         <div>
                             <div className="mb-2">
-                                <label className="text-xl font-bold text-gray-700 mb-2">รหัสอาจารย์</label>
+                                <label className="text-xl font-bold text-gray-700 mb-2">ชื่อผู้ใช้</label>
                             </div>
                             <input
                                 type="text"
@@ -104,24 +114,33 @@ function TeacherAccountPage() {
                                 className="w-full p-3 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-600"
                             />
                         </div>
+
+                        {/* Add password fields */}
                         <div>
                             <div className="mb-2">
-                                <label className="text-xl font-bold text-gray-700 mb-2">ตำแหน่ง</label>
+                                <label className="text-xl font-bold text-gray-700 mb-2">รหัสผ่านใหม่</label>
                             </div>
-                            <select
-                                value={teacherData?.position_id || ''}
-                                onChange={(e) => setTeacherData({ ...teacherData, position_id: Number(e.target.value) })}
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
                                 className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
-                            >
-                                <option value="" disabled>เลือกตำแหน่ง</option>
-                                {positions.map((position) => (
-                                    <option key={position.ID} value={position.ID}>
-                                        {position.position_name}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
+                        <div>
+                            <div className="mb-2">
+                                <label className="text-xl font-bold text-gray-700 mb-2">ยืนยันรหัสผ่าน</label>
+                            </div>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+                            />
+                        </div>
+
+                        {/* Other fields */}
                         <div>
                             <div className="mb-2">
                                 <label className="text-xl font-bold text-gray-700 mb-2">ชื่ออาจารย์</label>

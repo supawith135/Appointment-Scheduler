@@ -27,8 +27,16 @@ async function GetAdminById(id: string) {
         .then((res) => res)
         .catch((e) => e.response);
 }
+async function GetAdminTeacherById(id: string) {
+
+    return await axios
+        .get(`${apiUrl}/admin/teacherDetail/${id}`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 
 export {
     GetAdminById,
-    UpdateAdminById
+    UpdateAdminById,
+    GetAdminTeacherById
 };
