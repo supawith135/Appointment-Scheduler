@@ -27,9 +27,9 @@ function ListTeacher() {
     getTeacherList();
   }, []);
 
-  const handleMoreDetail = (ID?: number) => {
-    navigate(`teacherDetail/${ID}`);
-  };
+  // const handleMoreDetail = (ID?: number) => {
+  //   navigate(`teacherDetail/${ID}`);
+  // };
 
   const handleBooking = (ID?: number) => {
     navigate(`bookingTeacher/${ID}`);
@@ -66,13 +66,13 @@ function ListTeacher() {
               {item.contact_number}
             </div>
           </div>
-          <button
+          {/* <button
             type="button"
             className="bg-ENGi-Red text-white w-full py-2 hover:bg-ENGi-Red-dark transition-colors duration-300"
             onClick={() => handleMoreDetail(item.ID)}
           >
             More Detail
-          </button>
+          </button> */}
         </motion.div>
       ))}
     </div>

@@ -26,7 +26,7 @@ async function GetListTimeSlots() {
 async function GetTimeSlotById(id: string) {
 
     return await axios
-        .get(`${apiUrl}/teacher/${id}`, requestOptions)
+        .get(`${apiUrl}/teacher/timeslot/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
@@ -50,7 +50,7 @@ async function UpdateTimeSlotById(id: string, data: TimeSlotsInterface) {
 async function DeleteTimeSlotById(id: string) {
 
     return await axios
-        .delete(`${apiUrl}/user/${id}`, requestOptions)
+        .delete(`${apiUrl}/teacher/timeslot/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }

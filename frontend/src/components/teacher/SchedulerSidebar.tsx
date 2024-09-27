@@ -94,8 +94,6 @@ function SchedulerSidebar() {
         );
     };
 
-
-
     const isTimeOverlapping = (day: string, index: number, newRange: DateRange<Dayjs>): boolean => {
         return availability[day].some((range, i) => {
             if (i === index) return false;
@@ -208,7 +206,6 @@ function SchedulerSidebar() {
 
             currentStartTime = slotEndTime;
         }
-
         return slots;
     };
 

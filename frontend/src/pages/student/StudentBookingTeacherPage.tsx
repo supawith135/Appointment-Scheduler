@@ -1,5 +1,6 @@
 import FrontLayout from '../../components/layouts/FrontLayout'
 import BookingTeacherCalendar from '../../components/student/BookingTeacherCalendar'
+import TeacherDetail from '../../components/shared/TeacherDetail'
 function StudentBookingTeacherPage() {
   return (
     <FrontLayout>
@@ -13,6 +14,7 @@ function StudentBookingTeacherPage() {
               เลือกเวลาจองคิวนัดหมาย
             </p>
           </div>
+          <TeacherDetail/>
           <BookingTeacherCalendar />
         </div>
       </main>

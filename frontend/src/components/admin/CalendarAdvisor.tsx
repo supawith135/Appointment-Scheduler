@@ -60,7 +60,7 @@ function CalendarTeacher() {
 
             return {
                 event_id: booking.ID || 0,
-                title: booking.time_slot?.title || "No Title",
+                title: `${booking.time_slot?.title} - ${booking.user?.user_name}` || "No Title",
                 start: new Date(booking.time_slot?.slot_start_time || ""),
                 end: new Date(booking.time_slot?.slot_end_time || ""),
                 editable: false,

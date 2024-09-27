@@ -30,7 +30,6 @@ func main() {
 		students.GET("", student.GetStudentsList)
 		students.GET("/:id", student.GetStudentById)
 		students.PATCH("/:id", student.UpdateStudentById)
-
 		//booking
 		students.POST("booking", student.CreateBooking)
 		students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
@@ -38,12 +37,10 @@ func main() {
 		students.GET("/booking/:id", student.GetBookingById)
 		students.GET("/bookingTeacher/:id", student.GetTimeSlotsByTeacherId)
 		students.DELETE("/booking/:id", student.DeleteBookingById)
-
 		//teacher
-		
+		students.GET("/teacherDetail/:id", student.GetStudentTeacherById)
 		students.GET("/teacher", student.GetTeachersList)
 	}
-
 	// Teacher routes
 	teachers := r.Group("/teacher")
 	teachers.Use(middlewares.Authorizes("teacher"))
@@ -56,16 +53,17 @@ func main() {
 		teachers.POST("/timeslot", teacher.CreateTimeSlot)
 		// teachers.PUT("/timeslot/:id", teacher.UpdateTimeSlotById)
 		teachers.DELETE("/timeslot/:id", teacher.DeleteTimeSlotById)
-
 		//bookingListStudent
 		teachers.GET("/booking/student/:id", teacher.GetBookingStudentListByAdvisorID)
+		teachers.GET("/StudentBookingDetails/:user_name", teacher.GetBookingByUserName)
 		teachers.PATCH("/booking/student/:id", teacher.UpdateBookingStudentById)
-
 		//statisticalData
 		teachers.GET("/statisticalData/:id", teacher.GetTeachersStatisticsById)
-
 		//position
 		teachers.GET("/positions", teacher.GetPositionsList)
+		//student
+		teachers.GET("/studentDetail/:user_name", teacher.GetTeacherStudentByUserName)
+		
 	}
 
 	// Admin routes
@@ -77,7 +75,7 @@ func main() {
 		admins.GET("/student", admin.GetStudentsList)
 		admins.GET("/student/:id", admin.GetStudentById)
 		admins.GET("/teacher", admin.GetTeachersList)
-		admins.GET("/teacher/:id", admin.GetTeacherById)
+		admins.GET("/teacherDetail/:id", admin.GetAdminTeacherById)
 		admins.GET("/timeslot", admin.GetListTimeSlots)
 		admins.GET("/timeslot/:id", admin.GetTimeSlotById)
 		admins.GET("/booking/teacher/:id", admin.GetBookingStudentListByTeacherID)
@@ -85,7 +83,6 @@ func main() {
 	}
 	
 	r.Run()
-
 	// r.Run();
 	// ใช้ select {} เพื่อรอให้ goroutine ทำงานโดยไม่ปิดโปรแกรม
 	select {}

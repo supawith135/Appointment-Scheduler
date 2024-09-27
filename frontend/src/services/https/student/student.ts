@@ -17,7 +17,6 @@ const requestOptions = {
 };
 
 async function GetStudentsList() {
-
     return await axios
         .get(`${apiUrl}/student`, requestOptions)
         .then((res) => res)
@@ -46,10 +45,18 @@ async function GetTeachersList() {
         .then((res) => res)
         .catch((e) => e.response);
 }
+async function GetStudentTeacherById(id: string) {
+
+    return await axios
+        .get(`${apiUrl}/student/teacherDetail/${id}`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 
 export {
     GetStudentsList,
     GetStudentById,
     UpdateStudentById,
-    GetTeachersList
+    GetTeachersList,
+    GetStudentTeacherById
 };

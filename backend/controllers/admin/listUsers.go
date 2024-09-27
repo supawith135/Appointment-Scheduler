@@ -81,7 +81,7 @@ func GetTeachersList(c *gin.Context) {
 	})
 }
 // ดึงข้อมูลรายชื่ออาจารย์ด้วย ID
-func GetTeacherById(c *gin.Context) {
+func GetAdminTeacherById(c *gin.Context) {
 
 	ID := c.Param("id")
 
