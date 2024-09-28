@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CreateBooking } from '../../services/https/student/booking';
+import { BookingsInterface } from '../../interfaces/IBookings';
 import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom';
 import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
-import { DeleteTimeSlotById } from '../../services/https/teacher/timeSlot';
-interface ModalProps {
 
+interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (reason: string) => void;
@@ -12,10 +14,10 @@ interface ModalProps {
     slotDetails: TimeSlotsInterface | null;
 }
 
-const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDetails}) => {
-    const [_ , setReason] = useState('');
+const BookingTimeAdvisorModal: React.FC<ModalProps> = ({ isOpen, onClose, slotDetails }) => {
+    const [reason, setReason] = useState('');
     const modalRef = useRef<HTMLDivElement>(null);
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -34,12 +36,19 @@ const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDet
 
     const handleSubmit = async () => {
         if (!slotDetails) return;
-        const id = String(slotDetails.ID)
-        let res = await DeleteTimeSlotById(id);
-        if (res.status === 200) {
+
+        const values: BookingsInterface = {
+            user_id: Number(localStorage.getItem("id")),
+            time_slot_id: slotDetails.ID,
+            reason,
+            status_id: 1,
+        };
+
+        let res = await CreateBooking(values);
+        if (res.status === 201) {
             Swal.fire({
-                title: "ยกเลิกสำเร็จ!",
-                text: "การยกเลิกของคุณได้รับการยืนยันแล้ว",
+                title: "จองสำเร็จ!",
+                text: "การจองของคุณได้รับการยืนยันแล้ว",
                 icon: "success",
                 showConfirmButton: false,
                 timer: 2000,
@@ -49,12 +58,12 @@ const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDet
                     popup: 'animated zoomIn'
                 }
             }).then(() => {
-                window.location.reload();
+                navigate("/Student/History");
             });
         } else {
             Swal.fire({
-                title: "ไม่สามารถยกเลิกได้",
-                text: res.data.message,
+                title: "ไม่สามารถจองได้",
+                text: res.message,
                 icon: "error",
                 confirmButtonColor: '#d33',
                 background: '#f0f0f0',
@@ -114,30 +123,45 @@ const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDet
                                 </p>
                                 <p className="mb-3 text-gray-700"><span className="font-semibold">อาจารย์:</span> {slotDetails.user?.position?.position_name} {slotDetails.user?.full_name}</p>
                                 <p className="mb-6 text-gray-700"><span className="font-semibold">สถานที่:</span> {slotDetails.location}</p>
-                              
                             </motion.div>
                         )}
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <h3 className="text-lg font-semibold mb-2 text-red-700">ระบุสาเหตุที่เข้าพบ</h3>
+                            <textarea
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                                rows={4}
+                                className="w-full p-3 border border-gray-300 rounded-md mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-red-700 transition duration-300 ease-in-out"
+                                placeholder="กรุณากรอกรายละเอียด..."
+                            />
+                        </motion.div>
+
                         <motion.div
                             className="flex justify-end gap-3"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
                         >
-                            {/* <motion.button
+                            <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={onClose}
                                 className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-300 ease-in-out"
                             >
                                 ยกเลิก
-                            </motion.button> */}
+                            </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleSubmit}
                                 className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300 ease-in-out"
                             >
-                                ยกเลิกเวลา
+                                จอง
                             </motion.button>
                         </motion.div>
                     </motion.div>
@@ -147,4 +171,4 @@ const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDet
     );
 };
 
-export default ModalDeleteTimeSlotByID;
+export default BookingTimeAdvisorModal;

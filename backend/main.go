@@ -32,7 +32,6 @@ func main() {
 		students.PATCH("/:id", student.UpdateStudentById)
 		//booking
 		students.POST("booking", student.CreateBooking)
-		students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
 		students.GET("/bookingStudent/:id", student.GetBookingByStudentId)
 		students.GET("/booking/:id", student.GetBookingById)
 		students.GET("/bookingTeacher/:id", student.GetTimeSlotsByTeacherId)
@@ -40,6 +39,10 @@ func main() {
 		//teacher
 		students.GET("/teacherDetail/:id", student.GetStudentTeacherById)
 		students.GET("/teacher", student.GetTeachersList)
+
+		//advisor
+		students.GET("/bookingAdvisor/:id", student.GetListBookingAdvisorById)
+		students.GET("/advisor/:id", student.GetStudentWithAdvisorById)
 	}
 	// Teacher routes
 	teachers := r.Group("/teacher")
@@ -79,6 +82,9 @@ func main() {
 		admins.GET("/timeslot", admin.GetListTimeSlots)
 		admins.GET("/timeslot/:id", admin.GetTimeSlotById)
 		admins.GET("/booking/teacher/:id", admin.GetBookingStudentListByTeacherID)
+		//add Student
+		admins.POST("/createStudent", admin.CreateStudent)
+		
 	
 	}
 	

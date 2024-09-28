@@ -177,7 +177,7 @@ func GetBookingByUserName(c *gin.Context) {
     db := config.DB()
 
     // Perform the database query
-    results := db.Preload("User").Preload("TimeSlot").Preload("Status").
+    results := db.Preload("User").Preload("TimeSlot").Preload("Status").Preload("User.Advisor").
         Joins("JOIN users ON users.id = bookings.user_id").
         Where("users.user_name = ?", userName).
         Find(&bookings)

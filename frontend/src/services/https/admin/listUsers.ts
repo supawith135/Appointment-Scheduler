@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { UsersInterface } from "../../../interfaces/IUsers";
 const apiUrl = process.env.NODE_ENV === 'production' 
     ? "https://appointment-scheduler-mrls.onrender.com" 
     : "http://localhost:8080";
@@ -61,6 +61,13 @@ async function GetTimeSlotById(id: string) {
         .then((res) => res)
         .catch((e) => e.response);
 }
+async function CreateStudent(data: UsersInterface) {
+
+    return await axios
+        .post(`${apiUrl}/admin/createStudent`, data, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 export {
     GetStudentsList,
     GetStudentById,
@@ -68,4 +75,5 @@ export {
     GetTeacherById,
     GetListTimeSlots,
     GetTimeSlotById,
+    CreateStudent
 };

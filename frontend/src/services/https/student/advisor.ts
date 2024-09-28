@@ -7,18 +7,21 @@ const Authorization = localStorage.getItem("token");
 const Bearer = localStorage.getItem("token_type");
 
 const requestOptions = {
-
     headers: {
         "Content-Type": "application/json",
         Authorization: `${Bearer} ${Authorization}`,
     },
 };
 
-async function GetBookingStudentListByTeacherID(id: string) {
+async function GetStudentWithAdvisorById(id: string) {
 
     return await axios
-        .get(`${apiUrl}/admin/booking/teacher/${id}`, requestOptions)
+        .get(`${apiUrl}/student/advisor/${id}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }
-export {GetBookingStudentListByTeacherID}
+
+export {
+    GetStudentWithAdvisorById,
+
+};

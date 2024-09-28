@@ -3,57 +3,52 @@ package student
 import (
 	"log"
 	"net/http"
-	"time"
+	_"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/supawith135/Appointment-Scheduler/config"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 )
 
-// ดึงข้อมูล Timeslot ทั้งหมด
 func GetListBookingAdvisorById(c *gin.Context) {
-	// Get the advisor ID from the request parameters
-	student_id := c.Param("id")
+    // Get the student ID from the request parameters
+    studentID := c.Param("id")
 
-	// Initialize the database connection
-	db := config.DB()
+    // Initialize the database connection
+    db := config.DB()
 
-	var results []struct {
-		NameStudent   string    `json:"name_student"`
-		AdvisorID     uint      `json:"advisor_id"`
-		AdvisorName   string    `json:"advisor_name"`
-		TimeSlotID    uint      `json:"time_slot_id"`
-		Title         string    `json:"title"`
-		Location      string    `json:"location"`
-		IsAvailable   bool      `json:"is_available"`
-		SlotDate      time.Time `json:"slot_date"`
-		SlotStartTime time.Time `json:"slot_start_time"`
-		SlotEndTime   time.Time `json:"slot_end_time"`
-	}
+    var timeSlots []entity.TimeSlots
 
-	err := db.Table("time_slots").
-		Select("users.full_name as name_student, users.advisor_id as advisor_id, advisors.full_name as advisor_name, time_slots.id as time_slot_id, time_slots.title, time_slots.location, time_slots.is_available, time_slots.slot_date, time_slots.slot_start_time, time_slots.slot_end_time").
-		Joins("INNER JOIN users ON time_slots.user_id = users.advisor_id").
-		Joins("INNER JOIN users AS advisors ON advisors.id = users.advisor_id").
-		Where("users.id = ? and time_slots.is_available = true", student_id).
-		Find(&results).Error
-	if err != nil {
-		log.Printf("Database query error: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
+    // Query to get time slots with preloaded advisor, position, and role information
+    err := db.
+        Joins("JOIN users ON time_slots.user_id = users.advisor_id").
+        Joins("JOIN users AS advisors ON advisors.id = users.advisor_id").
+        Where("users.id = ? AND time_slots.is_available = ?", studentID, true).
+        Preload("User").            // Preload the associated User
+        Preload("User.Advisor").     // Preload the associated Advisor
+        Preload("User.Position").    // Preload the associated Position
+        Preload("User.Role").        // Preload the associated Role
+        Find(&timeSlots).Error
 
-	if len(results) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No time slots found for the specified advisor"})
-		return
-	}
+    if err != nil {
+        log.Printf("Database query error: %v", err)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+        return
+    }
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-		"message": "Time slots retrieved successfully",
-		"data":    results,
-	})
+    if len(timeSlots) == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No time slots found for the specified advisor"})
+        return
+    }
+
+    // Respond with the result
+    c.JSON(http.StatusOK, gin.H{
+        "status":  "success",
+        "message": "Time slots retrieved successfully",
+        "data":    timeSlots,
+    })
 }
+
 
 // ดึงข้อมูล Timeslot โดย ID
 func GetBookingByStudentId(c *gin.Context) {

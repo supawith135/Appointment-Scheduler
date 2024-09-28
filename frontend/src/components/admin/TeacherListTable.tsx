@@ -1,133 +1,119 @@
 import React from 'react';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
+// import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import Tooltip from '@mui/material/Tooltip';
+// import Tooltip from '@mui/material/Tooltip';
+import { GetTeachersList } from '../../services/https/admin/listUsers';
+import { UsersInterface } from '../../interfaces/IUsers';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const rows = [
-    { id: 1, firstName: 'Aek', lastName: 'Chai', reasons: 'Discussion about project', status: 'รอการเข้าพบ' },
-    { id: 2, firstName: 'Somchai', lastName: 'Sukhum', reasons: 'Course counseling', status: 'รอการเข้าพบ' },
-    { id: 3, firstName: 'Anan', lastName: 'Praphat', reasons: 'Exam review', status: 'ไม่ได้เข้าพบ' },
-    { id: 4, firstName: 'Nicha', lastName: 'Wong', reasons: 'Career advice', status: 'เข้าพบสำเร็จ' },
-    { id: 5, firstName: 'Pim', lastName: 'Sawatdee', reasons: 'Personal issues', status: 'เข้าพบสำเร็จ' },
-    { id: 6, firstName: 'Kanya', lastName: 'Kiat', reasons: 'Research assistance', status: 'เข้าพบสำเร็จ' },
-    { id: 7, firstName: 'Lek', lastName: 'Thong', reasons: 'Scholarship inquiry', status: 'เข้าพบสำเร็จ' },
-];
+const theme = createTheme({
+    typography: {
+        fontFamily: '"Noto Sans", "Noto Sans Thai", sans-serif',
+    },
+});
 
 const TeacherListTable: React.FC = () => {
-    // Function to get the icon, color, and description based on status
-    const getStatusIconAndColor = (status: string): { icon: JSX.Element; color: string; description: string } => {
-        switch (status) {
-            case 'รอการเข้าพบ':
-                return { icon: <AccessTimeIcon />, color: 'orange', description: 'รอการเข้าพบ' };
-            case 'เข้าพบสำเร็จ':
-                return { icon: <CheckIcon />, color: 'green', description: 'เข้าพบสำเร็จ' };
-            case 'ไม่ได้เข้าพบ':
-                return { icon: <ClearIcon />, color: 'red', description: 'ไม่ได้เข้าพบ' };
-            default:
-                return { icon: <AccessTimeIcon />, color: 'gray', description: 'Unknown' };
+    const [teacherData, setTeacherData] = React.useState<UsersInterface[]>([]);
+
+    const getTeachersList = async () => {
+        try {
+            const res = await GetTeachersList();
+            if (res.status === 200) {
+                setTeacherData(res.data.data);
+                console.log("StudentData: ", res.data);
+            } else {
+                console.error('Unexpected response:', res);
+            }
+        } catch (error) {
+            console.error('Error fetching students:', error instanceof Error ? error.message : 'An unknown error occurred');
         }
     };
 
-    // Handle view details
-    const handleViewDetails = (id: number) => {
-        console.log(`View details for appointment ID: ${id}`);
-        // Implement your view details logic here
-    };
+    React.useEffect(() => {
+        getTeachersList();
+    }, []);
 
-    // Handle delete action
-    const handleDelete = (id: number) => {
-        console.log(`Delete appointment ID: ${id}`);
-        // Implement your delete logic here
-    };
+    // const handleViewDetails = (id: number) => {
+    //     console.log(`View details for student ID: ${id}`);
+    // };
 
-    // Define the columns with custom actions
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
         {
-            field: 'fullName',
-            headerName: 'Full name',
-            description: 'This column has a value getter and is not sortable.',
-            sortable: false,
+            field: 'user_name',
+            headerName: 'รหัสประจำตัว',
+            width: 120,
+            headerClassName: 'font-bold text-xl',
+        },
+        {
+            field: 'full_name',
+            headerName: 'ชื่อ',
+            width: 250,
+            headerClassName: 'font-bold text-xl',
+        },
+        {
+            field: 'location',
+            headerName: 'ที่อยู่อาจารย์',
             width: 200,
-            valueGetter: (_, rows) => `${rows.firstName || ''} ${rows.lastName || ''}`,
+            headerClassName: 'font-bold text-xl',
         },
-        { field: 'reasons', headerName: 'Reasons', width: 300 },
-        {
-            field: 'status',
-            headerName: 'Status',
-            width: 80,
-            renderCell: (params) => {
-                const { icon, color, description } = getStatusIconAndColor(params.value as string);
-                return (
-                    <Tooltip title={description} arrow>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color , marginTop: '16px'}}>
-                            {icon}
-                        </div>
-                    </Tooltip>
-                );
-            },
-        },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            width: 150,
-            sortable: false,
-            renderCell: (params) => (
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    <Tooltip title="View Details" arrow>
-                        <RemoveRedEyeOutlinedIcon
-                            color="primary"
-                            style={{ cursor: 'pointer', marginTop: '16px' }}
-                            onClick={() => handleViewDetails(params.row.id)} // Added onClick for view details
-                        />
-                    </Tooltip>
-                    <Tooltip title="Delete" arrow>
-                        <DeleteIcon
-                            color="error"
-                            style={{ cursor: 'pointer', marginTop: '16px' }}
-                            onClick={() => handleDelete(params.row.id)} // Added onClick for delete action
-                        />
-                    </Tooltip>
-                </div>
-            ),
-        },
+        // {
+        //     field: 'actions',
+        //     headerName: 'Actions',
+        //     width: 150,
+        //     renderCell: (params) => (
+        //         <div style={{ display: 'flex', gap: '8px' }}>
+        //             <Tooltip title="View Details" arrow>
+        //                 <RemoveRedEyeOutlinedIcon
+        //                     color="primary"
+        //                     style={{ cursor: 'pointer', marginTop: '16px' }}
+        //                     onClick={() => handleViewDetails(params.row.id)}
+        //                 />
+        //             </Tooltip>
+        //         </div>
+        //     ),
+        // },
     ];
 
     return (
         <div className="border rounded-lg shadow-lg p-4 bg-white">
-            {/* <h2 className="text-lg font-semibold mb-4">Appointment History</h2> */}
-            <div style={{ height: 400, width: '100%' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection
-                    sx={{
-                        '& .MuiDataGrid-cell': {
-                            fontFamily: 'Noto Sans, Noto Sans Thai',
-                        },
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f5f5f5',
-                            fontWeight: 'bold',
-                        },
-                        '& .MuiDataGrid-row:hover': {
-                            backgroundColor: '#e0f7fa',
-                        },
-                        '& .MuiDataGrid-columnSeparator--sideRight': {
-                            display: 'none',
-                        },
-                    }}
-                />
-            </div>
+            <ThemeProvider theme={theme}>
+                <div style={{ height: 600, width: '100%' }}>
+                    <DataGrid
+                        rows={teacherData.map((teacherData) => ({
+                            id: teacherData.ID ?? 0,
+                            user_name: teacherData.user_name || 'ไม่พบรหัสประจำตัว',
+                            full_name: `${teacherData.position?.position_name} ${teacherData.full_name}` || 'ไม่พบรายชื่อ',
+                            location: teacherData.location || 'ยังไม่ได้ใส่ที่อยู่'
+                        }))}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 5 },
+                            },
+                        }}
+                        pageSizeOptions={[5, 10]}
+                        checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-cell': {
+                                fontFamily: 'Noto Sans, Noto Sans Thai',
+                                fontSize: '16px', // Increase font size here
+                            },
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#f5f5f5',
+                                fontWeight: 'bold',
+                                fontSize: '18px', // Increase header font size
+                            },
+                            '& .MuiDataGrid-row:hover': {
+                                backgroundColor: '#e0f7fa',
+                            },
+                            '& .MuiDataGrid-columnSeparator--sideRight': {
+                                display: 'none',
+                            },
+                        }}
+                    />
+                </div>
+            </ThemeProvider>
         </div>
     );
 };

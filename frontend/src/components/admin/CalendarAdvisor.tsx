@@ -3,8 +3,7 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import { BookingsInterface } from '../../interfaces/IBookings';
 import { GetBookingStudentListByTeacherID } from '../../services/https/admin/listBookingTeacher';
 import { SxProps } from '@mui/system';
-
-
+import { useParams } from 'react-router-dom';
 interface EventInterface {
     event_id: number;
     title: string;
@@ -83,10 +82,13 @@ function CalendarTeacher() {
         setEvents(formattedEvents);
     }, [bookingsData]);
 
+
+    const { id } = useParams<{ id: string }>();
     useEffect(() => {
-        const id = String(localStorage.getItem('id'));
-        getBookingStudentListByTeacherID(id);
-    }, []);
+        if (id) {
+            getBookingStudentListByTeacherID(id);
+        }
+    }, [id]);
 
     return (
         <div>
@@ -94,7 +96,6 @@ function CalendarTeacher() {
             
                 view="month"
                 events={events} // Use typed events here
-                
                 hourFormat= "24"
                 timeZone='Asia/Bangkok'
             />

@@ -10,9 +10,9 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
-	"time"
+	_"time"
 	_"strconv"
-	"gorm.io/gorm/logger"
+	_"gorm.io/gorm/logger"
 )
 
 // Global database instance
@@ -80,17 +80,20 @@ func SetupDatabase() {
 		os.Getenv("DB_TIMEZONE"),
 	)
 	// New logger for detailed SQL logging
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-		  SlowThreshold: time.Second, // Slow SQL threshold
-		  LogLevel:      logger.Info, // Log level
-		  Colorful:      true,        // Enable color
-		},
-	  )
+
+	// newLogger := logger.New(
+	// 	log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+	// 	logger.Config{
+	// 	  SlowThreshold: time.Second, // Slow SQL threshold
+	// 	  LogLevel:      logger.Info, // Log level
+	// 	  Colorful:      true,        // Enable color
+	// 	},
+	//   )
+
 	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=Asia/Bangkok"
 	// dsn := "host=localhost user=postgres password=123456 dbname=appointment port=5432 sslmode=disable TimeZone=UTC"
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger,})
+	// database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger,})
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

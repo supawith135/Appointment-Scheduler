@@ -9,9 +9,8 @@ import Tooltip from '@mui/material/Tooltip';
 // import { GetBookingByStudentID } from '../../services/https/student/booking';
 import { GetBookingByUserName } from '../../services/https/teacher/listBookingStudent';
 import { BookingsInterface } from '../../interfaces/IBookings';
-import BookingDetailsStudentModel from '../modal/BookingDetailsStudentModel';
 import { useParams } from 'react-router-dom';
-
+import ModalTeacherStudentDeail from '../modal/ModalTeacherStudentDeail';
 const StudentBookingTable: React.FC = () => {
     const [bookingsData, setBookingsData] = useState<BookingsInterface[]>([]);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -256,7 +255,7 @@ const StudentBookingTable: React.FC = () => {
                 </ThemeProvider>
 
             </div>
-            <BookingDetailsStudentModel
+            <ModalTeacherStudentDeail
                 open={isModalOpen}
                 onClose={handleCloseModal}
                 bookingDetails={selectedBooking}
