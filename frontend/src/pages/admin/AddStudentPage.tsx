@@ -1,135 +1,226 @@
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
-import FrontLayout from '../../components/layouts/FrontLayout'
-function AddStudentPage() {
-  const [name, setName] = useState('');
-  const [advisor, setAdvisor] = useState('');
+import * as XLSX from 'xlsx';
+import Papa from 'papaparse';
+import { UsersInterface } from '../../interfaces/IUsers';
+import { CreateStudent } from '../../services/https/admin/listUsers';
+import FrontLayout from '../../components/layouts/FrontLayout';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Button,
+  Typography,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-  const handleName = (event: SelectChangeEvent) => {
-    setName(event.target.value);
+
+const theme = createTheme({
+  typography: {
+    fontFamily: '"Noto Sans", "Noto Sans Thai", sans-serif',
+  },
+});
+
+function AddStudentPage() {
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string>('');
+  const [usersData, setUsersData] = useState<UsersInterface[]>([]);
+  const [loading, setLoading] = useState(false); // Loading state for submissions
+
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setFileName(selectedFile.name); // Set the file name
+    }
   };
 
-  const handleAdvisor = (event: SelectChangeEvent) => {
-    setAdvisor(event.target.value);
+  // Import and parse file
+  const handleImport = () => {
+    if (!file) return;
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    if (fileExtension === 'csv') {
+      parseCSV(file);
+    } else if (fileExtension === 'xlsx') {
+      parseXLSX(file);
+    }
+  };
+
+  const parseCSV = (file: File) => {
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      encoding: 'UTF-8', // Specify encoding as UTF-8
+      complete: (result) => {
+        const data: UsersInterface[] = result.data.map((item: any) => ({
+          user_name: item['StudentID'] || '',
+          full_name: item['Name'] || '',
+          email: `${item['StudentID'] || ''}@g.sut.ac.th`,
+          role_id: 1,
+          password: item['StudentID'] || '',
+        }));
+        setUsersData(data);
+        console.log("CSV data: ", data);
+      },
+      error: (error) => {
+        console.error("Error parsing CSV:", error);
+      },
+    });
+  };
+
+  // Parse XLSX file
+  const parseXLSX = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData: UsersInterface[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+        .slice(1)
+        .map((row: any) => ({
+          user_name: row[0],
+          full_name: row[1],
+          email: `${row[0]}@g.sut.ac.th`,
+          role_id: 1,
+          password: row[0],
+        }));
+      setUsersData(jsonData);
+      console.log("XLSX data: ", jsonData);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleSubmit = async () => {
+    if (usersData.length === 0) {
+      toast.error("ไม่มีข้อมูลนักศึกษาในการบันทึก");
+      return;
+    }
+
+    setLoading(true); // Set loading state to true
+    try {
+      for (const user of usersData) {
+        const userJson: UsersInterface = {
+          user_name: user.user_name || '',
+          full_name: user.full_name || '',
+          email: user.email || '',
+          password: user.password || '',
+          role_id: user.role_id ?? 1,
+        };
+        console.log('Submitting user:', userJson); // Log the user data before submission
+
+        const res = await CreateStudent(userJson); // Call your API to save the user
+
+        if (res.status === 200) {
+          console.log('Student data:', res.data);
+          toast.success(res.data.message || "บันทึกข้อมูลสำเร็จ!"); // Set success message
+        } else {
+          console.error('Error adding user:', res.statusText);
+          toast.error(res.data.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล!"); // Set error message from API
+        }
+      }
+    } catch (error) {
+      console.error('Error adding users:', error instanceof Error ? error.message : 'An unknown error occurred');
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล!"); // Default error message
+    } finally {
+      setLoading(false); // Reset loading state regardless of success or failure
+    }
   };
 
   return (
-    <div className='bg-white'>
-      <FrontLayout>
-        <div className='flex flex-grow flex-col p-4 md:p-8 lg:p-10'>
-          <div className='mx-auto p-2 md:p-10 lg:p-12 shadow-xl rounded-md  w-full max-w-4xl'>
-            <div className='text-red-700 text-3xl md:text-4xl my-2 text-center'>เพิ่มรายชื่อนักศึกษา</div>
-            <div className='mb-4'>
-              <label className='block text-lg font-medium text-black'>รหัสนักศึกษา</label>
-              <label className='ml-4 block text-sm font-medium text-gray-500 mb-2'>รหัสนักศึกษา เช่น B64xxxxx</label>
-              <input
-                type='text'
-                placeholder='กรุณากรอกชื่อผู้ใช้......'
-                id='username'
-                name='username'
-                className='w-full p-2 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-700'
-              />
-            </div>
-            <div className='mb-4'>
-              <label className='block text-lg font-medium text-black'>คำนำหน้าชื่อ</label>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-select-small-label">คำนำหน้าชื่อ</InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  value={name}
-                  label="คำนำหน้าชื่อ"
-                  onChange={handleName}
-                  sx={{
-                    fontFamily: 'Noto Sans, Noto Sans Thai', // Added fontFamily here
-                    '.MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#b91c1c',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#b91c1c',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#b91c1c',
-                    },
-                    '.MuiSelect-select': {
-                      fontFamily: 'Noto Sans, Noto Sans Thai', // Ensure the font is applied to the select options as well
-                    },
+    <FrontLayout>
+      <ThemeProvider theme={theme}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 2,
+            minHeight: '100vh',
+          }}
+        >
+          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-red-700 mb-6 lg:mb-10 text-center">
+            เพิ่มรายชื่อนักศึกษา
+          </p>
 
-                  }}
-                >
-                  <MenuItem value={10}>นาย</MenuItem>
-                  <MenuItem value={20}>นางสาว</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className='mb-4 flex flex-col md:flex-row gap-4'>
-              <div className='flex-1'>
-                <label className='block text-lg font-medium text-black mb-2'>ชื่อ</label>
-                <input
-                  type='text'
-                  placeholder='กรุณากรอกชื่อ......'
-                  id='firstname'
-                  name='firstname'
-                  className='w-full p-2 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-700'
-                />
-              </div>
-              <div className='flex-1'>
-                <label className='block text-lg font-medium text-black mb-2'>นามสกุล</label>
-                <input
-                  type='text'
-                  placeholder='กรุณากรอกนามสกุล......'
-                  id='lastname'
-                  name='lastname'
-                  className='w-full p-2 bg-white border border-red-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-700'
-                />
-              </div>
-            </div>
-            <div className='mb-4'>
-              <label className='block text-lg font-medium text-black'>อาจารย์ที่ปรึกษา</label>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-select-small-label">อาจารย์ที่ปรึกษา</InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  value={advisor}
-                  label="อาจารย์ที่ปรึกษา"
-                  onChange={handleAdvisor}
-                  sx={{
-                    fontFamily: 'Noto Sans, Noto Sans Thai', // Added fontFamily here
-                    '.MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#b91c1c',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#b91c1c',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#b91c1c',
-                    },
-                    '.MuiSelect-select': {
-                      fontFamily: 'Noto Sans, Noto Sans Thai', // Ensure the font is applied to the select options as well
-                    },
-                  }}
-                >
-                  <MenuItem value={10}>Hollie Tyler</MenuItem>
-                  <MenuItem value={20}>Oskar O'Moore</MenuItem>
-                  <MenuItem value={30}>Martina Solomon</MenuItem>
-                  <MenuItem value={40}>Oskar O'Moore</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className='mt-4 flex justify-end'>
-              <button className="text-xl border border-red-700 rounded-md px-5 py-3  text-red-700 hover:bg-red-700 hover:text-white">
-                บันทึก
-              </button>
-            </div>
-          </div>
-        </div>
-      </FrontLayout>
-    </div>
+          <input type="file" accept=".xlsx,.csv" onChange={handleFileChange} style={{ display: 'none' }} id="file-upload" />
+          <label htmlFor="file-upload">
+            <Button variant="contained" color="primary" startIcon={<AddIcon />} component="span" sx={{ mb: 2 }}>
+              เลือกไฟล์
+            </Button>
+          </label>
+          {fileName && (
+            <Typography variant="subtitle1" sx={{ mt: 2, color: '#555' }}>
+              ไฟล์ที่เลือก: {fileName}
+            </Typography>
+          )}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleImport}
+            sx={{ mt: 2, '&:hover': { transform: 'scale(1.05)' } }}
+          >
+            นำเข้าไฟล์
+          </Button>
+          <Box sx={{ mt: 4, width: '100%', maxWidth: '600px' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>ข้อมูลที่นำเข้า:</Typography>
+            {usersData.length > 0 && (
+              <TableContainer component={Paper} sx={{color: "black", fontSize: '2rem',fontWeight: 'bold'}}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>รหัสประจำตัว</TableCell>
+                      <TableCell>ชื่อ</TableCell>
+                      <TableCell>อีเมล</TableCell>
+                      {/* <TableCell>ID บทบาท</TableCell> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {usersData.map((user, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{user.user_name}</TableCell>
+                        <TableCell>{user.full_name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        {/* <TableCell>{user.role_id}</TableCell> */}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Box>
 
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleSubmit}
+            disabled={loading}
+            sx={{ mt: 4, '&:hover': { transform: 'scale(1.05)' } }}
+          >
+            {loading ? 'บันทึกข้อมูล...' : 'บันทึกข้อมูล'}
+          </Button>
+
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar
+            closeOnClick
+            pauseOnHover
+            draggable
+            theme="colored" // You can change the theme here
+          />
+        </Box>
+      </ThemeProvider>
+    </FrontLayout>
   );
 }
 

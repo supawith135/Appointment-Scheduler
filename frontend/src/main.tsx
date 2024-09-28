@@ -29,18 +29,6 @@ import AdminAccountPage from './pages/admin/AdminAccountPage'
 import AdminTeacherDetailPage from './pages/admin/AdminTeacherDetailPage'
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: <App/>,
-  // },
-  // {
-  //   path: "/home",
-  //   element: <HomePage/>,
-  // },
-  // {
-  //   path: "/profile",
-  //   element: <ProfilePage/>,
-  // },
   {
     path: '/',
     element: <App />,

@@ -62,7 +62,6 @@ function ResponsiveAppBar() {
     }, [id]);
 
     const settings = ['Profile', 'Account', 'Logout'];
-    // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
     const handleMenuClick = (setting: string) => {
         if (setting === 'Logout') {
@@ -79,6 +78,34 @@ function ResponsiveAppBar() {
         <AppBar position="static" sx={{ background: "#800020" }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        component="a"
+                        href="#app-bar-with-responsive-menu"
+                        sx={{
+                            mr: 2,
+                            display: { xs: 'flex', md: 'none' },
+                            flexGrow: 1,
+                            fontFamily: 'monospace',
+                            fontWeight: 700,
+                            letterSpacing: '.3rem',
+                            color: 'inherit',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        <img
+                            src={sutLogoWhite}
+                            alt='sutLogoWhite'
+                            className='max-w-56 ml-10'
+                            onClick={() => {
+                                const role = localStorage.getItem("role");
+                                const baseRoute = role === 'student' ? '/Student' : role === 'teacher' ? '/Teacher' : '/Admin';
+                                navigate(baseRoute);
+                            }}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    </Typography>
                     <Typography
                         variant="h6"
                         noWrap
@@ -106,36 +133,46 @@ function ResponsiveAppBar() {
                             style={{ cursor: 'pointer' }}
                         />
                     </Typography>
-                    <Box sx={{ flexGrow: 1 }} /> {/* เพิ่ม Box นี้เพื่อใช้เป็นพื้นที่ว่าง */}
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                        <div className='text-white font-bold text-xl mr-2'>
+                            {userData?.user_name} - {userData?.position?.position_name || ''} {userData?.full_name} 
+                        </div>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="User Avatar" src={userData?.image} />
                             </IconButton>
                         </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={() => handleMenuClick(setting)}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
                     </Box>
+                    <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                        <Tooltip title="Open settings">
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <Avatar alt="User Avatar" src={userData?.image} />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                    >
+                        {settings.map((setting) => (
+                            <MenuItem key={setting} onClick={() => handleMenuClick(setting)}>
+                                <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                            </MenuItem>
+                        ))}
+                    </Menu>
                 </Toolbar>
             </Container>
         </AppBar>

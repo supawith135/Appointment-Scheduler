@@ -280,10 +280,12 @@ const TeacherHistoryTable: React.FC = () => {
                         sx={{
                             '& .MuiDataGrid-cell': {
                                 fontFamily: 'Noto Sans, Noto Sans Thai',
+                                fontSize: '16px', // Increase font size here
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 backgroundColor: '#f5f5f5',
                                 fontWeight: 'bold',
+                                fontSize: '18px', // Increase header font size
                             },
                             '& .MuiDataGrid-row:hover': {
                                 backgroundColor: '#e0f7fa',
