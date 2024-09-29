@@ -12,18 +12,20 @@ function ListTeacher() {
   const getTeacherList = async () => {
     try {
       const res = await GetTeachersList();
+      console.log("API Response:", res); // Log API Response
       if (res.status === 200) {
         setTeacherData(res.data.data);
-        console.log("Teacher List :", res.data);
+        console.log("Teacher List:", res.data);
       } else {
-        console.error("Error getting student data: ", res.data);
+        console.error("Error getting teacher data: ", res.data);
       }
     } catch (error) {
-      console.error("Error fetching student data:", error);
+      console.error("Error fetching teacher data:", error);
     }
   };
 
   useEffect(() => {
+    console.log("Fetching teacher list..."); // Log when fetching starts
     getTeacherList();
   }, []);
 
@@ -51,10 +53,10 @@ function ListTeacher() {
               alt={item.full_name}
               onClick={() => handleBooking(item.ID)}
             />
-            
+
           </div>
           <div className="p-4">
-          <div className="text-black font-bold text-xl">
+            <div className="text-black font-bold text-xl">
               {`${item.position?.position_name} ${item.full_name}`}
             </div>
             <div className="flex items-center text-gray-600 my-2">
