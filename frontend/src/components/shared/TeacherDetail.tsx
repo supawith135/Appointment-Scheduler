@@ -6,7 +6,7 @@ import { GetAdminTeacherById } from '../../services/https/admin/admin';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { useParams } from 'react-router-dom';
 
-function StudentTeacherDetailPage() {
+function TeacherDetail() {
     const [teacher, setTeacher] = useState<UsersInterface | null>(null);
 
     const getTeacherById = async (id: string) => {
@@ -121,4 +121,4 @@ function StudentTeacherDetailPage() {
     );
 }
 
-export default StudentTeacherDetailPage;
+export default TeacherDetail;

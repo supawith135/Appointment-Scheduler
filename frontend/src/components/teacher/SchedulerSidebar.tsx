@@ -328,7 +328,7 @@ function SchedulerSidebar() {
 
     return (
         <ThemeProvider theme={theme}>
-            <div className="w-full max-w-md bg-white p-6 shadow-md overflow-y-auto h-screen">
+            <div className="w-full max-w-md bg-white p-6 shadow-md overflow-y-auto ">
                 <h2 className="text-xl font-bold mb-4 text-ENGi-Red ">สร้างเวลานัดหมาย</h2>
                 <Box >
                     <TextField

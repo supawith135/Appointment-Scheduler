@@ -91,21 +91,21 @@ function Login() {
                 className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
                 <p className='text-center text-2xl text-ENGi-Red'>วิธีการเข้าสู่ระบบ</p>
                 {/* Instructions for different user roles */}
-                <p className='text-lx text-SUT-Grey mt-2'>อาจารย์</p>
-                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Sompong</p>
-                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : a123456</p>
-                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Alia</p>
-                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : a123456</p>
+                <p className='text-lx text-black font-bold mt-2'>อาจารย์</p>
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Sompong</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p>
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Alia</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p>
 
-                <p className='text-lx text-SUT-Grey mt-2'>นักศึกษา</p>
-                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : B6412345</p>
-                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : b123456</p>
-                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : DekDeeVstart</p>
-                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : a123456</p>
+                <p className='text-lx text-black font-bold mt-2'>นักศึกษา</p>
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : B6412345</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : b123456</p>
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : DekDeeVstart</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p>
 
-                <p className='text-lx text-SUT-Grey mt-2'>แอดมิน</p>
-                <p className='text-sm text-gray-400 ml-6'>• ชื่อผู้ใช้ : Admin</p>
-                <p className='text-sm text-gray-400 ml-6'>• รหัสผ่าน : admin123456</p>
+                <p className='text-lx text-black font-bold mt-2'>แอดมิน</p>
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Admin</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : admin123456</p>
               </motion.div>
 
               <motion.div 
@@ -116,7 +116,7 @@ function Login() {
               >
                 <p className='text-center text-2xl text-ENGi-Red mb-6'>กรุณาเข้าสู่ระบบ</p>
                 <div className='mb-4 relative'>
-                  <label htmlFor='username' className='block text-lx text-gray-500 mb-2'>
+                  <label htmlFor='username' className='block text-lx  mb-2 text-black font-bold'>
                     ชื่อผู้ใช้
                   </label>
                   <div className='relative'>
@@ -143,7 +143,7 @@ function Login() {
                   {usernameError && <p className="text-red-500 text-sm mt-1">{usernameError}</p>}
                 </div>
                 <div className='mb-4 relative'>
-                  <label htmlFor='password' className='block text-lx text-gray-500 mb-2'>
+                  <label htmlFor='password' className='block text-lx text-black font-bold mb-2'>
                     รหัสผ่าน
                   </label>
                   <div className='relative'>
@@ -173,7 +173,7 @@ function Login() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="border border-red-700 rounded-md px-5 py-2 text-ENGi-Red hover:bg-ENGi-Red hover:text-white transition duration-300"
+                    className="border border-red-700 rounded-md px-5 py-2 text-ENGi-Red hover:bg-ENGi-Red hover:text-white transition duration-300 font-bold"
                     onClick={handleLogin}
                   >
                     เข้าสู่ระบบ

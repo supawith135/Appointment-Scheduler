@@ -85,7 +85,6 @@ func main() {
 		//add Student
 		admins.POST("/createStudent", admin.CreateStudent)
 		
-	
 	}
 	
 	r.Run()
