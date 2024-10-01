@@ -9,11 +9,11 @@ import StudentHomePage from './pages/student/StudentHomePage'
 import AdminHomePage from './pages/admin/AdminHomePage'
 import StudentHistoryPage from './pages/student/StudentHistoryPage'
 import TeacherHistoryPage from './pages/teacher/TeacherHistoryPage'
-import AddStudent from './pages/admin/AddStudentPage'
+import AddStudentListPage from './pages/admin/AddStudentListPage'
 import StudenAppointmentPage from './pages/student/StudentBookingAdvisorPage'
 import TeacherCreateTimeSlotPage from './pages/teacher/TeacherCreateTimeSlotPage'
 import TeacherAppointmentPage from './pages/teacher/TeacherAppointmentPage'
-import AddTeacher from './pages/admin/AddTeacherPage'
+import AddTeacherListPage from './pages/admin/AddTeacherListPage'
 import StudentListPage from './pages/admin/StudentListPage'
 import TecherListPage from './pages/admin/TeacherListPage'
 import AppointmentTeacherPage from './pages/admin/AppointmentTeacherPage'
@@ -27,6 +27,8 @@ import StudentAccountPage from './pages/student/StudentAccountPage'
 import TeacherAccountPage from './pages/teacher/TeacherAccountPage'
 import AdminAccountPage from './pages/admin/AdminAccountPage'
 import AdminTeacherDetailPage from './pages/admin/AdminTeacherDetailPage'
+import AddStudentPage from './pages/admin/AddStudentPage'
+import AddTeacherPage from './pages/admin/AddTeacherPage'
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
   {
@@ -41,8 +43,6 @@ const router = createBrowserRouter([
         path: '/Teacher',
         element: <ProtectedRoute role="teacher" />,
         children: [
-          // { path: '', element: <TeacherHomePage /> },
-          // { path: 'A', element: <TeacherCreateTimeSlotPage /> },
           { path: '', element: <TeacherAppointmentPage /> },
           { path: 'CreateTimeSlot', element: <TeacherCreateTimeSlotPage /> },
           { path: 'History', element: <TeacherHistoryPage /> },
@@ -61,8 +61,7 @@ const router = createBrowserRouter([
           { path: 'History', element: <StudentHistoryPage /> },
           { path: 'bookingTeacher/:id', element: <StudentBookingTeacherPage /> },
           { path: 'Account', element: <StudentAccountPage /> },
-          
-          
+             
         ],
       },
       {
@@ -70,15 +69,16 @@ const router = createBrowserRouter([
         element: <ProtectedRoute role="admin" />,
         children: [
           { path: '', element: <AdminHomePage /> },
-          { path: 'AddStudent', element: <AddStudent /> },
-          { path: 'AddTeacher', element: <AddTeacher /> },
+          { path: 'AddStudentList', element: <AddStudentListPage /> },
+          { path: 'AddTeacherList', element: <AddTeacherListPage /> },
           { path: 'StudentList', element: <StudentListPage /> },
           { path: 'TeacherList', element: <TecherListPage /> },
           { path: 'bookingTeacher/:id', element: <AppointmentTeacherPage /> },
           { path: 'Profile', element: <AdminProfile /> },
           { path: 'Account', element: <AdminAccountPage /> },
           { path: 'teacherDetail/:id', element: <AdminTeacherDetailPage /> },
-          
+          { path: 'AddStudent', element: <AddStudentPage /> },
+          { path: 'AddTeacher', element: <AddTeacherPage /> },     
         ],
       },
     ],

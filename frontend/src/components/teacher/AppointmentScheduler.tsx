@@ -8,6 +8,9 @@ import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/th';
 import isBetween from 'dayjs/plugin/isBetween';
+import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
+import { CreateTimeSlot } from '../../services/https/teacher/timeSlot';
+import TimeSlot from './TimeSlot';
 
 dayjs.locale('th');
 dayjs.extend(isBetween);
@@ -100,7 +103,7 @@ export default function AppointmentScheduler() {
     return null;
   };
 
-  const handleAddTimeSlot = (dayIndex: number, day?: string) => {
+  const handleAddTimeSlot = (dayIndex: number, day?: string) => { 
     if (day) {
       setAppointment(prev => ({
         ...prev,
@@ -142,7 +145,13 @@ export default function AppointmentScheduler() {
     }
   };
 
-  const handleTimeChange = (dayIndex: number, timeIndex: number, type: 'start' | 'end', newValue: Dayjs | null, day?: string) => {
+  const handleTimeChange = (
+    dayIndex: number,
+    timeIndex: number,
+    type: 'start' | 'end',
+    newValue: Dayjs | null,
+    day?: string
+  ) => {
     let updatedAppointment = { ...appointment };
     let slots: TimeSlot[];
 
@@ -168,15 +177,93 @@ export default function AppointmentScheduler() {
       updatedAppointment.daySlots[dayIndex].timeSlots = slots;
     }
 
+    // Check if the end time matches the selected duration
+    if (updatedSlot.startTime && updatedSlot.endTime) {
+      const diff = updatedSlot.endTime.diff(updatedSlot.startTime, 'minute');
+      if (diff !== appointment.duration) {
+        setError(`ช่วงเวลาที่เลือกไม่สอดคล้องกับช่วงเวลา ${appointment.duration} นาที`);
+      } else {
+        setError(null);
+      }
+    }
+
     setAppointment(updatedAppointment);
-    setError(null);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log('Appointment data:', appointment);
-    // Transform and submit data here
+  event.preventDefault();
+
+  const userId = localStorage.getItem("id");
+  if (!userId) {
+    console.error("User ID not found in localStorage");
+    return;
+  }
+
+  const timeSlotsData: TimeSlotsInterface[] = [];
+
+  const createTimeSlots = (date: Dayjs, startTime: Dayjs, endTime: Dayjs) => {
+    let currentStartTime = startTime;
+    while (currentStartTime.isBefore(endTime)) {
+      let slotEndTime = currentStartTime.add(appointment.duration, 'minute');
+      if (slotEndTime.isAfter(endTime)) {
+        slotEndTime = endTime;
+      }
+      
+      timeSlotsData.push({
+        user_id: Number(userId),
+        slot_date: date.startOf('day').toDate(),
+        slot_start_time: currentStartTime.toDate(),
+        slot_end_time: slotEndTime.toDate(),
+        title: appointment.title,
+        location: appointment.location,
+        is_available: true,
+      });
+
+      currentStartTime = slotEndTime;
+    }
   };
+
+  if (appointment.recurrence === 'none') {
+    appointment.daySlots.forEach(daySlot => {
+      daySlot.timeSlots.forEach(slot => {
+        if (slot.startTime && slot.endTime) {
+          createTimeSlots(daySlot.date, slot.startTime, slot.endTime);
+        }
+      });
+    });
+  } else {
+    // For weekly and biweekly recurrence
+    const startDate = dayjs().startOf('week');
+    const endDate = startDate.add(appointment.recurrence === 'weekly' ? 1 : 2, 'week');
+
+    for (let date = startDate; date.isBefore(endDate); date = date.add(1, 'day')) {
+      const dayName = date.format('dddd') as keyof typeof appointment.selectedDays;
+      const daySlots = appointment.selectedDays[dayName];
+
+      daySlots.forEach(slot => {
+        if (slot.startTime && slot.endTime) {
+          const slotDate = date.hour(slot.startTime.hour()).minute(slot.startTime.minute());
+          const slotEndDate = date.hour(slot.endTime.hour()).minute(slot.endTime.minute());
+          createTimeSlots(date, slotDate, slotEndDate);
+        }
+      });
+    }
+  }
+
+  try {
+    for (const timeSlot of timeSlotsData) {
+      const res = await CreateTimeSlot(timeSlot);
+      if (res.status === 200) {
+        console.log('Time slot created:', res.data);
+      }
+    }
+    console.log('All time slots created successfully');
+    // ทำการ reset form หรือแสดงข้อความสำเร็จที่นี่
+  } catch (error) {
+    console.error('Error submitting appointment:', error);
+    // แสดงข้อความ error ที่นี่
+  }
+};
 
   const formatThaiDate = (date: Dayjs) => {
     return `${date.format('D MMMM YYYY')}`; // Remove day of the week
@@ -245,8 +332,6 @@ export default function AppointmentScheduler() {
                       onChange={(newValue) => handleTimeChange(dayIndex, timeIndex, 'start', newValue)}
                       ampm={false}
                       views={['hours', 'minutes']}
-                      // inputFormat="HH:mm"
-                      // renderInput={(params) => <TextField {...params} />}
                     />
                     <TimePicker
                       label="เวลาสิ้นสุด"
@@ -254,26 +339,57 @@ export default function AppointmentScheduler() {
                       onChange={(newValue) => handleTimeChange(dayIndex, timeIndex, 'end', newValue)}
                       ampm={false}
                       views={['hours', 'minutes']}
-                      // inputFormat="HH:mm"
-                      // renderInput={(params) => <TextField {...params} />}
                     />
                     <IconButton onClick={() => handleRemoveTimeSlot(dayIndex, timeIndex)}>
                       <RemoveIcon />
                     </IconButton>
                   </div>
                 ))}
-                <Button onClick={() => handleAddTimeSlot(dayIndex)} startIcon={<AddIcon />}>
+                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => handleAddTimeSlot(dayIndex)}>
                   เพิ่มช่วงเวลา
                 </Button>
-                <Button onClick={() => handleRemoveDay(dayIndex)} color="secondary">
-                  ลบวัน
+                <IconButton onClick={() => handleRemoveDay(dayIndex)} className="ml-2">
+                  <RemoveIcon />
+                </IconButton>
+              </div>
+            ))}
+            <Button variant="outlined" onClick={handleAddDay}>
+              เพิ่มวัน
+            </Button>
+          </div>
+        )}
+
+        {appointment.recurrence !== 'none' && (
+          <div>
+            {Object.keys(thaiDays).map(day => (
+              <div key={day} className="mb-4">
+                <h3>{thaiDays[day]}</h3>
+                {appointment.selectedDays[day].map((slot, timeIndex) => (
+                  <div key={timeIndex} className="flex items-center space-x-2 mb-2">
+                    <TimePicker
+                      label="เวลาเริ่มต้น"
+                      value={slot.startTime}
+                      onChange={(newValue) => handleTimeChange(0, timeIndex, 'start', newValue, day)}
+                      ampm={false}
+                      views={['hours', 'minutes']}
+                    />
+                    <TimePicker
+                      label="เวลาสิ้นสุด"
+                      value={slot.endTime}
+                      onChange={(newValue) => handleTimeChange(0, timeIndex, 'end', newValue, day)}
+                      ampm={false}
+                      views={['hours', 'minutes']}
+                    />
+                    <IconButton onClick={() => handleRemoveTimeSlot(0, timeIndex, day)}>
+                      <RemoveIcon />
+                    </IconButton>
+                  </div>
+                ))}
+                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => handleAddTimeSlot(0, day)}>
+                  เพิ่มช่วงเวลา
                 </Button>
               </div>
             ))}
-
-            <Button onClick={handleAddDay} startIcon={<AddIcon />}>
-              เพิ่มวัน
-            </Button>
           </div>
         )}
 
@@ -281,8 +397,8 @@ export default function AppointmentScheduler() {
           <DateCalendar onChange={handleDateSelect} />
         </Dialog>
 
-        <Button type="submit" variant="contained" color="primary">
-          ยืนยันการนัดหมาย
+        <Button variant="contained" color="primary" type="submit">
+          ยืนยันข้อมูล
         </Button>
       </form>
     </LocalizationProvider>

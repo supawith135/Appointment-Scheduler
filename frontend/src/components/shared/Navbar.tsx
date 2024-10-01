@@ -26,6 +26,7 @@ const adminNavItems: NavItem[] = [
     label: 'นักศึกษา',
     children: [
       { path: '/Admin/AddStudent', label: 'เพิ่มรายชื่อนักศึกษา' },
+      { path: '/Admin/AddStudentList', label: 'นำเข้ารายชื่อนักศึกษา' },
       { path: '/Admin/StudentList', label: 'รายชื่อนักศึกษา' },
     ]
   },
@@ -34,6 +35,7 @@ const adminNavItems: NavItem[] = [
     label: 'อาจารย์',
     children: [
       { path: '/Admin/AddTeacher', label: 'เพิ่มรายชื่ออาจารย์' },
+      { path: '/Admin/AddTeacherList', label: 'นำเข้ารายชื่ออาจารย์' },
       { path: '/Admin/TeacherList', label: 'รายชื่ออาจารย์' },
     ]
   },
@@ -86,13 +88,13 @@ const Navbar: React.FC = () => {
             onHoverStart={() => setHoveredItem(item.label)}
             onHoverEnd={() => setHoveredItem(null)}
             onClick={() => toggleDropdown(item.label)}
-            className={`px-3 py-2 rounded-md text-lg font-medium relative ${openDropdown === item.label ? 'text-ENGi-Red' : 'text-gray-700 hover:text-ENGi-Red'
+            className={`px-3 py-2 rounded-md text-lg font-bold relative ${openDropdown === item.label ? 'text-ENGi-Red' : 'text-gray-700 hover:text-ENGi-Red'
               }`}
           >
             {item.label}
             {(hoveredItem === item.label || openDropdown === item.label) && (
               <motion.div
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-ENGi-Red"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-ENGi-Red "
                 layoutId="underline"
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
@@ -106,13 +108,13 @@ const Navbar: React.FC = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10"
+                className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 font-bold"
               >
                 {item.children.map((child) => (
                   <Link
                     key={child.path}
                     to={child.path}
-                    className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-ENGi-Red"
+                    className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100 hover:text-ENGi-Red "
                     onClick={() => handleLinkClick(child.path)}
                   >
                     {child.label}
@@ -129,7 +131,7 @@ const Navbar: React.FC = () => {
         >
           <Link
             to={item.path}
-            className={`px-3 py-2 rounded-md text-lg font-medium relative ${activeLink === item.path
+            className={`px-3 py-2 rounded-md text-lg font-bold relative ${activeLink === item.path
               ? 'text-ENGi-Red'
               : 'text-gray-700 hover:text-ENGi-Red'
               }`}

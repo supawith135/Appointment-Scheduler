@@ -18,7 +18,6 @@ import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import { CreateTimeSlot } from '../../services/https/teacher/timeSlot';
 
-// import { message } from 'antd';
 import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
 
 const theme = createTheme({
@@ -302,6 +301,7 @@ function SchedulerSidebar() {
                     throw new Error(`Failed to create time slot: ${res.data.message}`);
                 }
             }
+            
 
             setSnackbarOpen(true);
             setTitle('');
@@ -312,6 +312,7 @@ function SchedulerSidebar() {
             setErrorMessage(error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการสร้างช่วงเวลา");
         } finally {
             setIsLoading(false);
+            window.location.reload();
         }
     };
 
@@ -328,7 +329,7 @@ function SchedulerSidebar() {
 
     return (
         <ThemeProvider theme={theme}>
-            <div className="w-full max-w-md bg-white p-6 shadow-md overflow-y-auto ">
+            <div className="w-full max-w-md bg-white p-6 shadow-md overflow-y-auto">
                 <h2 className="text-xl font-bold mb-4 text-ENGi-Red ">สร้างเวลานัดหมาย</h2>
                 <Box >
                     <TextField
@@ -374,7 +375,7 @@ function SchedulerSidebar() {
                             <option value="15 นาที">15 นาที</option>
                             <option value="30 นาที">30 นาที</option>
                             <option value="45 นาที">45 นาที</option>
-                            <option value="1 ชั่วโมง">1 ชั่วโมง</option>
+                            <option value="60 นาที">60 นาที</option>
                         </NativeSelect>
                     </FormControl>
                 </Box>
@@ -455,7 +456,6 @@ function SchedulerSidebar() {
                         สร้างช่วงเวลาทั้งหมดสำเร็จ
                     </Alert>
                 </Snackbar>
-
             </div>
         </ThemeProvider>
     );

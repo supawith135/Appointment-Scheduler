@@ -48,10 +48,11 @@ function Login() {
 
         setTimeout(() => {
           const role = res.data.role;
-          if (role === 'student') navigate('/Student');
-          else if (role === 'teacher') navigate('/Teacher');
-          else if (role === 'admin') navigate('/Admin');
-          else navigate('/');
+          if (role === 'student') window.location.href = "/Student";
+          else if (role === 'teacher') window.location.href = "/Teacher" ;
+          else if (role === 'admin') window.location.href = "/Admin" ;
+          else window.location.href = "/"; 
+          
         }, 2000);
       } else {
         showNotification(res.data.error || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ', 'error');
@@ -89,7 +90,7 @@ function Login() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className='bg-white shadow-2xl rounded-md p-5 box-border w-96'>
-                <p className='text-center text-2xl text-ENGi-Red'>วิธีการเข้าสู่ระบบ</p>
+                <p className='text-center text-2xl text-ENGi-Red font-bold'>วิธีการเข้าสู่ระบบ</p>
                 {/* Instructions for different user roles */}
                 <p className='text-lx text-black font-bold mt-2'>อาจารย์</p>
                 <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Sompong</p>
@@ -114,7 +115,7 @@ function Login() {
                 transition={{ duration: 0.5 }}
                 className='bg-white shadow-2xl rounded-md p-5 box-border w-96'
               >
-                <p className='text-center text-2xl text-ENGi-Red mb-6'>กรุณาเข้าสู่ระบบ</p>
+                <p className='text-center text-2xl text-ENGi-Red mb-6 font-bold'>กรุณาเข้าสู่ระบบ</p>
                 <div className='mb-4 relative'>
                   <label htmlFor='username' className='block text-lx  mb-2 text-black font-bold'>
                     ชื่อผู้ใช้

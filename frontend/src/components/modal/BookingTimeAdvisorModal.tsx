@@ -136,7 +136,7 @@ const BookingTimeAdvisorModal: React.FC<ModalProps> = ({ isOpen, onClose, slotDe
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
                                 rows={4}
-                                className="w-full p-3 border border-gray-300 rounded-md mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-red-700 transition duration-300 ease-in-out"
+                                className="w-full p-3 border border-gray-300 rounded-md mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-red-700 transition duration-300 ease-in-out "
                                 placeholder="กรุณากรอกรายละเอียด..."
                             />
                         </motion.div>
