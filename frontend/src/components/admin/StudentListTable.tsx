@@ -1,9 +1,11 @@
-import React from 'react';
-// import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import React, { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { GetStudentsList } from '../../services/https/admin/listUsers';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { GetStudentsList, DeleteStudentById } from '../../services/https/admin/listUsers';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // อย่าลืม import CSS ของ react-toastify
 
 const theme = createTheme({
     typography: {
@@ -13,13 +15,14 @@ const theme = createTheme({
 
 const StudentListTable: React.FC = () => {
     const [studentData, setStudentData] = React.useState<UsersInterface[]>([]);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
 
     const getStudentsList = async () => {
         try {
             const res = await GetStudentsList();
             if (res.status === 200) {
                 setStudentData(res.data.data);
-                console.log("StudentData: ", res.data);
             } else {
                 console.error('Unexpected response:', res);
             }
@@ -32,9 +35,36 @@ const StudentListTable: React.FC = () => {
         getStudentsList();
     }, []);
 
-    // const handleViewDetails = (id: number) => {
-    //     console.log(`View details for student ID: ${id}`);
-    // };
+    const handleOpenDialog = (id: number) => {
+        setSelectedStudentId(id);
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setSelectedStudentId(null);
+    };
+
+    const handleDelete = async () => {
+        if (selectedStudentId) {
+            try {
+                const id = String(selectedStudentId);
+                const res = await DeleteStudentById(id); // เรียกใช้งานฟังก์ชันลบ
+                if(res.status == 200){
+                    setStudentData((prevData) => prevData.filter(student => String(student.ID) !== id));
+                }
+                // แจ้งเตือนเมื่อการลบสำเร็จ
+                toast.success('ลบข้อมูลเรียบร้อยแล้ว', {
+                    onClose: () => window.location.reload(), // Reload หน้าเมื่อแจ้งเตือนเสร็จแล้ว
+                });
+
+                handleCloseDialog();
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                toast.error('เกิดข้อผิดพลาดในการลบข้อมูล');
+            }
+        }
+    };
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -42,36 +72,31 @@ const StudentListTable: React.FC = () => {
             field: 'user_name',
             headerName: 'รหัสประจำตัว',
             width: 120,
-            headerClassName: 'font-bold text-xl',
         },
         {
             field: 'full_name',
             headerName: 'ชื่อ',
             width: 200,
-            headerClassName: 'font-bold text-xl',
         },
         {
             field: 'advisor',
             headerName: 'อาจารย์ที่ปรึกษา',
             width: 200,
-            headerClassName: 'font-bold text-xl',
         },
-        // {
-        //     field: 'actions',
-        //     headerName: 'Actions',
-        //     width: 150,
-        //     renderCell: (params) => (
-        //         <div style={{ display: 'flex', gap: '8px' }}>
-        //             <Tooltip title="View Details" arrow>
-        //                 <RemoveRedEyeOutlinedIcon
-        //                     color="primary"
-        //                     style={{ cursor: 'pointer', marginTop: '16px' }}
-        //                     onClick={() => handleViewDetails(params.row.id)}
-        //                 />
-        //             </Tooltip>
-        //         </div>
-        //     ),
-        // },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 150,
+            renderCell: (params) => (
+                <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleOpenDialog(params.row.id)}
+                >
+                    ลบ
+                </Button>
+            ),
+        },
     ];
 
     return (
@@ -91,7 +116,7 @@ const StudentListTable: React.FC = () => {
                                 paginationModel: { page: 0, pageSize: 10 },
                             },
                         }}
-                        pageSizeOptions={[10, 20]}
+                        pageSizeOptions={[10, 15]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-cell': {
@@ -112,6 +137,28 @@ const StudentListTable: React.FC = () => {
                         }}
                     />
                 </div>
+
+                {/* Confirmation Dialog */}
+                <Dialog
+                    open={openDialog}
+                    onClose={handleCloseDialog}
+                >
+                    <DialogTitle>ยืนยันการลบ</DialogTitle>
+                    <DialogContent>
+                        คุณต้องการลบข้อมูลนี้หรือไม่?
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog} color="primary">
+                            ยกเลิก
+                        </Button>
+                        <Button onClick={handleDelete} color="error">
+                            ลบ
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Toast notifications */}
+                <ToastContainer />
             </ThemeProvider>
         </div>
     );

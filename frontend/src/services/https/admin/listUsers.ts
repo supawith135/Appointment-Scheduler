@@ -68,6 +68,39 @@ async function CreateStudent(data: UsersInterface) {
         .then((res) => res)
         .catch((e) => e.response);
 }
+
+async function CreateTeacher(data: UsersInterface) {
+
+    return await axios
+        .post(`${apiUrl}/admin/createTeacher`, data, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+
+
+async function DeleteStudentById(id: string) {
+
+    return await axios
+        .delete(`${apiUrl}/admin/deleteStudent/${id}`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+
+async function DeleteTeacherById(id: string) {
+
+    return await axios
+        .delete(`${apiUrl}/admin/deleteTeacher/${id}`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+
+async function GetPositionsList() {
+
+    return await axios
+        .get(`${apiUrl}/admin/positions`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 export {
     GetStudentsList,
     GetStudentById,
@@ -75,5 +108,9 @@ export {
     GetTeacherById,
     GetListTimeSlots,
     GetTimeSlotById,
-    CreateStudent
+    CreateStudent,
+    CreateTeacher,
+    DeleteStudentById,
+    DeleteTeacherById,
+    GetPositionsList
 };

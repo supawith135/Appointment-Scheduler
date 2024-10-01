@@ -46,8 +46,12 @@ const TeacherHistoryTable: React.FC = () => {
         }
     };
 
-    const formatDay = (dateString: string) => {
-        const date = new Date(dateString);
+    const formatDay = (dateInput: string | Date | undefined) => {
+        if (!dateInput) return '';
+        
+        // If dateInput is a string, convert it to a Date object
+        const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    
         return date.toLocaleDateString('th-TH', {
             year: 'numeric',
             month: 'long',
@@ -91,7 +95,6 @@ const TeacherHistoryTable: React.FC = () => {
             setIsModalOpen(true);
         }
     };
-
     // Close modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -173,10 +176,6 @@ const TeacherHistoryTable: React.FC = () => {
             renderCell: (params) => {
                 return `${formatDay(params.value)}`;
             },
-            // valueGetter: (_, row) => {
-            //     const day = row?.slot_date;
-            //     return `${formatTime(day)}`;
-            // }
         },
         {
             field: 'timeRange',
@@ -260,7 +259,7 @@ const TeacherHistoryTable: React.FC = () => {
                             reasons: booking.reason || 'No title',
                             location: booking.time_slot?.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
-                            date: booking?.time_slot?.slot_date,
+                            date: formatDay(booking?.time_slot?.slot_date) || '', // แปลงวันที่ที่นี่
                             slot_start_time: booking.time_slot?.slot_start_time || '',
                             slot_end_time: booking.time_slot?.slot_end_time || '',
                             status: booking.status?.status || "unknow",

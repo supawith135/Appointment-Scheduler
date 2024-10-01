@@ -12,7 +12,8 @@ function TeacherAccountPage() {
     const [fullName, setFullName] = useState('');
     const [location, setLocation] = useState('');
     const [loading, setLoading] = useState(false);
-    const [_ , setPositions] = useState<PositionsInterface[]>([]);
+    const [positions, setPositions] = useState<PositionsInterface[]>([]);
+    const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const id = String(localStorage.getItem('id'));
@@ -24,6 +25,7 @@ function TeacherAccountPage() {
                 setTeacherData(res.data.data);
                 setFullName(res.data.data.full_name || '');
                 setLocation(res.data.data.location || '');
+                setSelectedPosition(res.data.data.position_id || null);  // Set initial position
             } else {
                 throw new Error('Failed to fetch teacher data');
             }
@@ -66,8 +68,8 @@ function TeacherAccountPage() {
             ID: Number(id),
             full_name: fullName,
             location,
-            position_id: teacherData.position_id,
-            password: newPassword, // Add password field to the update data
+            position_id: selectedPosition || undefined,   // Include selected position ID in the payload
+            password: newPassword || undefined,  // Add password only if it exists
         };
 
         try {
@@ -95,7 +97,7 @@ function TeacherAccountPage() {
                 className="flex flex-grow flex-col p-4 md:p-8 lg:p-10"
             >
                 <motion.div
-                    className="mx-auto p-6 md:p-10 shadow-2xl rounded-lg w-full max-w-2xl bg-white"
+                    className="mx-auto p-6 md:p-10 shadow-2xl rounded-lg w-full max-w-2xl bg-white text-black"
                     whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
                     transition={{ duration: 0.3 }}
                 >
@@ -140,6 +142,25 @@ function TeacherAccountPage() {
                             />
                         </div>
 
+                        {/* Select position */}
+                        <div>
+                            <div className="mb-2">
+                                <label className="text-xl font-bold text-gray-700 mb-2">ตำแหน่ง</label>
+                            </div>
+                            <select
+                                value={selectedPosition || ''}
+                                onChange={(e) => setSelectedPosition(Number(e.target.value))}
+                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
+                            >
+                                <option value="" disabled>เลือกตำแหน่ง</option>
+                                {positions.map((position) => (
+                                    <option key={position.ID} value={position.ID}>
+                                        {position.position_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         {/* Other fields */}
                         <div>
                             <div className="mb-2">
@@ -176,11 +197,9 @@ function TeacherAccountPage() {
                         <motion.button
                             onClick={handleConfirm}
                             disabled={loading}
-                            className={`text-xl font-semibold rounded-full px-8 py-3 text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'} transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg`}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            className={`text-xl font-semibold rounded-full px-8 py-3 text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 transition duration-300 ease-in-out'}`}
                         >
-                            {loading ? 'กำลังบันทึก...' : 'บันทึก'}
+                            {loading ? 'กำลังบันทึก...' : 'ยืนยันข้อมูล'}
                         </motion.button>
                     </motion.div>
                 </motion.div>

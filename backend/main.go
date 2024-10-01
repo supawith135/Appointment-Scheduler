@@ -84,6 +84,13 @@ func main() {
 		admins.GET("/booking/teacher/:id", admin.GetBookingStudentListByTeacherID)
 		//add Student
 		admins.POST("/createStudent", admin.CreateStudent)
+		admins.DELETE("/deleteStudent/:id", admin.DeleteStudentById)
+		
+		//teacher
+		admins.POST("/createTeacher", admin.CreateTeacher)
+		admins.DELETE("/deleteTeacher/:id", admin.DeleteTeacherById)
+		admins.GET("/positions", admin.GetPositionsList)
+		
 		
 	}
 	

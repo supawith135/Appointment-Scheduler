@@ -5,14 +5,16 @@ import (
 	"github.com/supawith135/Appointment-Scheduler/config"
 	"github.com/supawith135/Appointment-Scheduler/entity"
 	"golang.org/x/crypto/bcrypt"
+    "log"
 	"net/http"
 )
 
 // ฟังก์ชันสำหรับการ hash รหัสผ่าน
-func CreateStudent(c *gin.Context) {
+func CreateTeacher(c *gin.Context) {
     var user entity.Users
     var usersCheck entity.Users
     var role entity.Roles
+	var position entity.Positions
     db := config.DB() // Get the DB instance
 
     if err := c.ShouldBindJSON(&user); err != nil {
@@ -26,7 +28,12 @@ func CreateStudent(c *gin.Context) {
     }
 
     if tx := db.Where("id = ?", user.RoleID).First(&role); tx.RowsAffected == 0 {
-        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "ไม่มีสถานะนักศึกษา"})
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "ไม่มีสถานะอาจารย์"})
+        return
+    }
+
+	if tx := db.Where("id = ?", user.PositionID).First(&position); tx.RowsAffected == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "ไม่มีตำแหน่งนี้"})
         return
     }
 
@@ -56,24 +63,43 @@ func CreateStudent(c *gin.Context) {
     })
 }
 
-// ลบข้อมูล Student โดย ID
-func DeleteStudentById(c *gin.Context) {
+// ลบข้อมูล Teacher โดย ID
+func DeleteTeacherById(c *gin.Context) {
 	id := c.Param("id")
 
 	db := config.DB()
 
-	result := db.Exec("DELETE FROM users WHERE id = ? AND role_id = 1", id)
+	result := db.Exec("DELETE FROM users WHERE id = ? AND role_id = 2", id)
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to delete student"})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to delete Teacher"})
 		return
 	}
 	if result.RowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Student not found"})
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Teacher not found"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
-		"message": "User Student deleted successfully",
+		"message": "User Teacher deleted successfully",
+	})
+}
+
+func GetPositionsList(c *gin.Context) { 
+	var positions []entity.Positions
+
+	db := config.DB()
+
+	results := db.Find(&positions)
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Positions retrieved successfully",
+		"data":    positions,
 	})
 }

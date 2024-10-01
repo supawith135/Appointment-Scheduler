@@ -18,14 +18,6 @@ import (
 // Global database instance
 var db *gorm.DB
 
-// DB returns the global database instance
-//
-//	func DB() *gorm.DB {
-//		if db == nil {
-//			log.Fatal("Database connection is not initialized")
-//		}
-//		return db
-//	}
 func DB() *gorm.DB {
 
 	return db
@@ -45,9 +37,7 @@ func hashPassword(password string) (string, error) {
 func uintPtr(i uint) *uint {
 	return &i
 }
-// func strtPtr(i string) *string {
-// 	return &i
-// }
+
 
 // SetupDatabase sets up and initializes the database
 func SetupDatabase() {
@@ -125,6 +115,8 @@ func seedData() {
 		{PositionName: "ศาสตราจารย์"},
 		{PositionName: "รองศาสตราจารย์"},
 		{PositionName: "ผู้ช่วยศาสตราจารย์"},
+		{PositionName: "อาจารย์"},
+		{PositionName: "ผู้ช่วยสอนและวิจัย"},
 	}
 	for _, position := range positions {
 		db.FirstOrCreate(&position, &entity.Positions{PositionName: position.PositionName})
@@ -185,7 +177,6 @@ func seedData() {
 		},
 		// Admin
 		{
-			PositionID: uintPtr(1),
 			FullName:   "แอดมิน เทส",
 			RoleID:     uintPtr(3),
 			AdvisorID:  nil,
