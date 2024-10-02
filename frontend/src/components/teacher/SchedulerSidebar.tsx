@@ -69,9 +69,12 @@ function SchedulerSidebar() {
             setSelectedDate(date);
             setShowCalendar(false);
             if (!availability[dateString]) {
+                // เมื่อเพิ่มวันที่ใหม่ ให้กำหนดช่วงเวลาเริ่มต้นเป็น 9:00 - 17:00
+                const defaultStart = date.hour(0).minute(0);
+                const defaultEnd = date.hour(23).minute(55);
                 setAvailability((prev) => ({
                     ...prev,
-                    [dateString]: [[date.startOf('day'), date.endOf('day')]],
+                    [dateString]: [[defaultStart, defaultEnd]],
                 }));
             }
         }
@@ -149,19 +152,33 @@ function SchedulerSidebar() {
 
     const addTimeRange = (day: string) => {
         setAvailability((prev) => {
-            const newRanges = [...prev[day]];
-            const lastRange = newRanges[newRanges.length - 1];
-
-            if (lastRange && lastRange[1]) { // ตรวจสอบว่า lastRange และ lastRange[1] ไม่เป็น null
-                const newStart = lastRange[1]; // เริ่มจากเวลาสิ้นสุดของช่วงเวลาสุดท้าย
-                const newEnd = newStart.add(durationMinutes, 'minute'); // เพิ่มระยะเวลา (duration) ต่อไป
-
-                if (newStart.isBefore(dayjs().endOf('day'))) {
-                    // เพิ่มช่วงเวลาใหม่ถ้า newStart ยังไม่ถึงสิ้นวัน
-                    newRanges.push([newStart, newEnd]);
+            const newRanges = [...(prev[day] || [])];
+            let newStart: Dayjs;
+            let newEnd: Dayjs;
+    
+            if (newRanges.length === 0) {
+                // ถ้ายังไม่มีช่วงเวลาในวันนี้ ให้เริ่มจาก 9:00 - 10:00
+                newStart = dayjs(day).hour(9).minute(0);
+                newEnd = newStart.add(1, 'hour');
+            } else {
+                const lastRange = newRanges[newRanges.length - 1];
+                if (lastRange && lastRange[1]) {
+                    newStart = lastRange[1].add(15, 'minute');
+                    newEnd = newStart.add(1, 'hour');
+    
+                    // ตรวจสอบว่าไม่เกินเที่ยงคืน
+                    if (newEnd.isAfter(dayjs(day).endOf('day'))) {
+                        newEnd = dayjs(day).endOf('day');
+                    }
+                } else {
+                    // กรณีที่ lastRange หรือ lastRange[1] เป็น null
+                    newStart = dayjs(day).hour(9).minute(0);
+                    newEnd = newStart.add(1, 'hour');
                 }
             }
-
+    
+            newRanges.push([newStart, newEnd]);
+    
             return {
                 ...prev,
                 [day]: newRanges,
