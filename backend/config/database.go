@@ -154,6 +154,7 @@ func seedData() {
 			UserName:   "Sompong",
 			Password:   "a123456", // Will be hashed
 			GenderID:   uintPtr(1),
+			
 		},
 		{
 			PositionID: uintPtr(2),
