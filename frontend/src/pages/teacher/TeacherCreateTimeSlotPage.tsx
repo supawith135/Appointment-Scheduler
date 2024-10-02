@@ -2,7 +2,7 @@ import SchedulerSidebar from '../../components/teacher/SchedulerSidebar';
 import FrontLayout from '../../components/layouts/FrontLayout';
 import AppointmentScheduler from '../../components/teacher/AppointmentScheduler';
 import TimeSlot from '../../components/teacher/TimeSlot';
-import TestAppointment from '../../components/teacher/testAppointment';
+// import TestAppointment from '../../components/teacher/testAppointment';
 function TeacherCreateTimeSlotPage() {
   return (
     <FrontLayout>

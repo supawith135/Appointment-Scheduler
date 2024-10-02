@@ -119,7 +119,7 @@ const ModalTeacherStudentDeail: React.FC<ModalTeacherStudentDeailProps> = ({ ope
                                 sx={{ mb: 2 }}
                             />
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>อาจารย์ :</strong> {bookingDetails?.user?.advisor?.full_name}
+                                <strong>อาจารย์ :</strong> {bookingDetails?.time_slot?.user?.position?.position_name} {bookingDetails?.time_slot?.user?.full_name} 
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
                                 <strong>สถานที่นัดหมาย :</strong> {bookingDetails?.time_slot?.location}
@@ -129,6 +129,9 @@ const ModalTeacherStudentDeail: React.FC<ModalTeacherStudentDeailProps> = ({ ope
                             </Typography>
                             <Divider sx={{ my: 2 }} />
                             
+                            <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
+                                <strong>รหัสประจำตัว:</strong> {bookingDetails?.user?.user_name}
+                            </Typography>
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
                                 <strong>ชื่อนักศึกษา:</strong> {bookingDetails?.user?.full_name}
                             </Typography>

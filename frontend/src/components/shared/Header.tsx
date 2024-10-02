@@ -76,7 +76,7 @@ function ResponsiveAppBar() {
 
     return (
         <AppBar position="static" sx={{ background: "#800020" }}>
-            <Container maxWidth="xl">
+            <div >
                 <Toolbar disableGutters>
                     <Typography
                         variant="h6"
@@ -97,7 +97,7 @@ function ResponsiveAppBar() {
                         <img
                             src={sutLogoWhite}
                             alt='sutLogoWhite'
-                            className='max-w-56 ml-10'
+                            className='max-w-40 ml-10'
                             onClick={() => {
                                 const role = localStorage.getItem("role");
                                 const baseRoute = role === 'student' ? '/Student' : role === 'teacher' ? '/Teacher' : '/Admin';
@@ -124,7 +124,7 @@ function ResponsiveAppBar() {
                         <img
                             src={sutLogoWhite}
                             alt='sutLogoWhite'
-                            className='max-w-56 ml-10'
+                            className='max-w-48 ml-10'
                             onClick={() => {
                                 const role = localStorage.getItem("role");
                                 const baseRoute = role === 'student' ? '/Student' : role === 'teacher' ? '/Teacher' : '/Admin';
@@ -173,8 +173,10 @@ function ResponsiveAppBar() {
                             </MenuItem>
                         ))}
                     </Menu>
+                    <div className='mr-6'></div>
                 </Toolbar>
-            </Container>
+                
+            </div>
         </AppBar>
     );
 }

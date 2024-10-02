@@ -32,10 +32,10 @@ async function UpdateBookingStudentById(id :string, data: BookingsInterface) {
       .catch((e) => e.response);
   
 }
-async function GetBookingByUserName(user_name: String) {
+async function GetBookingByUserName(id :string,user_name: String) {
 
     return await axios
-        .get(`${apiUrl}/teacher/StudentBookingDetails/${user_name}`, requestOptions)
+        .get(`${apiUrl}/teacher/StudentBookingDetails/${id}/${user_name}`, requestOptions)
         .then((res) => res)
         .catch((e) => e.response);
 }

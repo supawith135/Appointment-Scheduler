@@ -3,6 +3,7 @@ import { TbUsers, TbUserCheck } from "react-icons/tb";
 import { LuCalendarRange } from "react-icons/lu";
 import { motion } from 'framer-motion';
 import { IconType } from 'react-icons';
+import { useNavigate } from 'react-router-dom';  // นำเข้า useNavigate
 import { GetTeacherStatisticsById } from '../../services/https/teacher/statistics';
 
 interface DashboardCardProps {
@@ -12,6 +13,7 @@ interface DashboardCardProps {
   bgColor: string;
   iconBgColor: string;
   iconColor: string;
+  onClick?: () => void;  // เพิ่ม prop onClick
 }
 interface TeacherStatistics {
   total_students: number;
@@ -22,7 +24,7 @@ interface TeacherStatistics {
   remaining_bookings_for_advisor: number;
 }
 
-const DashboardCard: React.FC<DashboardCardProps> = ({ icon: Icon, title, value, bgColor, iconBgColor, iconColor }) => {
+const DashboardCard: React.FC<DashboardCardProps> = ({ icon: Icon, title, value, bgColor, iconBgColor, iconColor, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -32,6 +34,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ icon: Icon, title, value,
       transition={{ type: "spring", stiffness: 400, damping: 10 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
+      onClick={onClick}  // เพิ่มการเรียก onClick เมื่อคลิก
     >
       <motion.div
         className={`${iconBgColor} p-3 rounded-full`}
@@ -61,6 +64,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ icon: Icon, title, value,
 
 function TeacherDashboard() {
   const [statisticsData, setStatisticsData] = useState<TeacherStatistics | null>(null);
+  const navigate = useNavigate();  // ใช้ useNavigate เพื่อการนำทาง
 
   const getTeacherStatisticsById = async (id: string) => {
     const res = await GetTeacherStatisticsById(id);
@@ -85,7 +89,15 @@ function TeacherDashboard() {
   // ใช้ค่าจาก statisticsData เพื่อแสดงใน DashboardCard
   const cardData: DashboardCardProps[] = [
     { icon: TbUsers, title: "นักศึกษาทั้งสาขา", value: statisticsData.total_students, bgColor: "bg-green-100", iconBgColor: "bg-green-200", iconColor: "text-green-600" },
-    { icon: TbUserCheck, title: "นักศึกษาที่ดูแล", value: statisticsData.advisor_student_count, bgColor: "bg-blue-100", iconBgColor: "bg-blue-200", iconColor: "text-blue-600" },
+    { 
+      icon: TbUserCheck, 
+      title: "นักศึกษาที่ดูแล", 
+      value: statisticsData.advisor_student_count, 
+      bgColor: "bg-blue-100", 
+      iconBgColor: "bg-blue-200", 
+      iconColor: "text-blue-600", 
+      onClick: () => navigate('/Teacher/StudentInCharge')  // กำหนดการนำทางเมื่อคลิก
+    },
     { icon: LuCalendarRange, title: "นัดหมายทั้งหมด", value: statisticsData.total_bookings_for_advisor, bgColor: "bg-purple-100", iconBgColor: "bg-purple-200", iconColor: "text-purple-600" },
     { icon: LuCalendarRange, title: "นัดหมายที่เหลือ", value: statisticsData.remaining_bookings_for_advisor, bgColor: "bg-yellow-100", iconBgColor: "bg-yellow-200", iconColor: "text-yellow-600" },
   ];

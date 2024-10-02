@@ -174,7 +174,7 @@ const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({
                             </Typography>
                             <Divider sx={{ my: 2 }} />
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>อาจารย์ :</strong> {bookingDetails?.user?.advisor?.full_name}
+                                <strong>อาจารย์ :</strong> {bookingDetails?.time_slot?.user?.position?.position_name} {bookingDetails?.time_slot?.user?.full_name} 
                             </Typography>
                             
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>

@@ -60,28 +60,28 @@ func GetBookingByStudentId(c *gin.Context) {
 	// Get the database connection
 	db := config.DB()
 
-	// Query for bookings with the provided user_id and preload related fields
-	results := db.Preload("User").Preload("User.Advisor").Preload("TimeSlot").Preload("Status").
-	    Where("user_id = ?", UserID).Find(&bookings)
+	// Query for bookings with the provided user_id, preload related fields, and order by ID descending
+	results := db.Preload("User").Preload("User.Advisor").Preload("TimeSlot.User.Position").Preload("Status").
+		Where("user_id = ?", UserID).Order("id DESC").Find(&bookings)
 
 	// Check if there's any error in the query
 	if results.Error != nil {
-	    log.Printf("Database query error: %v", results.Error)
-	    c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
-	    return
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
+		return
 	}
 
 	// Check if any bookings were found
 	if len(bookings) == 0 {
-	    c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "bookings not found"})
-	    return
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "bookings not found"})
+		return
 	}
 
 	// Return the retrieved bookings in JSON format
 	c.JSON(http.StatusOK, gin.H{
-	    "status":  "success",
-	    "message": "Bookings retrieved successfully",
-	    "data":    bookings,
+		"status":  "success",
+		"message": "Bookings retrieved successfully",
+		"data":    bookings,
 	})
 }
 

@@ -28,7 +28,7 @@ func GetBookingStudentListByAdvisorID(c *gin.Context) {
 	// Query for bookings where the time_slots.user_id matches the provided AdvisorID
 	results := db.Preload("User").Preload("User.Advisor").Preload("TimeSlot").Preload("Status").
 		Joins("JOIN time_slots ON time_slots.id = bookings.time_slot_id").
-		Where("time_slots.user_id = ?", AdvisorID).
+		Where("time_slots.user_id = ?", AdvisorID).Order("id DESC").
 		Find(&bookings)
 
 	// Check if there's any error in the query
@@ -168,34 +168,37 @@ func UpdateBookingStudentById(c *gin.Context) {
 //		})
 //	}
 func GetBookingByUserName(c *gin.Context) {
-    // Get the user_name from the URL parameters
-    userName := c.Param("user_name") // Adjust the parameter name as needed
+    // รับค่า teacherID และ userName จาก URL parameter
+    teacherID := c.Param("id")
+    userName := c.Param("user_name")
 
     var bookings []entity.Bookings
 
-    // Get the database connection
+    // เรียกใช้งานฐานข้อมูล
     db := config.DB()
 
-    // Perform the database query
-    results := db.Preload("User").Preload("TimeSlot").Preload("Status").Preload("User.Advisor").
+    // คิวรี่หาการจองโดย userName และ teacherID ที่สร้าง TimeSlots
+    results := db.Preload("User").Preload("TimeSlot.User.Position").Preload("Status").
         Joins("JOIN users ON users.id = bookings.user_id").
+        Joins("JOIN time_slots ON time_slots.id = bookings.time_slot_id").
         Where("users.user_name = ?", userName).
+        Where("time_slots.user_id = ?", teacherID).
         Find(&bookings)
 
-    // Check if there's any error in the query
+    // ตรวจสอบหาข้อผิดพลาด
     if results.Error != nil {
         log.Printf("Database query error: %v", results.Error)
         c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error.Error()})
         return
     }
 
-    // Check if any bookings were found
+    // ตรวจสอบว่าพบข้อมูลหรือไม่
     if len(bookings) == 0 {
         c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "bookings not found"})
         return
     }
 
-    // Return the retrieved bookings in JSON format
+    // ส่งคืนข้อมูลในรูปแบบ JSON
     c.JSON(http.StatusOK, gin.H{
         "status":  "success",
         "message": "Bookings retrieved successfully",
