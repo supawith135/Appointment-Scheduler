@@ -248,7 +248,7 @@ const TeacherHistoryTable: React.FC = () => {
 
     return (
         <div className="border rounded-lg shadow-lg p-4 bg-white">
-            <h2 className="text-lg font-semibold mb-4">Appointment History</h2>
+            <h2 className="text-lg font-semibold mb-4 text-black">Appointment History</h2>
             <div style={{ height: 400, width: '100%' }}>
                 <ThemeProvider theme={theme}>
                     <DataGridPremium

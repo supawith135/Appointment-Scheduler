@@ -37,3 +37,38 @@ func GetTeacherStudentByUserName(c *gin.Context) {
         "data":    user,
     })
 }
+
+
+func GetStudentInCharge(c *gin.Context) {
+    // Get the student ID from the request parameters
+    advisorID := c.Param("id")
+
+    // Initialize the database connection
+    db := config.DB()
+
+    var Users []entity.Users
+
+    // Query to get time slots with preloaded advisor, position, and role information
+    err := db.
+        Joins("JOIN users advisor ON advisor.id = users.advisor_id").
+        Where("advisor.id = ?", advisorID).
+        Find(&Users).Error
+
+    if err != nil {
+        log.Printf("Database query error: %v", err)
+        c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+        return
+    }
+
+    if len(Users) == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No time slots found for the specified advisor"})
+        return
+    }
+
+    // Respond with the result
+    c.JSON(http.StatusOK, gin.H{
+        "status":  "success",
+        "message": "Time slots retrieved successfully",
+        "data":    Users,
+    })
+}

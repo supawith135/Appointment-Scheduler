@@ -107,7 +107,7 @@ const StudentHistoryTable: React.FC = () => {
             headerName: 'ชื่ออาจารย์',
             description: 'รายชื่ออาจารย์',
             sortable: false,
-            width : 120,
+            width : 200,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
         },
         {
@@ -219,7 +219,7 @@ const StudentHistoryTable: React.FC = () => {
                     <DataGrid
                         rows={bookingsData.map((booking) => ({
                             id: booking.ID ?? 0,
-                            advisorName: booking.user?.advisor?.full_name || 'Unknown',
+                            advisorName: `${booking.time_slot?.user?.position?.position_name} ${booking.time_slot?.user?.full_name}` || 'Unknown',
                             reasons: booking.reason || 'No title',
                             location: booking.time_slot?.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',

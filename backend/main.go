@@ -58,7 +58,7 @@ func main() {
 		teachers.DELETE("/timeslot/:id", teacher.DeleteTimeSlotById)
 		//bookingListStudent
 		teachers.GET("/booking/student/:id", teacher.GetBookingStudentListByAdvisorID)
-		teachers.GET("/StudentBookingDetails/:user_name", teacher.GetBookingByUserName)
+		teachers.GET("/StudentBookingDetails/:id/:user_name", teacher.GetBookingByUserName)
 		teachers.PATCH("/booking/student/:id", teacher.UpdateBookingStudentById)
 		//statisticalData
 		teachers.GET("/statisticalData/:id", teacher.GetTeachersStatisticsById)
@@ -66,6 +66,8 @@ func main() {
 		teachers.GET("/positions", teacher.GetPositionsList)
 		//student
 		teachers.GET("/studentDetail/:user_name", teacher.GetTeacherStudentByUserName)
+		teachers.GET("/studentInCharge/:id", teacher.GetStudentInCharge)
+		
 		
 	}
 

@@ -44,9 +44,9 @@ const StudentBookingTable: React.FC = () => {
         }
     };
 
-    const getBookingByStudentID = async (user_name: string) => {
+    const getBookingByStudentID = async (id : string ,user_name: string) => {
         try {
-            const res = await GetBookingByUserName(user_name);
+            const res = await GetBookingByUserName(id ,user_name);
             if (res.status === 200) {
                 setBookingsData(res.data.data); // Access the correct data field
                 console.log("GetBookingByStudent data:", res.data.data);
@@ -58,9 +58,10 @@ const StudentBookingTable: React.FC = () => {
         }
     };
     const { user_name } = useParams<{ user_name: string }>();
+    const id = (localStorage.getItem('id'))
     useEffect(() => {
-        if (user_name) {
-            getBookingByStudentID(user_name);
+        if (  id && user_name) {
+            getBookingByStudentID(id,user_name);
         }
     }, [user_name]);
 
@@ -107,7 +108,7 @@ const StudentBookingTable: React.FC = () => {
             headerName: 'ชื่ออาจารย์',
             description: 'รายชื่ออาจารย์',
             sortable: false,
-            width : 120,
+            width : 200,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
         },
         {
@@ -213,13 +214,13 @@ const StudentBookingTable: React.FC = () => {
 
     return (
         <div className="border rounded-lg shadow-lg p-4 bg-white ">
-            <h2 className="text-lg font-semibold mb-4">Booking History</h2>
+            <h2 className="text-lg font-semibold mb-4 text-black">Booking History</h2>
             <div style={{ height: 400, width: '100%' }}>
                 <ThemeProvider theme={theme}>
                     <DataGrid
                         rows={bookingsData.map((booking) => ({
                             id: booking.ID ?? 0,
-                            advisorName: booking.user?.advisor?.full_name || 'Unknown',
+                            advisorName: `${booking.time_slot?.user?.position?.position_name} ${booking.time_slot?.user?.full_name}` || 'Unknown',
                             reasons: booking.reason || 'No title',
                             location: booking.time_slot?.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',

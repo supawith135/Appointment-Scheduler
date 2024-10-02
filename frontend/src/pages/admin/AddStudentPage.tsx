@@ -21,7 +21,7 @@ const AddStudentPage = () => {
         const value: UsersInterface = {
             user_name: userName,
             full_name: fullName,
-            password: fullName,
+            password: userName,
             email: `${userName}@g.sut.ac.th`, // เปลี่ยนเป็น userName เพื่อความถูกต้อง
             role_id: 1
         };
@@ -76,7 +76,7 @@ const AddStudentPage = () => {
 
                     {/* Student Full Name */}
                     <div>
-                        <div className="mb-2">
+                        <div className="my-4">
                             <label className="text-xl font-bold text-gray-700 mb-2">ชื่อนักศึกษา</label>
                             <p className="text-sm text-gray-600">เช่น นาย สมหวัง ดีมาก</p>
                         </div>
