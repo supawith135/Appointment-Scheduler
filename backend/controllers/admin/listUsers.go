@@ -16,7 +16,7 @@ func GetStudentsList(c *gin.Context) {
 	// Get the DB instance and Preload associated fields
 	db := config.DB() // Get the DB instance
 
-	results := db.Preload("Position").Preload("Role").Preload("Advisor").Preload("Gender").Where("role_id = ?", 1).Find(&users)
+	results := db.Preload("Position").Preload("Role").Preload("Advisor.Position").Preload("Gender").Where("role_id = ?", 1).Find(&users)
 
 	// Log and return detailed error if something goes wrong
 	if results.Error != nil {

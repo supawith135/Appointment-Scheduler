@@ -13,6 +13,8 @@ func CreateStudent(c *gin.Context) {
     var user entity.Users
     var usersCheck entity.Users
     var role entity.Roles
+    var advisor entity.Users // เพิ่มการสร้างตัวแปร advisor
+    
     db := config.DB() // Get the DB instance
 
     if err := c.ShouldBindJSON(&user); err != nil {
@@ -20,11 +22,19 @@ func CreateStudent(c *gin.Context) {
         return
     }
 
+    // เช็คว่า user_name มีอยู่ในระบบหรือไม่
     if tx := db.Where("user_name = ?", user.UserName).First(&usersCheck); !(tx.RowsAffected == 0) {
         c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "มีรหัสประจำตัวนี้อยู่แล้ว"})
         return
     }
 
+    // เช็คว่า advisor_id มีอยู่ในระบบหรือไม่
+    if tx := db.Where("id = ? AND role_id = 2", user.AdvisorID).First(&advisor); tx.RowsAffected == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "ไม่พบอาจารย์ที่ปรึกษา"})
+        return
+    }
+
+    // เช็คว่า role_id มีอยู่ในระบบหรือไม่
     if tx := db.Where("id = ?", user.RoleID).First(&role); tx.RowsAffected == 0 {
         c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "ไม่มีสถานะนักศึกษา"})
         return
@@ -37,11 +47,12 @@ func CreateStudent(c *gin.Context) {
     }
     
     newUser := entity.Users{
-        UserName: user.UserName, // เพิ่ม UserName
+        UserName: user.UserName,
         Email:    user.Email,
         FullName: user.FullName,
         Password: string(hashPassword),
-        RoleID:   user.RoleID, // ใช้ RoleID
+        RoleID:   user.RoleID,
+        AdvisorID: user.AdvisorID, // ใช้ AdvisorID ที่มาจากฟอร์ม
     }
 
     if err := db.Create(&newUser).Error; err != nil {

@@ -1,45 +1,77 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CreateStudent } from '../../services/https/admin/listUsers';
+import { CreateStudent, GetTeachersList } from '../../services/https/admin/listUsers';
+
 import FrontLayout from '../../components/layouts/FrontLayout';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Form, Input, Button, Select } from 'antd';
+import { UserOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
-const AddStudentPage = () => {
-    const [userName, setUserName] = useState('');
-    const [fullName, setFullName] = useState('');
+
+const { Option } = Select;
+
+function TeacherAccountPage() {
     const [loading, setLoading] = useState(false);
+    const [teacherData, setTeacherData] = useState<UsersInterface[]>([]);
 
-    const handleConfirm = async () => {
-        if (!userName || !fullName) {
-            toast.error('กรุณากรอกข้อมูลให้ครบถ้วน');
-            return;
-        }
+    const navigate = useNavigate();
 
-        setLoading(true);
-        const value: UsersInterface = {
-            user_name: userName,
-            full_name: fullName,
-            password: userName,
-            email: `${userName}@g.sut.ac.th`, // เปลี่ยนเป็น userName เพื่อความถูกต้อง
-            role_id: 1
-        };
-
+    const getTeachersList = async () => {
         try {
-            const res = await CreateStudent(value);
-            if (res.status === 200) {
-                toast.success('บัญชีผู้ใช้ถูกสร้างเรียบร้อยแล้ว!');
-                console.log(res.data)
-            } else {
-                toast.error('เกิดข้อผิดพลาดในการสร้างบัญชี กรุณาลองใหม่');
+            const res = await GetTeachersList();
+            if (res.status == 200) {
+                setTeacherData(res.data.data);
+                console.log("TeaherData : ", res.data)
             }
+
         } catch (error) {
             console.error("Error submitting data:", error);
-            toast.error('ไม่สามารถสร้างบัญชีได้ กรุณาลองใหม่');
+        }
+
+    }
+    useEffect(() => {
+        getTeachersList();
+    }, [])
+
+
+
+    const handleConfirm = async (values: UsersInterface) => {
+        setLoading(true);
+        values.role_id = 1;
+        values.email = `${values.user_name}@g.sut.ac.th`;
+        values.password = values.user_name;
+        console.log("values :", values);
+
+        try {
+            const res = await CreateStudent(values);
+            if (res.status === 200) {
+                console.log(res.data);
+                toast.success('ข้อมูลอาจารย์ถูกเพิ่มเรียบร้อยแล้ว!', {
+                    onClose: () => {
+                        navigate('/Admin/StudentList'); // Navigate after the toast is closed
+                    },
+                });
+            } else {
+                const message = res.data.message || 'เกิดข้อผิดพลาด';
+                toast.error(message);
+                throw new Error(message);
+            }
+        } catch (error: any) {
+            console.error("Error submitting data:", error);
+            const errorMessage = error.response?.data?.message || 'ไม่สามารถเพิ่มข้อมูลได้ กรุณาลองใหม่อีกครั้ง';
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
+    };
+
+
+    const formItemLayout = {
+        labelCol: { span: 24 },
+        wrapperCol: { span: 24 },
     };
 
     return (
@@ -49,64 +81,110 @@ const AddStudentPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex flex-grow flex-col p-4 md:p-8 lg:p-10 "
+                className="flex flex-grow flex-col p-4 md:p-8 lg:p-10 bg-gradient-to-br "
             >
                 <motion.div
                     className="mx-auto p-6 md:p-10 shadow-2xl rounded-lg w-full max-w-2xl bg-white"
                     whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
                     transition={{ duration: 0.3 }}
                 >
-                    <h1 className="text-red-700 text-3xl md:text-4xl mb-8 text-center font-bold">ข้อมูลนักศึกษา</h1>
-
-                    <div className="space-y-6">
-                        {/* Student Username */}
-                        <div>
-                            <div className="mb-2">
-                                <label className="text-xl font-bold text-gray-700 mb-2">รหัสประจำตัว </label>
-                                <p className="text-sm text-gray-600">เช่น B64xxxxxx</p>
-                            </div>
-                            <input
-                                type="text"
-                                value={userName}
-                                onChange={(e) => setUserName(e.target.value)}
-                                className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Student Full Name */}
-                    <div>
-                        <div className="my-4">
-                            <label className="text-xl font-bold text-gray-700 mb-2">ชื่อนักศึกษา</label>
-                            <p className="text-sm text-gray-600">เช่น นาย สมหวัง ดีมาก</p>
-                        </div>
-                        <input
-                            type="text"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
-                        />
-
-                    </div>
-                    <motion.div
-                        className="mt-8 flex justify-center"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                    <motion.h1
+                        className="text-red-700 text-3xl md:text-4xl mb-8 text-center font-bold"
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.5 }}
                     >
-                        <motion.button
-                            onClick={handleConfirm}
-                            disabled={loading}
-                            className={`text-xl font-semibold rounded-full px-8 py-3 text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'} transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg`}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            {loading ? 'กำลังบันทึก...' : 'บันทึก'}
-                        </motion.button>
-                    </motion.div>
+                        ข้อมูลนักศึกษา
+                    </motion.h1>
+
+                    <Form
+                        {...formItemLayout}
+                        onFinish={handleConfirm}
+                        initialValues={{
+                            user_name: '',
+                            full_name: '',
+                            advisor_id: '',
+                        }}
+                    >
+                        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                            <Form.Item
+                                label={
+                                    <div className='p-2'>
+                                        <span className="text-xl font-bold font-NotoSans">รหัสประจำตัวนักศึกษา</span>
+                                    </div>
+                                }
+                                name="user_name" // เปลี่ยนเป็น student_id เพื่อให้สอดคล้องกับรหัสที่ต้องการ
+                                rules={[
+                                    { required: true, message: "กรุณากรอกรหัสประจำตัวนักศึกษา!" },
+                                    {
+                                        pattern: /^B[a-zA-Z0-9]{7}$/, // รูปแบบ B ตามด้วยตัวอักษรหรือตัวเลข 7 ตัว
+                                        message: "รหัสประจำตัวนักเรียนต้องเริ่มด้วย 'B' ตามด้วย 7 ตัวเลข! เช่น B6412345",
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    prefix={<UserOutlined className="text-indigo-500" />}
+                                    placeholder='เช่น B64XXXXX'
+                                    style={{ height: '48px' }} // เพิ่มความสูงที่ต้องการ
+                                />
+                            </Form.Item>
+                        </motion.div>
+                        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                            <Form.Item
+                                label={
+                                    <span className="text-xl font-bold font-NotoSans">ชื่อนักศึกษา</span>
+                                }
+                                name="full_name"
+                                rules={[{ required: true, message: "กรุณากรอกชื่อนักศึกษา!" }]}
+                            >
+                                <Input prefix={<UserOutlined className="text-indigo-500" />}
+                                    placeholder='เช่น นาย เก่ง ขยัน'
+                                    style={{ height: '48px' }} // เพิ่มความสูงที่ต้องการ
+                                />
+                            </Form.Item>
+                        </motion.div>
+
+                        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                            <Form.Item
+                                label={<span className="text-lg font-semibold font-NotoSans">อาจารย์ที่ปรึกษา</span>}
+                                name="advisor_id"
+                                rules={[{ required: true, message: "กรุณาเลือกอาจารย์ที่ปรึกษา !" }]}
+                            >
+                                <Select
+                                    placeholder="กรุณาเลือกอาจารย์ที่ปรึกษา"
+                                    style={{ width: "100%", height: '48px' }} // ตั้งค่าความสูงและความกว้างใน style เดียว
+                                >
+                                    {teacherData.map((teacher) => (
+                                        <Option key={teacher.ID} value={teacher.ID}>
+                                            {teacher.position?.position_name} {teacher.full_name} {/* เปลี่ยน full_name เป็นชื่อของอาจารย์ */}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </motion.div>
+
+                        <Form.Item>
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={loading}
+                                    style={{ height: '48px' }} // เพิ่มความสูงที่ต้องการ
+                                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-full shadow-lg"
+                                >
+                                    {loading ? 'กำลังบันทึก...' : 'ยืนยันข้อมูล'}
+                                </Button>
+                            </motion.div>
+                        </Form.Item>
+                    </Form>
                 </motion.div>
             </motion.div>
+
         </FrontLayout>
     );
-};
+}
 
-export default AddStudentPage;
+export default TeacherAccountPage;

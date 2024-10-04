@@ -81,7 +81,7 @@ const StudentListTable: React.FC = () => {
         {
             field: 'advisor',
             headerName: 'อาจารย์ที่ปรึกษา',
-            width: 200,
+            width: 280,
         },
         {
             field: 'actions',
@@ -108,7 +108,7 @@ const StudentListTable: React.FC = () => {
                             id: student.ID ?? 0,
                             user_name: student.user_name || 'ไม่พบรหัสประจำตัว',
                             full_name: student.full_name || 'ไม่พบรายชื่อ',
-                            advisor: student.advisor?.full_name || 'ยังไม่ได้เลือก',
+                            advisor: `${student.advisor?.position?.position_name} ${student.advisor?.full_name}` || 'ยังไม่ได้เลือก',
                         }))}
                         columns={columns}
                         initialState={{
