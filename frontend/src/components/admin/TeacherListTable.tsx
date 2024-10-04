@@ -70,6 +70,11 @@ const TeacherListTable: React.FC = () => {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
         {
+            field: 'position',
+            headerName: 'ตำแหน่ง',
+            width: 200,
+        },
+        {
             field: 'full_name',
             headerName: 'ชื่อ',
             width: 200,
@@ -102,6 +107,7 @@ const TeacherListTable: React.FC = () => {
                     <DataGrid
                         rows={teacherData.map((teacher) => ({
                             id: teacher.ID ?? 0,
+                            position: teacher.position?.position_name,
                             full_name: teacher.full_name || 'ไม่พบรายชื่อ',
                             email: teacher.email || 'ยังไม่ได้เลือก',
                         }))}

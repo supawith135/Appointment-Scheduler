@@ -122,7 +122,7 @@ function Login() {
                   </label>
                   <div className='relative'>
                     <motion.div
-                      variants={iconVariants}
+                      // variants={iconVariants}
                       whileHover="hover"
                       whileTap="tap"
                       className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400'
@@ -130,7 +130,7 @@ function Login() {
                       <User size={20} />
                     </motion.div>
                     <motion.input
-                      variants={inputVariants}
+                      // variants={inputVariants}
                       animate={usernameError ? "error" : "normal"}
                       type='text'
                       placeholder='กรุณากรอกชื่อผู้ใช้......'
@@ -149,7 +149,7 @@ function Login() {
                   </label>
                   <div className='relative'>
                     <motion.div
-                      variants={iconVariants}
+                      // variants={iconVariants}
                       whileHover="hover"
                       whileTap="tap"
                       className='absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400'
@@ -157,7 +157,7 @@ function Login() {
                       <Lock size={20} />
                     </motion.div>
                     <motion.input
-                      variants={inputVariants}
+                      // variants={inputVariants}
                       animate={passwordError ? "error" : "normal"}
                       type='password'
                       placeholder='กรุณากรอกรหัสผ่าน......'

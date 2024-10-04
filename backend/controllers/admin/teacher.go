@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
     "log"
 	"net/http"
+    "fmt"
 )
 
 // ฟังก์ชันสำหรับการ hash รหัสผ่าน
@@ -21,6 +22,7 @@ func CreateTeacher(c *gin.Context) {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
+    fmt.Println("Received user:", user) // Log ค่าที่ได้รับ
 
     if tx := db.Where("user_name = ?", user.UserName).First(&usersCheck); !(tx.RowsAffected == 0) {
         c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "มีรหัสประจำตัวนี้อยู่แล้ว"})
@@ -44,11 +46,14 @@ func CreateTeacher(c *gin.Context) {
     }
     
     newUser := entity.Users{
-        UserName: user.UserName, // เพิ่ม UserName
-        Email:    user.Email,
-        FullName: user.FullName,
-        Password: string(hashPassword),
-        RoleID:   user.RoleID, // ใช้ RoleID
+        UserName:  user.UserName, // เพิ่ม UserName
+        Email:     user.Email,
+        FullName:  user.FullName,
+        Password:  string(hashPassword),
+        RoleID:    user.RoleID, // ใช้ RoleID
+        PositionID: user.PositionID, // เพิ่ม PositionID ที่นี่
+        ContactNumber: user.ContactNumber, // เพิ่ม ContactNumber ที่นี่
+        Image: user.Image,
     }
 
     if err := db.Create(&newUser).Error; err != nil {
