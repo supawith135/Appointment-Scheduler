@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import AdminMobileMenu from './AdminMobileMenu';  // ปรับ path ตามที่คุณบันทึกไฟล์
+import { useNavigate } from 'react-router-dom';
 
 interface NavItem {
   path: string;
@@ -50,6 +52,7 @@ const Navbar: React.FC = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const navigate = useNavigate();
   useEffect(() => {
     const storedRole = localStorage.getItem('role');
     setRole(storedRole);
@@ -67,9 +70,11 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleLinkClick = (path: string) => {
+    console.log('Navigating to:', path);
     setActiveLink(path);
     setIsOpen(false);
     setOpenDropdown(null);
+    navigate(path);
   };
 
   const toggleDropdown = (label: string) => {
@@ -186,9 +191,77 @@ const Navbar: React.FC = () => {
       </div>
       {isOpen && (
         <div className="md:hidden">
+          {role === 'admin' ? (
+            <AdminMobileMenu
+              navItems={adminNavItems}
+              onNavigate={(path) => {
+                handleLinkClick(path);
+                setIsOpen(false);
+              }}
+            />
+          ) : (
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              {navItems.map((item) => (
+                <div key={item.path || item.label}>
+                  {item.children ? (
+                    <>
+                      <button
+                        onClick={() => toggleDropdown(item.label)}
+                        className="w-full text-left block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:text-ENGi-Red hover:bg-gray-50"
+                      >
+                        {item.label}
+                      </button>
+                      {openDropdown === item.label && (
+                        <div className="pl-4">
+                          {item.children.map((child) => (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:text-ENGi-Red hover:bg-gray-50"
+                              onClick={(e) => {
+                                e.preventDefault(); // ป้องกันการทำงานเริ่มต้นของ Link
+                                handleLinkClick(child.path);
+                                setIsOpen(false);
+                                setOpenDropdown(null);
+                                // ใช้ programmatic navigation
+                                window.location.href = child.path;
+                              }}
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      className={`block px-3 py-2 rounded-md text-lg font-medium ${activeLink === item.path
+                        ? 'text-ENGi-Red border-l-4 border-ENGi-Red bg-gray-100'
+                        : 'text-gray-700 hover:text-ENGi-Red hover:bg-gray-50'
+                        }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLinkClick(item.path);
+                        setIsOpen(false);
+                        // ใช้ programmatic navigation
+                        window.location.href = item.path;
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {/* {isOpen && (
+        <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
-              <div key={item.path}>
+              <div key={item.path || item.label}>
                 {item.children ? (
                   <>
                     <button
@@ -204,7 +277,14 @@ const Navbar: React.FC = () => {
                             key={child.path}
                             to={child.path}
                             className="block px-3 py-2 rounded-md text-lg font-medium text-gray-700 hover:text-ENGi-Red hover:bg-gray-50"
-                            onClick={() => handleLinkClick(child.path)}
+                            onClick={(e) => {
+                              e.preventDefault(); // ป้องกันการทำงานเริ่มต้นของ Link
+                              handleLinkClick(child.path);
+                              setIsOpen(false);
+                              setOpenDropdown(null);
+                              // ใช้ programmatic navigation
+                              window.location.href = child.path;
+                            }}
                           >
                             {child.label}
                           </Link>
@@ -216,10 +296,16 @@ const Navbar: React.FC = () => {
                   <Link
                     to={item.path}
                     className={`block px-3 py-2 rounded-md text-lg font-medium ${activeLink === item.path
-                        ? 'text-ENGi-Red border-l-4 border-ENGi-Red bg-gray-100'
-                        : 'text-gray-700 hover:text-ENGi-Red hover:bg-gray-50'
+                      ? 'text-ENGi-Red border-l-4 border-ENGi-Red bg-gray-100'
+                      : 'text-gray-700 hover:text-ENGi-Red hover:bg-gray-50'
                       }`}
-                    onClick={() => handleLinkClick(item.path)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(item.path);
+                      setIsOpen(false);
+                      // ใช้ programmatic navigation
+                      window.location.href = item.path;
+                    }}
                   >
                     {item.label}
                   </Link>
@@ -228,7 +314,7 @@ const Navbar: React.FC = () => {
             ))}
           </div>
         </div>
-      )}
+      )} */}
     </nav>
   );
 };

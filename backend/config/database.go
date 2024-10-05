@@ -176,7 +176,7 @@ func seedData() {
 			Password:   "a123456",
 			GenderID:   uintPtr(1),
 		},
-		// Admin
+		// // Admin
 		{
 			FullName:   "แอดมิน เทส",
 			RoleID:     uintPtr(3),

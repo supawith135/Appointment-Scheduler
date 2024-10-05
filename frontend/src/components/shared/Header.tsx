@@ -75,9 +75,9 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="static" sx={{ background: "#800020" }}>
+        <AppBar position="static" sx={{ background: "#800020", height: { xs: '60px', sm: '70px' }, padding: '0 8px' }}>
             <div >
-                <Toolbar disableGutters>
+            <Toolbar sx={{ minHeight: { xs: '60px', sm: '70px' } }}> {/* ปรับความสูงของ Toolbar */}
                     <Typography
                         variant="h6"
                         noWrap

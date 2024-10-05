@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CreateStudent, GetTeachersList } from '../../services/https/admin/listUsers';
-
 import FrontLayout from '../../components/layouts/FrontLayout';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { ToastContainer, toast } from 'react-toastify';
@@ -9,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Form, Input, Button, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-
 
 const { Option } = Select;
 
@@ -35,8 +33,6 @@ function TeacherAccountPage() {
     useEffect(() => {
         getTeachersList();
     }, [])
-
-
 
     const handleConfirm = async (values: UsersInterface) => {
         setLoading(true);
@@ -67,7 +63,6 @@ function TeacherAccountPage() {
             setLoading(false);
         }
     };
-
 
     const formItemLayout = {
         labelCol: { span: 24 },

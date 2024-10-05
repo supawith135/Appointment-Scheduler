@@ -84,15 +84,16 @@ function AddStudentListPage() {
         const data: UsersInterface[] = result.data
           .slice(1)
           .map((row: any) => {
-            const advisor = advisors.find(advisor => advisor.full_name === row[3]);
+            const advisor = advisors.find(advisor => advisor.full_name === row[4]);
             return {
-              user_name: row[0],
-              full_name: row[1],
-              email: `${row[0]}@g.sut.ac.th`,
+              // ID: row[0],
+              user_name: row[1],
+              full_name: row[2],
+              email: `${row[1]}@g.sut.ac.th`,
               role_id: 1,
-              password: row[0],
+              password: row[1],
               advisor_id: advisor ? advisor.ID : undefined,
-              position_id: row[2],
+              position_id: row[3],
               advisor: advisor ? { full_name: advisor.full_name } : undefined
             };
           });
@@ -117,15 +118,16 @@ function AddStudentListPage() {
       const jsonData: UsersInterface[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
         .slice(1)
         .map((row: any) => {
-          const advisor = advisors.find(advisor => advisor.full_name === row[3]);
+          const advisor = advisors.find(advisor => advisor.full_name === row[4]);
           return {
-            user_name: row[0],
-            full_name: row[1],
-            email: `${row[0]}@g.sut.ac.th`,
+            // ID: row[0],
+            user_name: row[1],
+            full_name: row[2],
+            email: `${row[1]}@g.sut.ac.th`,
             role_id: 1,
-            password: row[0],
+            password: row[1],
             advisor_id: advisor ? advisor.ID : undefined,
-            position_id: row[2],
+            position_id: row[3],
             advisor: advisor ? { full_name: advisor.full_name } : undefined
           };
         });
@@ -222,7 +224,7 @@ function AddStudentListPage() {
       toast.update(toastId, {
         render: "เกิดข้อผิดพลาดในการบันทึกข้อมูล!",
         type: "error",
-        autoClose: 3000,
+        autoClose: 10000,
       });
     } finally {
       setLoading(false);
@@ -254,7 +256,7 @@ function AddStudentListPage() {
                   เลือกไฟล์
                 </Button>
               </label>
-              <div> ในการอัปโหลดไฟล์ .CSV หรือ .XLSX คอลัมน์ ต้องเรียงลำดับ  รหัสประจำตัว, ชื่อ, ตำแหน่ง และ ชื่ออาจารย์ที่ปรึกษา !!</div>
+              <div> ในการอัปโหลดไฟล์ .CSV หรือ .XLSX คอลัมน์ ต้องเรียง ลำดับ, รหัสประจำตัว, ชื่อ, ตำแหน่ง และ ชื่ออาจารย์ที่ปรึกษา !!</div>
               {fileName && (
                 <Typography variant="subtitle1" sx={{ mt: 2, color: '#555' }}>
                   ไฟล์ที่เลือก: {fileName}
@@ -271,13 +273,14 @@ function AddStudentListPage() {
               </Button>
               {loading && <LinearProgress variant="determinate" value={uploadProgress} />}
 
-              <Box sx={{ my: 4, width: '100%', maxWidth: '700px' }}>
+              <Box sx={{ my: 4, width: '200%', maxWidth: '800px' }}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>ข้อมูลที่นำเข้า:</Typography>
                 {usersData.length > 0 && (
                   <TableContainer component={Paper} sx={{ color: "black", fontSize: '2rem', fontWeight: 'bold' }}>
                     <Table>
                       <TableHead>
                         <TableRow>
+                          <TableCell>ลำดับ</TableCell>
                           <TableCell>รหัสประจำตัว</TableCell>
                           <TableCell>ชื่อ</TableCell>
                           <TableCell>อีเมล</TableCell>
@@ -288,12 +291,12 @@ function AddStudentListPage() {
                       <TableBody>
                         {usersData.map((user, index) => (
                           <TableRow key={index}>
+                            <TableCell>{index + 1}</TableCell>
                             <TableCell>{user?.user_name}</TableCell>
                             <TableCell>{user?.full_name}</TableCell>
                             <TableCell>{user?.email}</TableCell>
                             {/* ตรวจสอบว่ามีข้อมูล advisor ก่อนแสดงชื่อ */}
                             <TableCell>{user.position_id} {user?.advisor?.full_name}</TableCell>
-                            {/* <TableCell>{user.role_id}</TableCell> */}
                           </TableRow>
                         ))}
                       </TableBody>
