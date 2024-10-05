@@ -77,6 +77,14 @@ async function CreateTeacher(data: UsersInterface) {
         .catch((e) => e.response);
 }
 
+async function CreateMultipleTeachers(data: UsersInterface[]) {
+
+    return await axios
+        .post(`${apiUrl}/admin/createMultipleTeacher`, data, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
+
 
 async function DeleteStudentById(id: string) {
 
@@ -112,5 +120,6 @@ export {
     CreateTeacher,
     DeleteStudentById,
     DeleteTeacherById,
-    GetPositionsList
+    GetPositionsList,
+    CreateMultipleTeachers
 };
