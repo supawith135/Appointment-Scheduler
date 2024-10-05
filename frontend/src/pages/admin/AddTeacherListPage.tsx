@@ -105,13 +105,13 @@ function AddTeacherListPage() {
         const data: UsersInterface[] = result.data
           .slice(1) // ตัดแถวแรกที่เป็น header ออก
           .map((row: any) => ({
-            user_name: row[2],
-            position_id: mapPositionToId(row[0]), // Map position title to position_id
-            full_name: row[1],
-            email: row[2],
+            user_name: row[3],
+            position_id: mapPositionToId(row[1]), // Map position title to position_id
+            full_name: row[2],
+            email: row[3],
             role_id: 2,
-            password: row[2],
-            contact_number: row[3],
+            password: row[3],
+            contact_number: row[4],
           }));
         setUsersData(data);
         console.log("CSV data: ", data);
@@ -133,13 +133,13 @@ function AddTeacherListPage() {
       const jsonData: UsersInterface[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
         .slice(1)
         .map((row: any) => ({
-          user_name: row[2],
-          position_id: mapPositionToId(row[0]), // Map position title to position_id
-          full_name: row[1],
-          email: row[2],
+          user_name: row[3],
+          position_id: mapPositionToId(row[1]), // Map position title to position_id
+          full_name: row[2],
+          email: row[3],
           role_id: 2,
-          password: row[2],
-          contact_number: row[3],
+          password: row[3],
+          contact_number: row[4],
         }));
       setUsersData(jsonData);
       console.log("XLSX data: ", jsonData);
@@ -235,7 +235,7 @@ function AddTeacherListPage() {
       toast.update(toastId, {
         render: "เกิดข้อผิดพลาดในการบันทึกข้อมูล!",
         type: "error",
-        autoClose: 3000,
+        autoClose: 10000,
       });
     } finally {
       setLoading(false);
@@ -267,7 +267,7 @@ function AddTeacherListPage() {
                   เลือกไฟล์
                 </Button>
               </label>
-              <div> ในการอัปโหลดไฟล์ .CSV หรือ .XLSX คอลัมน์ ต้องเรียงลำดับ ตำแหน่ง, ชื่อ, อีเมล และ เบอร์โทร เท่านั้น !!</div>
+              <div> ในการอัปโหลดไฟล์ .CSV หรือ .XLSX คอลัมน์ ต้องเรียง ลำดับ, ตำแหน่ง, ชื่อ, อีเมล และ เบอร์โทร เท่านั้น !!</div>
               {fileName && (
                 <Typography variant="subtitle1" sx={{ mt: 2, color: '#555' }}>
                   ไฟล์ที่เลือก: {fileName}
@@ -284,13 +284,14 @@ function AddTeacherListPage() {
               </Button>
               {loading && <LinearProgress variant="determinate" value={uploadProgress} />}
 
-              <Box sx={{ my: 4, width: '100%', maxWidth: '600px' }}>
+              <Box sx={{ my: 4, width: '100%', maxWidth: '700px' }}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>ข้อมูลที่นำเข้า:</Typography>
                 {usersData.length > 0 && (
                   <TableContainer component={Paper} sx={{ color: "black", fontSize: '2rem', fontWeight: 'bold' }}>
                     <Table>
                       <TableHead>
                         <TableRow>
+                        <TableCell>ลำดับ</TableCell>
                           <TableCell>ตำแหน่ง</TableCell>
                           <TableCell>ชื่อ</TableCell>
                           <TableCell>อีเมล</TableCell>
@@ -300,6 +301,7 @@ function AddTeacherListPage() {
                       <TableBody>
                         {usersData.map((user, index) => (
                           <TableRow key={index}>
+                            <TableCell>{index +1}</TableCell>
                             <TableCell>{mapPositionToName(Number(user.position_id))}</TableCell>
                             <TableCell>{user.full_name}</TableCell>
                             <TableCell>{user.email}</TableCell>
