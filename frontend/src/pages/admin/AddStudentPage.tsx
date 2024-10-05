@@ -49,7 +49,7 @@ function TeacherAccountPage() {
             const res = await CreateStudent(values);
             if (res.status === 200) {
                 console.log(res.data);
-                toast.success('ข้อมูลอาจารย์ถูกเพิ่มเรียบร้อยแล้ว!', {
+                toast.success('ข้อมูลนักศึกษาถูกเพิ่มเรียบร้อยแล้ว!', {
                     onClose: () => {
                         navigate('/Admin/StudentList'); // Navigate after the toast is closed
                     },
