@@ -248,7 +248,7 @@ const TeacherHistoryTable: React.FC = () => {
 
     return (
         <div className="border rounded-lg shadow-lg p-4 bg-white">
-            <h2 className="text-lg font-semibold mb-4 text-black">Appointment History</h2>
+            <h2 className="text-lg font-semibold mb-4 text-black">Booking History</h2>
             <div style={{ height: 400, width: '100%' }}>
                 <ThemeProvider theme={theme}>
                     <DataGridPremium
@@ -259,7 +259,7 @@ const TeacherHistoryTable: React.FC = () => {
                             reasons: booking.reason || 'No title',
                             location: booking.time_slot?.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
-                            date: formatDay(booking?.time_slot?.slot_date) || '', // แปลงวันที่ที่นี่
+                            date: booking?.time_slot?.slot_date || '', // แปลงวันที่ที่นี่
                             slot_start_time: booking.time_slot?.slot_start_time || '',
                             slot_end_time: booking.time_slot?.slot_end_time || '',
                             status: booking.status?.status || "unknow",

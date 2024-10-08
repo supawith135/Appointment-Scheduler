@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { FaFacebook, FaLine, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import { GetStudentWithAdvisorById } from '../../services/https/student/advisor';
 import { UsersInterface } from '../../interfaces/IUsers';
-
+import Default  from '../../assets/default-profile.jpg'
 function AdvisorDetail() {
     const [advisor, setAdvisor] = useState<UsersInterface | null>(null);
 
@@ -52,7 +52,7 @@ function AdvisorDetail() {
                             variants={itemVariants}
                         >
                             <img
-                                src={advisor.advisor?.image || '/placeholder.jpg'}
+                                src={advisor.advisor?.image || Default }
                                 alt={`${advisor.full_name}'s profile`}
                                 className="h-32 w-32 object-cover rounded-full m-4"
                             />

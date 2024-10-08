@@ -99,6 +99,7 @@ func GetTimeSlotById(c *gin.Context) {
 // 		"data":    timeSlot,
 // 	})
 // }
+
 func CreateTimeSlot(c *gin.Context) { 
     var timeSlot entity.TimeSlots
     db := config.DB()
@@ -123,8 +124,8 @@ func CreateTimeSlot(c *gin.Context) {
     endTime := timeSlot.SlotEndTime
     slotDate := timeSlot.SlotDate
 
-    result = db.Where("user_id = ? AND slot_date = ? AND ((slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time = ?))", 
-        timeSlot.UserID, slotDate, endTime, endTime, startTime, startTime, startTime).Find(&existingSlots)
+    result = db.Where("user_id = ? AND slot_date = ? AND ((slot_start_time < ? AND slot_end_time > ?) OR (slot_start_time >= ? AND slot_start_time < ?) OR (slot_end_time > ? AND slot_end_time <= ?))", 
+    timeSlot.UserID, slotDate, endTime, startTime, startTime, endTime, startTime, endTime).Find(&existingSlots)
 
     if result.Error != nil {
         log.Printf("Database query error: %v", result.Error)
@@ -133,7 +134,7 @@ func CreateTimeSlot(c *gin.Context) {
     }
 
     if len(existingSlots) > 0 {
-        c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "Time slot overlaps with existing slots or start time is the same as an existing slot"})
+        c.JSON(http.StatusConflict, gin.H{"status": "error", "message": "ช่วงเวลานี้ซ้ำซ้อนกับช่วงเวลาที่มีอยู่แล้ว กรุณาเลือกช่วงเวลาอื่น"})
         return
     }
 

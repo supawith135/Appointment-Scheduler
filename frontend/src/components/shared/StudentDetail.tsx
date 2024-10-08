@@ -4,7 +4,7 @@ import { FaFacebook, FaLine, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-i
 import { GetTeacherStudentByUserName } from '../../services/https/teacher/student';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { useParams } from 'react-router-dom';
-
+import Default  from '../../assets/default-profile.jpg'
 function StudentDetail() {
     const [student, setStudent] = useState<UsersInterface | null>(null);
 
@@ -51,7 +51,7 @@ function StudentDetail() {
                             variants={itemVariants}
                         >
                             <img
-                                src={student.image || '/placeholder.jpg'}
+                                src={student.image || Default}
                                 alt={`${student.full_name}'s profile`}
                                 className="h-32 w-32 object-cover rounded-full m-4"
                             />

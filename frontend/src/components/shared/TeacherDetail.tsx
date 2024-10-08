@@ -5,7 +5,7 @@ import { GetStudentTeacherById } from '../../services/https/student/student';
 import { GetAdminTeacherById } from '../../services/https/admin/admin';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { useParams } from 'react-router-dom';
-
+import Default  from '../../assets/default-profile.jpg'
 function TeacherDetail() {
     const [teacher, setTeacher] = useState<UsersInterface | null>(null);
 
@@ -59,7 +59,7 @@ function TeacherDetail() {
                             variants={itemVariants}
                         >
                             <img
-                                src={teacher.image || '/placeholder.jpg'}
+                                src={teacher.image || Default}
                                 alt={`${teacher.full_name}'s profile`}
                                 className="h-32 w-32 object-cover rounded-full m-4"
                             />
