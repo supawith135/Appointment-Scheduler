@@ -7,6 +7,7 @@ import { UsersInterface } from '../../interfaces/IUsers';
 import { GetTeacherById, UpdateTeacherById } from '../../services/https/teacher/teacher';
 import { GetStudentById, UpdateStudentById } from '../../services/https/student/student';
 import { GetAdminById, UpdateAdminById } from '../../services/https/admin/admin';
+import Default  from '../../assets/default-profile.jpg'
 
 const Profile: React.FC = () => {
     const [imageString, setImageString] = useState<string | null>(null);
@@ -115,13 +116,13 @@ const Profile: React.FC = () => {
                         >
                             {imageString ? (
                                 <img
-                                    src={imageString}
+                                    src={imageString || Default}
                                     alt="Profile"
                                     className="w-full h-full object-cover rounded-full border-4 border-purple-500"
                                 />
                             ) : (
                                 <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
-                                    <Upload size={40} className="text-gray-400" />
+                                    <Upload size={40}  className="text-gray-400" />
                                 </div>
                             )}
                         </motion.div>

@@ -10,7 +10,7 @@ import { MdOutlineAddCircleOutline } from "react-icons/md";
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { Alert } from '@mui/material';
-import Snackbar from '@mui/material/Snackbar';
+// import Snackbar from '@mui/material/Snackbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -19,7 +19,13 @@ import NativeSelect from '@mui/material/NativeSelect';
 import { CreateTimeSlot } from '../../services/https/teacher/timeSlot';
 
 import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 const theme = createTheme({
     typography: {
         fontFamily: '"Noto Sans", "Noto Sans Thai", sans-serif',
@@ -27,11 +33,11 @@ const theme = createTheme({
 });
 
 function SchedulerSidebar() {
-    const today = dayjs().format('YYYY-MM-DD');
+    const today = dayjs().add(1, 'day').format('YYYY-MM-DD');
     const [availability, setAvailability] = React.useState<Record<string, DateRange<Dayjs>[]>>({
         [today]: [[dayjs().startOf('day'), dayjs().endOf('day')]]
     });
-    const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(dayjs());
+    const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(dayjs().add(1, 'day'));
     const [showCalendar, setShowCalendar] = React.useState(false);
     const [title, setTitle] = React.useState<string>('');
     const [location, setLocation] = React.useState<string>('');
@@ -41,8 +47,8 @@ function SchedulerSidebar() {
     const [errorLocation, setErrorLocation] = React.useState<string | null>(null);
     // const [messageApi, contextHolder] = message.useMessage();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    // const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+    // const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const durationMinutes = parseInt(duration.split(' ')[0]);
 
     dayjs.locale('th'); // Set the locale to Thai
@@ -61,7 +67,7 @@ function SchedulerSidebar() {
 
     // ฟังก์ชันสำหรับการตรวจสอบวันที่
     const shouldDisableDate = (date: Dayjs) => {
-        return date.isBefore(dayjs().startOf('day'));
+        return date.isBefore(dayjs().add(1, 'day').startOf('day'));
     };
     const handleDateChange = (date: Dayjs | null) => {
         if (date) {
@@ -102,7 +108,10 @@ function SchedulerSidebar() {
             const [existingStart, existingEnd] = range;
             const [newStart, newEnd] = newRange;
             return (
-                (newStart?.isBefore(existingEnd) && newEnd?.isAfter(existingStart))
+                (newStart?.isBefore(existingEnd) && newEnd?.isAfter(existingStart)) ||
+                (newStart?.isSame(existingStart) && newEnd?.isSame(existingEnd)) ||
+                (newStart?.isSameOrAfter(existingStart) && newStart?.isBefore(existingEnd)) ||
+                (newEnd?.isAfter(existingStart) && newEnd?.isSameOrBefore(existingEnd))
             );
         });
     };
@@ -141,6 +150,11 @@ function SchedulerSidebar() {
                 setError('');
             }
 
+            if (isTimeOverlapping(day, index, updatedRange)) {
+                setError("ช่วงเวลานี้ซ้ำซ้อนกับช่วงเวลาอื่นในวันเดียวกัน กรุณาเลือกช่วงเวลาที่ไม่ซ้ำซ้อน");
+            } else {
+                setError('');
+            }
             newRanges[index] = updatedRange;
 
             return {
@@ -155,7 +169,7 @@ function SchedulerSidebar() {
             const newRanges = [...(prev[day] || [])];
             let newStart: Dayjs;
             let newEnd: Dayjs;
-    
+
             if (newRanges.length === 0) {
                 // ถ้ายังไม่มีช่วงเวลาในวันนี้ ให้เริ่มจาก 9:00 - 10:00
                 newStart = dayjs(day).hour(9).minute(0);
@@ -165,7 +179,7 @@ function SchedulerSidebar() {
                 if (lastRange && lastRange[1]) {
                     newStart = lastRange[1].add(15, 'minute');
                     newEnd = newStart.add(1, 'hour');
-    
+
                     // ตรวจสอบว่าไม่เกินเที่ยงคืน
                     if (newEnd.isAfter(dayjs(day).endOf('day'))) {
                         newEnd = dayjs(day).endOf('day');
@@ -176,9 +190,9 @@ function SchedulerSidebar() {
                     newEnd = newStart.add(1, 'hour');
                 }
             }
-    
+
             newRanges.push([newStart, newEnd]);
-    
+
             return {
                 ...prev,
                 [day]: newRanges,
@@ -266,33 +280,50 @@ function SchedulerSidebar() {
 
     const handleConfirm = async () => {
         let hasError = false;
-
+    
         if (!title) {
             setErrorTitle('กรุณากรอกหัวข้อการนัดหมาย');
             hasError = true;
         } else {
             setErrorTitle(null);
         }
-
+    
         if (!location) {
             setErrorLocation('กรุณากรอกที่อยู่');
             hasError = true;
         } else {
             setErrorLocation(null);
         }
-
+    
         if (hasError) {
             return;
         }
-
+    
         const userId = parseInt(localStorage.getItem("id") || "0", 10);
         if (userId === 0) {
-            setErrorMessage("ไม่พบ ID ผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
+            toast.error("ไม่พบ ID ผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
             return;
         }
-
+    
+        // ตรวจสอบการซ้ำซ้อนของเวลาก่อนสร้าง allTimeSlots
+        const hasOverlap = Object.entries(availability).some(([day, ranges]) => {
+            return ranges.some((range, index) => isTimeOverlapping(day, index, range));
+        });
+    
+        if (hasOverlap) {
+            toast.error("มีช่วงเวลาที่ซ้ำซ้อนกัน กรุณาตรวจสอบและแก้ไขก่อนยืนยัน", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            return;
+        }
+    
         const allTimeSlots: TimeSlotsInterface[] = [];
-
+    
         Object.entries(availability).forEach(([day, ranges]) => {
             ranges.forEach(([start, end]) => {
                 if (start && end) {
@@ -301,16 +332,14 @@ function SchedulerSidebar() {
                 }
             });
         });
-
+    
         if (allTimeSlots.length === 0) {
-            setErrorMessage("ส่งข้อมูลไม่สำเร็จ กรุณาน่า สร้างข้อมูลใหม่อีกครั้ง");
+            toast.error("ไม่มีช่วงเวลาที่จะสร้าง กรุณาเพิ่มช่วงเวลาก่อนยืนยัน");
             return;
         }
-
-        console.log('All time slots to be created:', JSON.stringify(allTimeSlots, null, 2));
-
+    
         setIsLoading(true);
-
+    
         try {
             for (const slot of allTimeSlots) {
                 const res = await CreateTimeSlot(slot);
@@ -318,34 +347,65 @@ function SchedulerSidebar() {
                     throw new Error(`Failed to create time slot: ${res.data.message}`);
                 }
             }
-            
-
-            setSnackbarOpen(true);
-            setTitle('');
-            setLocation('');
-            setAvailability({});
-            setSelectedDate(null);
+    
+            toast.success('สร้างช่วงเวลาทั้งหมดสำเร็จ', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                onClose: () => {
+                    window.location.reload();
+                }
+            });
+    
+            // รีเซ็ต state
+            resetForm();
         } catch (error) {
-            setErrorMessage(error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการสร้างช่วงเวลา");
+            toast.error(error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการสร้างช่วงเวลา", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } finally {
             setIsLoading(false);
-            window.location.reload();
+            // พิจารณาว่าจำเป็นต้อง reload หรือไม่
+            // window.location.reload();
         }
     };
+    
+    // ฟังก์ชันสำหรับรีเซ็ต form
+    const resetForm = () => {
+        setTitle('');
+        setLocation('');
+        setAvailability({});
+        setSelectedDate(null);
+    };
 
-    // Effect to trigger the message
     React.useEffect(() => {
-        if (errorMessage) {
-            // messageApi.open({
-            //     type: errorMessage === "สร้างช่วงเวลาทั้งหมดสำเร็จ" ? "success" : "error",
-            //     content: errorMessage,
-            // });
-            setErrorMessage(null); // Reset the error message
-        }
-    }, [errorMessage]);
+        return () => {
+            toast.dismiss(); // ปิด toast ทั้งหมดเมื่อคอมโพเนนต์ถูก unmount
+        };
+    }, []);
+
+    // // Effect to trigger the message
+    // React.useEffect(() => {
+    //     if (errorMessage) {
+    //         // messageApi.open({
+    //         //     type: errorMessage === "สร้างช่วงเวลาทั้งหมดสำเร็จ" ? "success" : "error",
+    //         //     content: errorMessage,
+    //         // });
+    //         setErrorMessage(null); // Reset the error message
+    //     }
+    // }, [errorMessage]);
 
     return (
         <ThemeProvider theme={theme}>
+            <ToastContainer position="top-right" autoClose={5000} />
             <div className="w-full max-w-md bg-white p-6 shadow-md overflow-y-auto">
                 <h2 className="text-xl font-bold mb-4 text-ENGi-Red ">สร้างเวลานัดหมาย</h2>
                 <Box >
@@ -397,13 +457,14 @@ function SchedulerSidebar() {
                     </FormControl>
                 </Box>
                 <div >
-                    <h3 className="font-semibold mt-4">เวลาว่างทั่วไป</h3>
-                    <p className="text-sm text-gray-600">กำหนดเวลาที่คุณมักจะว่างสำหรับการนัดหมาย</p>
+    
+                    <h3 className="font-semibold mt-4 text-black">เวลาว่างทั่วไป</h3>
+                    <p className="text-sm text-gray-600 ">กำหนดเวลาที่คุณมักจะว่างสำหรับการนัดหมาย</p>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="th">
                         {Object.keys(availability).map((day) => (
                             <div key={day} className="mt-4">
                                 <div className="flex flex-col">
-                                    <h4 className="text-md font-medium mb-2 items-center">{formatDateToThai(dayjs(day))}</h4>
+                                    <h4 className="text-md font-medium mb-2 items-center text-black">{formatDateToThai(dayjs(day))}</h4>
                                     {availability[day].map((range, index) => (
                                         <div key={index} className="flex mb-2 items-center flex-row gap-4">
                                             <div className="flex-grow max-w-[180px]">
@@ -468,11 +529,12 @@ function SchedulerSidebar() {
                 >
                     {isLoading ? 'กำลังสร้าง...' : 'ยืนยัน'}
                 </button>
-                <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+
+                {/* <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
                     <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
                         สร้างช่วงเวลาทั้งหมดสำเร็จ
                     </Alert>
-                </Snackbar>
+                </Snackbar> */}
             </div>
         </ThemeProvider>
     );

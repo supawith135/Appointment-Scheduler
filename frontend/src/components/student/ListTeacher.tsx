@@ -4,7 +4,7 @@ import { GetTeachersList } from '../../services/https/student/student';
 import { UsersInterface } from '../../interfaces/IUsers';
 import { Phone, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
-
+import Default  from '../../assets/default-profile.jpg'
 function ListTeacher() {
   const [teacherData, setTeacherData] = useState<UsersInterface[]>([]);
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ function ListTeacher() {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 shadow-sm rounded-sm">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-6">
       {teacherData.map((item, index) => (
         <motion.div
           key={index}
@@ -46,35 +46,27 @@ function ListTeacher() {
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="relative">
+          <div className="relative w-full h-[350px]"> {/* ลดความสูงลงอีก */}
             <img
-              src={item.image}
-              className="w-full h-48 object-cover rounded-t-lg"
+              src={item.image || Default}
+              className="w-full h-full object-cover object-center rounded-t-lg"
               alt={item.full_name}
               onClick={() => handleBooking(item.ID)}
             />
-
           </div>
-          <div className="p-4">
-            <div className="text-black font-bold text-xl">
+          <div className="p-3"> {/* ลด padding ลงเล็กน้อย */}
+            <div className="text-black font-bold text-base mb-1"> {/* ลดขนาดตัวอักษรและเพิ่ม margin-bottom */}
               {`${item.position?.position_name} ${item.full_name}`}
             </div>
-            <div className="flex items-center text-gray-600 my-2">
-              <Mail size={18} className="mr-2" />
+            <div className="flex items-center text-gray-600 my-1 text-xs"> {/* ลดขนาดตัวอักษรลงอีก */}
+              <Mail size={18} className="mr-1" />
               {item.email}
             </div>
-            <div className="flex items-center text-gray-600 my-2">
-              <Phone size={18} className="mr-2" />
+            <div className="flex items-center text-gray-600 my-1 text-xs"> {/* ลดขนาดตัวอักษรลงอีก */}
+              <Phone size={18} className="mr-1" />
               {item.contact_number}
             </div>
           </div>
-          {/* <button
-            type="button"
-            className="bg-ENGi-Red text-white w-full py-2 hover:bg-ENGi-Red-dark transition-colors duration-300"
-            onClick={() => handleMoreDetail(item.ID)}
-          >
-            More Detail
-          </button> */}
         </motion.div>
       ))}
     </div>

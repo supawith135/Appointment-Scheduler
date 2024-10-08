@@ -9,6 +9,7 @@ import { BookingsInterface } from '../../interfaces/IBookings';
 import { UpdateBookingStudentById } from '../../services/https/teacher/listBookingStudent';
 import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
+import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 import {  CheckCircle ,XCircle } from 'react-feather'; // เพิ่ม import icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { CheckCircle as Clock, Cancel } from '@mui/icons-material';

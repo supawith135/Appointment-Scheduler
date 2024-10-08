@@ -112,6 +112,7 @@ function AddTeacherListPage() {
             role_id: 2,
             password: row[3],
             contact_number: row[4],
+            // image: row[5],
           }));
         setUsersData(data);
         console.log("CSV data: ", data);
@@ -140,6 +141,7 @@ function AddTeacherListPage() {
           role_id: 2,
           password: row[3],
           contact_number: row[4],
+          // image: row[5],
         }));
       setUsersData(jsonData);
       console.log("XLSX data: ", jsonData);
@@ -197,6 +199,7 @@ function AddTeacherListPage() {
             password: user.password || '',
             role_id: user.role_id ?? 2,
             contact_number: user.contact_number,
+            // image: user.image || '',
           };
 
           const res = await CreateTeacher(userJson);
@@ -291,21 +294,29 @@ function AddTeacherListPage() {
                     <Table>
                       <TableHead>
                         <TableRow>
-                        <TableCell>ลำดับ</TableCell>
+                          <TableCell>ลำดับ</TableCell>
                           <TableCell>ตำแหน่ง</TableCell>
                           <TableCell>ชื่อ</TableCell>
                           <TableCell>อีเมล</TableCell>
                           <TableCell>เบอร์โทร</TableCell>
+                          {/* <TableCell>รูปภาพ</TableCell> */}
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {usersData.map((user, index) => (
                           <TableRow key={index}>
-                            <TableCell>{index +1}</TableCell>
+                            <TableCell>{index + 1}</TableCell>
                             <TableCell>{mapPositionToName(Number(user.position_id))}</TableCell>
                             <TableCell>{user.full_name}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.contact_number}</TableCell>
+                            <TableCell>
+                              {/* {user.image ? (
+                                <img src={user.image} alt={user.full_name} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                              ) : (
+                                'ไม่มีรูปภาพ'
+                              )} */}
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>

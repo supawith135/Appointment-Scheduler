@@ -29,19 +29,19 @@ func UpdateTimeSlotsAvailability() error {
     db := config.DB()
     var timeSlots []entity.TimeSlots
 
-    // Get the current date
+    // Get the current time
     now := time.Now()
-    today := now.Format("2006-01-02") // Format the date to YYYY-MM-DD
 
-    // Update availability for time slots ending today
+    // Update availability for time slots where slot_end_time has passed and is still available
     err := db.Model(&timeSlots).
-        Where("DATE(slot_end_time) = ?", today).
+        Where("slot_end_time <= ? AND is_available = ?", now, true).
         Update("is_available", false).Error
     if err != nil {
         log.Printf("Error updating time slots availability: %v", err)
         return err
     }
-    
-    log.Println("Time slots availability updated successfully for today's date.")
+
+    log.Println("Time slots availability updated successfully for slots with passed end times.")
     return nil
 }
+

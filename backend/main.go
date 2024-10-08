@@ -67,8 +67,6 @@ func main() {
 		//student
 		teachers.GET("/studentDetail/:user_name", teacher.GetTeacherStudentByUserName)
 		teachers.GET("/studentInCharge/:id", teacher.GetStudentInCharge)
-		
-		
 	}
 
 	// Admin routes
@@ -87,15 +85,13 @@ func main() {
 		//add Student
 		admins.POST("/createStudent", admin.CreateStudent)
 		admins.DELETE("/deleteStudent/:id", admin.DeleteStudentById)
-		
 		//teacher
 		admins.POST("/createTeacher", admin.CreateTeacher)
 		admins.DELETE("/deleteTeacher/:id", admin.DeleteTeacherById)
 		admins.GET("/positions", admin.GetPositionsList)
-		
-		
+
 	}
-	
+
 	r.Run()
 	// r.Run();
 	// ใช้ select {} เพื่อรอให้ goroutine ทำงานโดยไม่ปิดโปรแกรม
@@ -124,8 +120,9 @@ func startCronJob() {
 			log.Println("Time slots availability updated successfully.")
 		}
 	})
-	// Job สำหรับอัปเดตสถานะของ Bookings ให้รันทุก ๆ 2 ชั่วโมง
-	c.AddFunc("0 */1 * * *", func() {
+	
+	// Cron job นี้จะทำงานทุก 15 นาทีเพื่ออัปเดต time slots
+	c.AddFunc("*/15 * * * *", func() {
 		log.Println("Running UpdateBookingsStatus...")
 		err := startCronJobControllers.UpdateBookingsStatus()
 		if err != nil {
@@ -134,7 +131,6 @@ func startCronJob() {
 			log.Println("Bookings status availability updated successfully.")
 		}
 	})
-
 	// เริ่มต้น cron job
 	c.Start()
 }

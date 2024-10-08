@@ -60,6 +60,7 @@ func SetupDatabase() {
 	// Configure your PostgreSQL database details here
 	// dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
 	// 	host, port, user, password, dbname, sslmode , timezone)
+
 	dsn := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s timezone=%s ",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
@@ -69,6 +70,7 @@ func SetupDatabase() {
 		os.Getenv("DB_SSLMODE"),
 		os.Getenv("DB_TIMEZONE"),
 	)
+
 	// New logger for detailed SQL logging
 
 	// newLogger := logger.New(
@@ -91,7 +93,7 @@ func SetupDatabase() {
 	db = database
 
 	// Drop and migrate tables
-	db.Migrator().DropTable(&entity.Users{}, &entity.Positions{}, &entity.Genders{}, &entity.Roles{}, &entity.TimeSlots{}, &entity.Bookings{}, &entity.Statuses{})
+	// db.Migrator().DropTable(&entity.Users{}, &entity.Positions{}, &entity.Genders{}, &entity.Roles{}, &entity.TimeSlots{}, &entity.Bookings{}, &entity.Statuses{})
 	db.AutoMigrate(&entity.Users{}, &entity.Positions{}, &entity.Genders{}, &entity.Roles{}, &entity.TimeSlots{}, &entity.Bookings{}, &entity.Statuses{})
 	fmt.Println("Database migration completed!")
 
@@ -145,37 +147,37 @@ func seedData() {
 	// Seed User data
 	users := []entity.Users{
 		// Teacher
-		{
-			PositionID: uintPtr(3),
-			FullName:   "สมพงษ์ ดีงาน",
-			RoleID:     uintPtr(2),
-			AdvisorID:  nil,
-			Email:      "Sompong@gmail.com",
-			UserName:   "Sompong",
-			Password:   "a123456", // Will be hashed
-			GenderID:   uintPtr(1),
+		// {
+		// 	PositionID: uintPtr(3),
+		// 	FullName:   "สมพงษ์ ดีงาน",
+		// 	RoleID:     uintPtr(2),
+		// 	AdvisorID:  nil,
+		// 	Email:      "Sompong@gmail.com",
+		// 	UserName:   "Sompong",
+		// 	Password:   "a123456", // Will be hashed
+		// 	GenderID:   uintPtr(1),
 			
-		},
-		{
-			PositionID: uintPtr(2),
-			FullName:   "อลิยา ทองกาล",
-			RoleID:     uintPtr(2),
-			AdvisorID:  nil,
-			Email:      "Alia@gmail.com",
-			UserName:   "Alia",
-			Password:   "a123456",
-			GenderID:   uintPtr(2),
-		},
-		{
-			PositionID: uintPtr(1),
-			FullName:   "อรัน บุตรดี",
-			RoleID:     uintPtr(2),
-			AdvisorID:  nil,
-			Email:      "Alan@gmail.com",
-			UserName:   "Alan",
-			Password:   "a123456",
-			GenderID:   uintPtr(1),
-		},
+		// },
+		// {
+		// 	PositionID: uintPtr(2),
+		// 	FullName:   "อลิยา ทองกาล",
+		// 	RoleID:     uintPtr(2),
+		// 	AdvisorID:  nil,
+		// 	Email:      "Alia@gmail.com",
+		// 	UserName:   "Alia",
+		// 	Password:   "a123456",
+		// 	GenderID:   uintPtr(2),
+		// },
+		// {
+		// 	PositionID: uintPtr(1),
+		// 	FullName:   "อรัน บุตรดี",
+		// 	RoleID:     uintPtr(2),
+		// 	AdvisorID:  nil,
+		// 	Email:      "Alan@gmail.com",
+		// 	UserName:   "Alan",
+		// 	Password:   "a123456",
+		// 	GenderID:   uintPtr(1),
+		// },
 		// // Admin
 		{
 			FullName:   "แอดมิน เทส",
@@ -187,46 +189,46 @@ func seedData() {
 			GenderID:   uintPtr(1),
 		},
 		// Student
-		{
-			PositionID: nil,
-			FullName:   "นักเรียน ดีเด่น",
-			RoleID:     uintPtr(1),
-			AdvisorID:  uintPtr(2),
-			Email:      "B6412345@gmail.com",
-			UserName:   "B6412345",
-			Password:   "b123456",
-			GenderID:   uintPtr(1),
-		},
-		{
-			PositionID: nil,
-			FullName:   "นายตั้งใจ มาเรียน",
-			RoleID:     uintPtr(1),
-			AdvisorID:  uintPtr(2),
-			Email:      "B64126265@gmail.com",
-			UserName:   "student2",
-			Password:   "b123456",
-			GenderID:   uintPtr(1),
-		},
-		{
-			PositionID: nil,
-			FullName:   "นายขย้นโดดเรียน",
-			RoleID:     uintPtr(1),
-			AdvisorID:  uintPtr(2),
-			Email:      "B641444444265@gmail.com",
-			UserName:   "student3",
-			Password:   "b123456",
-			GenderID:   uintPtr(1),
-		},
-		{
-			PositionID: nil,
-			FullName:   "เด็กดี วีสตาร์",
-			RoleID:     uintPtr(1),
-			AdvisorID:  uintPtr(1),
-			Email:      "B123456@gmail.com",
-			UserName:   "DekDeeVstart",
-			Password:   "a123456",
-			GenderID:   uintPtr(2),
-		},
+		// {
+		// 	PositionID: nil,
+		// 	FullName:   "นักเรียน ดีเด่น",
+		// 	RoleID:     uintPtr(1),
+		// 	AdvisorID:  uintPtr(2),
+		// 	Email:      "B6412345@gmail.com",
+		// 	UserName:   "B6412345",
+		// 	Password:   "b123456",
+		// 	GenderID:   uintPtr(1),
+		// },
+		// {
+		// 	PositionID: nil,
+		// 	FullName:   "นายตั้งใจ มาเรียน",
+		// 	RoleID:     uintPtr(1),
+		// 	AdvisorID:  uintPtr(2),
+		// 	Email:      "B64126265@gmail.com",
+		// 	UserName:   "student2",
+		// 	Password:   "b123456",
+		// 	GenderID:   uintPtr(1),
+		// },
+		// {
+		// 	PositionID: nil,
+		// 	FullName:   "นายขย้นโดดเรียน",
+		// 	RoleID:     uintPtr(1),
+		// 	AdvisorID:  uintPtr(2),
+		// 	Email:      "B641444444265@gmail.com",
+		// 	UserName:   "student3",
+		// 	Password:   "b123456",
+		// 	GenderID:   uintPtr(1),
+		// },
+		// {
+		// 	PositionID: nil,
+		// 	FullName:   "เด็กดี วีสตาร์",
+		// 	RoleID:     uintPtr(1),
+		// 	AdvisorID:  uintPtr(1),
+		// 	Email:      "B123456@gmail.com",
+		// 	UserName:   "DekDeeVstart",
+		// 	Password:   "a123456",
+		// 	GenderID:   uintPtr(2),
+		// },
 	}
 
 	for i, user := range users {
