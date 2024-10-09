@@ -77,6 +77,13 @@ const StudentHistoryTable: React.FC = () => {
         setSelectedBooking(null);
     };
 
+    const handleDeleteSuccess = () => {
+        const id = String(localStorage.getItem("id"));
+        if (id) {
+            getBookingByStudentID(id); // Refresh data after deletion
+        }
+    };
+
     // // Handle delete action
     // const handleDelete = (id: number) => {
     //     console.log(`Delete appointment ID: ${id}`);
@@ -107,7 +114,7 @@ const StudentHistoryTable: React.FC = () => {
             headerName: 'ชื่ออาจารย์',
             description: 'รายชื่ออาจารย์',
             sortable: false,
-            width : 200,
+            width : 250,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
         },
         {
@@ -259,6 +266,7 @@ const StudentHistoryTable: React.FC = () => {
                 open={isModalOpen}
                 onClose={handleCloseModal}
                 bookingDetails={selectedBooking}
+                onDeleteSuccess={handleDeleteSuccess} // Pass the function as a prop
             />
         </div>
     );

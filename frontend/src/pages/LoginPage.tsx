@@ -93,16 +93,21 @@ function Login() {
                 <p className='text-center text-2xl text-ENGi-Red font-bold'>วิธีการเข้าสู่ระบบ</p>
                 {/* Instructions for different user roles */}
                 <p className='text-lx text-black font-bold mt-2'>อาจารย์</p>
-                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Sompong</p>
+                {/* <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Sompong</p>
                 <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p>
                 <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Alia</p>
-                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p> */}
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : user@sut.ac.th</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : user@sut.ac.th</p>
+                
 
                 <p className='text-lx text-black font-bold mt-2'>นักศึกษา</p>
-                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : B6412345</p>
+                {/* <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : B6412345</p>
                 <p className='text-sm text-black ml-6'>• รหัสผ่าน : b123456</p>
                 <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : DekDeeVstart</p>
-                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : a123456</p> */}
+                <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : B64XXXXX</p>
+                <p className='text-sm text-black ml-6'>• รหัสผ่าน : B64XXXXX</p>
 
                 <p className='text-lx text-black font-bold mt-2'>แอดมิน</p>
                 <p className='text-sm text-black ml-6'>• ชื่อผู้ใช้ : Admin</p>

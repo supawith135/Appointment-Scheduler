@@ -53,7 +53,7 @@ func main() {
 		teachers.PATCH("/:id", teacher.UpdateTeacherById)
 		teachers.GET("/timeslot", teacher.GetListTimeSlots)
 		teachers.GET("/timeslot/:id", teacher.GetTimeSlotById)
-		teachers.POST("/timeslot", teacher.CreateTimeSlot)
+		teachers.POST("/timeslot", teacher.CreateTimeSlots)
 		// teachers.PUT("/timeslot/:id", teacher.UpdateTimeSlotById)
 		teachers.DELETE("/timeslot/:id", teacher.DeleteTimeSlotById)
 		//bookingListStudent
@@ -121,8 +121,8 @@ func startCronJob() {
 		}
 	})
 	
-	// Cron job นี้จะทำงานทุก 15 นาทีเพื่ออัปเดต time slots
-	c.AddFunc("*/15 * * * *", func() {
+	// Cron job ทำงานทุกๆ 2 ชั่วโมง เพื่ออัปเดต time slots
+	c.AddFunc("0 */2 * * *", func() {
 		log.Println("Running UpdateBookingsStatus...")
 		err := startCronJobControllers.UpdateBookingsStatus()
 		if err != nil {

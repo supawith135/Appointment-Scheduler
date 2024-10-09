@@ -66,6 +66,7 @@ const Profile: React.FC = () => {
             location: userData.location,
             email: userData.email,
         };
+        console.log("value : ", value)
 
         try {
             let res;
@@ -78,6 +79,7 @@ const Profile: React.FC = () => {
             }
 
             if (res && res.status === 200) {
+                console.log("User Pro File: ", res.data)
                 toast.success('Profile updated successfully!');
             } else {
                 toast.error('Error updating profile. Please try again.');

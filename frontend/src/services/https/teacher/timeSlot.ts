@@ -31,7 +31,7 @@ async function GetTimeSlotById(id: string) {
         .catch((e) => e.response);
 }
 
-async function CreateTimeSlot(data: TimeSlotsInterface) {
+async function CreateTimeSlots(data: TimeSlotsInterface[]) {
 
     return await axios
         .post(`${apiUrl}/teacher/timeslot`, data, requestOptions)
@@ -57,7 +57,7 @@ async function DeleteTimeSlotById(id: string) {
 export {
     GetListTimeSlots,
     GetTimeSlotById,
-    CreateTimeSlot,
+    CreateTimeSlots,
     UpdateTimeSlotById,
     DeleteTimeSlotById,
 };

@@ -67,7 +67,7 @@ function TeacherAccountPage() {
         const value: UsersInterface = {
             ID: Number(id),
             full_name: fullName,
-            location,
+            // location,
             position_id: selectedPosition || undefined,   // Include selected position ID in the payload
             password: newPassword || undefined,  // Add password only if it exists
         };
@@ -175,7 +175,7 @@ function TeacherAccountPage() {
                             />
                         </div>
 
-                        <div>
+                        {/* <div>
                             <div className="mb-2">
                                 <label className="text-xl font-bold text-gray-700 mb-2">ที่อยู่</label>
                                 <p className="text-sm text-gray-600">กรุณากรอกที่อยู่ของอาจารย์</p>
@@ -186,7 +186,7 @@ function TeacherAccountPage() {
                                 onChange={(e) => setLocation(e.target.value)}
                                 className="w-full p-3 bg-white border border-red-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 ease-in-out"
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     <motion.div

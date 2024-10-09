@@ -109,7 +109,7 @@ const StudentBookingTable: React.FC = () => {
             headerName: 'ชื่ออาจารย์',
             description: 'รายชื่ออาจารย์',
             sortable: false,
-            width : 200,
+            width : 250,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
         },
         {

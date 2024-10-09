@@ -16,7 +16,7 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
-import { CreateTimeSlot } from '../../services/https/teacher/timeSlot';
+import { CreateTimeSlots } from '../../services/https/teacher/timeSlot';
 
 import { TimeSlotsInterface } from '../../interfaces/ITimeSlots';
 import { ToastContainer, toast } from 'react-toastify';
@@ -32,6 +32,11 @@ const theme = createTheme({
     },
 });
 
+interface ErrorState {
+    [key: string]: { [index: number]: string };
+}
+
+
 function SchedulerSidebar() {
     const today = dayjs().add(1, 'day').format('YYYY-MM-DD');
     const [availability, setAvailability] = React.useState<Record<string, DateRange<Dayjs>[]>>({
@@ -43,6 +48,7 @@ function SchedulerSidebar() {
     const [location, setLocation] = React.useState<string>('');
     const [duration, setDuration] = React.useState<string>('15 นาที');
     const [error, setError] = React.useState<string>('');
+    const [errors, setErrors] = React.useState<ErrorState>({});
     const [errorTitle, setErrorTitle] = React.useState<string | null>(null);
     const [errorLocation, setErrorLocation] = React.useState<string | null>(null);
     // const [messageApi, contextHolder] = message.useMessage();
@@ -87,10 +93,12 @@ function SchedulerSidebar() {
     };
 
     const isFormValid = () => {
-        return title && location && Object.keys(availability).length > 0 && !error;
+        // ตรวจสอบว่ามี title, location, availability และไม่มีข้อผิดพลาดใน errors
+        const hasErrors = Object.keys(errors).some(day => errors[day] && Object.keys(errors[day]).length > 0);
+        return title && location && Object.keys(availability).length > 0 && !hasErrors;
     };
 
-    const isTimeRangeValid = (start: Dayjs | null, end: Dayjs | null): boolean => {
+    const  isTimeRangeValid = (start: Dayjs | null, end: Dayjs | null): boolean => {
         if (!start || !end) return true;
         const startMinutes = start.minute();
         const endMinutes = end.minute();
@@ -102,18 +110,24 @@ function SchedulerSidebar() {
         );
     };
 
-    const isTimeOverlapping = (day: string, index: number, newRange: DateRange<Dayjs>): boolean => {
-        return availability[day].some((range, i) => {
+    const isTimeOverlapping = (day: string, index: number, newRange: DateRange<Dayjs>): { overlaps: boolean; overlappingRanges: string[] } => {
+        const overlappingRanges: string[] = [];
+        const overlaps = availability[day].some((range, i) => {
             if (i === index) return false;
             const [existingStart, existingEnd] = range;
             const [newStart, newEnd] = newRange;
-            return (
+            if (
                 (newStart?.isBefore(existingEnd) && newEnd?.isAfter(existingStart)) ||
                 (newStart?.isSame(existingStart) && newEnd?.isSame(existingEnd)) ||
                 (newStart?.isSameOrAfter(existingStart) && newStart?.isBefore(existingEnd)) ||
                 (newEnd?.isAfter(existingStart) && newEnd?.isSameOrBefore(existingEnd))
-            );
+            ) {
+                overlappingRanges.push(`${existingStart?.format('HH:mm')} - ${existingEnd?.format('HH:mm')}`);
+                return true;
+            }
+            return false;
         });
+        return { overlaps, overlappingRanges };
     };
 
     const handleTimeChange = (day: string, index: number, type: 'start' | 'end', newValue: Dayjs | null) => {
@@ -128,33 +142,51 @@ function SchedulerSidebar() {
                 updatedRange = [currentRange[0], newValue];
             }
 
-            // Check if both start and end times are set
             if (updatedRange[0] && updatedRange[1]) {
-                // Check if start time is the same as end time
-                if (updatedRange[0].isSame(updatedRange[1])) {
-                    setError("เวลาเริ่มต้นต้องมาก่อนเวลาสิ้นสุด");
-                    return prev; // Return the previous state without updating
-                }
-                // Check if start time is after end time
-                if (updatedRange[0].isAfter(updatedRange[1])) {
-                    setError("เวลาเริ่มต้นต้องมาก่อนเวลาสิ้นสุด");
-                    return prev; // Return the previous state without updating
+                if (updatedRange[0].isSame(updatedRange[1]) || updatedRange[0].isAfter(updatedRange[1])) {
+                    setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        [day]: {
+                            ...prevErrors[day],
+                            [index]: "เวลาเริ่มต้นต้องมาก่อนเวลาสิ้นสุด"
+                        }
+                    }));
+                    return prev;
                 }
             }
 
             if (!isTimeRangeValid(updatedRange[0], updatedRange[1])) {
-                setError(`ช่วงเวลาที่เลือกไม่สอดคล้องกับช่วงเวลา ${duration}`);
-            } else if (isTimeOverlapping(day, index, updatedRange)) {
-                setError("ช่วงเวลานี้ซ้ำซ้อนกับช่วงเวลาอื่นในวันเดียวกัน");
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [day]: {
+                        ...prevErrors[day],
+                        [index]: `ช่วงเวลาที่เลือกไม่สอดคล้องกับช่วงเวลา ${duration}`
+                    }
+                }));
             } else {
-                setError('');
+                const { overlaps, overlappingRanges } = isTimeOverlapping(day, index, updatedRange);
+                if (overlaps) {
+                    setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        [day]: {
+                            ...prevErrors[day],
+                            [index]: `ช่วงเวลาซ้ำซ้อนกับช่วงเวลา: ${overlappingRanges.join(', ')}`
+                        }
+                    }));
+                } else {
+                    setErrors((prevErrors) => {
+                        const newErrors = { ...prevErrors };
+                        if (newErrors[day]) {
+                            delete newErrors[day][index];
+                            if (Object.keys(newErrors[day]).length === 0) {
+                                delete newErrors[day];
+                            }
+                        }
+                        return newErrors;
+                    });
+                }
             }
 
-            if (isTimeOverlapping(day, index, updatedRange)) {
-                setError("ช่วงเวลานี้ซ้ำซ้อนกับช่วงเวลาอื่นในวันเดียวกัน กรุณาเลือกช่วงเวลาที่ไม่ซ้ำซ้อน");
-            } else {
-                setError('');
-            }
             newRanges[index] = updatedRange;
 
             return {
@@ -227,8 +259,8 @@ function SchedulerSidebar() {
             slots.push({
                 user_id: userId,
                 slot_date: new Date(`${date}T00:00:00+07:00`), // Convert to Date
-                slot_start_time: new Date(currentStartTime.format('YYYY-MM-DDTHH:mm:ss[+07:00]')), // Convert to Date
-                slot_end_time: new Date(slotEndTime.format('YYYY-MM-DDTHH:mm:ss[+07:00]')), // Convert to Date
+                slot_start_time: new Date(currentStartTime.format(`${date}THH:mm:ss[+07:00]`)), // Convert to Date
+                slot_end_time: new Date(slotEndTime.format(`${date}THH:mm:ss[+07:00]`)), // Convert to Date
                 title: title,
                 location: location,
                 is_available: true,
@@ -280,38 +312,47 @@ function SchedulerSidebar() {
 
     const handleConfirm = async () => {
         let hasError = false;
-    
+
         if (!title) {
             setErrorTitle('กรุณากรอกหัวข้อการนัดหมาย');
             hasError = true;
         } else {
             setErrorTitle(null);
         }
-    
+
         if (!location) {
             setErrorLocation('กรุณากรอกที่อยู่');
             hasError = true;
         } else {
             setErrorLocation(null);
         }
-    
+
         if (hasError) {
             return;
         }
-    
+
         const userId = parseInt(localStorage.getItem("id") || "0", 10);
         if (userId === 0) {
             toast.error("ไม่พบ ID ผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
             return;
         }
-    
+
         // ตรวจสอบการซ้ำซ้อนของเวลาก่อนสร้าง allTimeSlots
+        const overlappingTimes: string[] = [];
         const hasOverlap = Object.entries(availability).some(([day, ranges]) => {
-            return ranges.some((range, index) => isTimeOverlapping(day, index, range));
+            return ranges.some((range, index) => {
+                const { overlaps, overlappingRanges } = isTimeOverlapping(day, index, range);
+                if (overlaps) {
+                    const formattedDay = dayjs(day).format('D MMMM YYYY');
+                    overlappingTimes.push(`วันที่ ${formattedDay}: ${overlappingRanges.join(', ')}`);
+                    return true;
+                }
+                return false;
+            });
         });
-    
+
         if (hasOverlap) {
-            toast.error("มีช่วงเวลาที่ซ้ำซ้อนกัน กรุณาตรวจสอบและแก้ไขก่อนยืนยัน", {
+            toast.error(`มีช่วงเวลาที่ซ้ำซ้อนกัน กรุณาตรวจสอบและแก้ไขก่อนยืนยัน:\n${overlappingTimes.join('\n')}`, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -321,9 +362,8 @@ function SchedulerSidebar() {
             });
             return;
         }
-    
         const allTimeSlots: TimeSlotsInterface[] = [];
-    
+
         Object.entries(availability).forEach(([day, ranges]) => {
             ranges.forEach(([start, end]) => {
                 if (start && end) {
@@ -332,22 +372,21 @@ function SchedulerSidebar() {
                 }
             });
         });
-    
+
         if (allTimeSlots.length === 0) {
             toast.error("ไม่มีช่วงเวลาที่จะสร้าง กรุณาเพิ่มช่วงเวลาก่อนยืนยัน");
             return;
         }
-    
+        console.log(allTimeSlots);
         setIsLoading(true);
-    
+
         try {
-            for (const slot of allTimeSlots) {
-                const res = await CreateTimeSlot(slot);
-                if (res.status !== 201) {
-                    throw new Error(`Failed to create time slot: ${res.data.message}`);
-                }
+            const res = await CreateTimeSlots(allTimeSlots); // ส่ง allTimeSlots โดยตรง
+            if (res.status !== 201) {
+                console.log("data : ", res.data);
+                throw new Error(`Failed to create time slot: ${res.data.message}`);
             }
-    
+
             toast.success('สร้างช่วงเวลาทั้งหมดสำเร็จ', {
                 position: "top-right",
                 autoClose: 5000,
@@ -359,7 +398,7 @@ function SchedulerSidebar() {
                     window.location.reload();
                 }
             });
-    
+
             // รีเซ็ต state
             resetForm();
         } catch (error) {
@@ -370,6 +409,9 @@ function SchedulerSidebar() {
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
+                onClose: () => {
+                    window.location.reload();
+                }
             });
         } finally {
             setIsLoading(false);
@@ -377,7 +419,7 @@ function SchedulerSidebar() {
             // window.location.reload();
         }
     };
-    
+
     // ฟังก์ชันสำหรับรีเซ็ต form
     const resetForm = () => {
         setTitle('');
@@ -457,7 +499,7 @@ function SchedulerSidebar() {
                     </FormControl>
                 </Box>
                 <div >
-    
+
                     <h3 className="font-semibold mt-4 text-black">เวลาว่างทั่วไป</h3>
                     <p className="text-sm text-gray-600 ">กำหนดเวลาที่คุณมักจะว่างสำหรับการนัดหมาย</p>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="th">
@@ -473,7 +515,6 @@ function SchedulerSidebar() {
                                                     value={range[0]}
                                                     onChange={(newValue) => handleTimeChange(day, index, 'start', newValue)}
                                                     shouldDisableTime={(time) => getDisabledTimes(day, index).some(disabledTime => disabledTime.isSame(time, 'minute'))}
-
                                                 />
                                             </div>
                                             -
@@ -483,7 +524,6 @@ function SchedulerSidebar() {
                                                     value={range[1]}
                                                     onChange={(newValue) => handleTimeChange(day, index, 'end', newValue)}
                                                     shouldDisableTime={(time) => getDisabledTimes(day, index).some(disabledTime => disabledTime.isSame(time, 'minute'))}
-
                                                 />
                                             </div>
                                             <div className='items-center ml-3 flex justify-center'>
@@ -499,7 +539,9 @@ function SchedulerSidebar() {
                                         </div>
 
                                     ))}
-                                    {error && <Alert severity="error">{error}</Alert>}
+                                    {errors[day] && Object.values(errors[day]).map((error, index) => (
+                                        <Alert key={index} severity="error" className="mt-2">{error}</Alert>
+                                    ))}
                                 </div>
                             </div>
                         ))}

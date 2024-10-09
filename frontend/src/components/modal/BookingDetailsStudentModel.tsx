@@ -7,7 +7,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BookingsInterface } from '../../interfaces/IBookings';
 import { motion } from 'framer-motion';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { CheckCircle, XCircle} from 'react-feather'; // เพิ่ม import icons
 import { CheckCircle as Clock,  Cancel} from '@mui/icons-material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -16,6 +18,7 @@ interface BookingDetailsStudentModelProps {
     open: boolean;
     onClose: () => void;
     bookingDetails: BookingsInterface;
+    onDeleteSuccess: () => void; // New prop
 }
 
 
@@ -52,51 +55,38 @@ const formatTime = (timeString: string) => {
     return time.toLocaleTimeString('th-TH', options);
 };
 
-const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({ open, onClose, bookingDetails }) => {
+const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({ open, onClose, bookingDetails,onDeleteSuccess}) => {
 
 
     const handleSubmit = async () => {
         const id = String(bookingDetails.ID);
-        toast.promise(
-            DeleteBookingById(id),
-          {
-            loading: 'กำลังยกเลิกการจอง...',
-            success: (res) => {
-              if (res.status === 200) {
-                setTimeout(() => window.location.reload(), 2000);
-                return (
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <CheckCircle color="green" size={20} style={{ marginRight: '8px' }} />
-                    <span>ยกเลิกการจองสำเร็จ</span>
-                  </div>
-                );
-              } else {
-                throw new Error('Unexpected response status');
-              }
-            },
-            error: () => (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <XCircle color="red" size={20} style={{ marginRight: '8px' }} />
-                <span>เกิดข้อผิดพลาดในการยกเลิกข้อมูล</span>
-              </div>
-            ),
-          },
-          {
-            style: {
-              minWidth: '250px',
-              backgroundColor: '#333',
-              color: '#fff',
-            },
-            success: {
-              duration: 5000,
-              icon: '🎉',
-            },
-            error: {
-              duration: 5000,
-              icon: '❌',
-            },
-          }
-        );
+        try {
+            const res = await DeleteBookingById(id);
+            if (res.status === 200) {
+                toast.success(res.message || 'บันทึกข้อมูลสำเร็จ', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                onDeleteSuccess();
+                onClose();
+            }
+        } catch (error: any) {
+            const errorMessage = error.res?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
+            toast.error(errorMessage, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        }
     };
     const handleCancelBooking = () => {
         if (canCancelBooking) {
@@ -217,7 +207,7 @@ const BookingDetailsStudentModel: React.FC<BookingDetailsStudentModelProps> = ({
                     </Box>
                 </Fade>
             </Modal>
-            <Toaster position="top-center" reverseOrder={false} />
+            <ToastContainer/>
         </ThemeProvider>
     );
 };
