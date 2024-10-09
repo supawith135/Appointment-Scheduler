@@ -16,6 +16,7 @@ interface ModalProps {
 
 const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, slotDetails }) => {
     const [reason, setReason] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const modalRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
@@ -36,6 +37,13 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, slotDetails }) => {
 
     const handleSubmit = async () => {
         if (!slotDetails) return;
+
+        if (!reason) {
+            setErrorMessage("กรุณาระบุสาเหตุที่เข้าพบ");
+            return; // หากไม่มีเหตุผลให้ไม่ส่งข้อมูล
+        } else {
+            setErrorMessage(''); // เคลียร์ข้อความแจ้งเตือน
+        }
 
         const values: BookingsInterface = {
             user_id: Number(localStorage.getItem("id")),
@@ -139,6 +147,9 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, slotDetails }) => {
                                 className="w-full p-3 border border-gray-300 rounded-md mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-red-700 transition duration-300 ease-in-out"
                                 placeholder="กรุณากรอกรายละเอียด..."
                             />
+                              {errorMessage && (
+                                <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+                            )}
                         </motion.div>
 
                         <motion.div
@@ -159,7 +170,8 @@ const ModalTime: React.FC<ModalProps> = ({ isOpen, onClose, slotDetails }) => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleSubmit}
-                                className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300 ease-in-out"
+                                disabled={!reason} // ปิดการใช้งานปุ่มถ้าสาเหตุไม่ถูกกรอก
+                                className={`bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300 ease-in-out ${!reason ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 จอง
                             </motion.button>

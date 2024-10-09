@@ -33,17 +33,17 @@ function TeacherAccountPage() {
     const handleConfirm = async (values: UsersInterface) => {
         setLoading(true);
         
-        // ตรวจสอบว่ามีการอัปโหลดรูปภาพหรือไม่
-        if (!imageString) {
-            toast.error('กรุณาอัปโหลดรูปภาพก่อนส่งข้อมูล!');
-            setLoading(false);
-            return; // หยุดการทำงานหากไม่มีรูปภาพ
-        }
+        // // ตรวจสอบว่ามีการอัปโหลดรูปภาพหรือไม่
+        // if (!imageString) {
+        //     toast.error('กรุณาอัปโหลดรูปภาพก่อนส่งข้อมูล!');
+        //     setLoading(false);
+        //     return; // หยุดการทำงานหากไม่มีรูปภาพ
+        // }
     
         values.user_name = values.email;
         values.role_id = 2;
         values.password = values.email;
-        values.image = imageString;
+        // values.image = imageString;
         console.log("values :", values);
     
         try {
@@ -97,7 +97,7 @@ function TeacherAccountPage() {
                     >
                         ข้อมูลอาจารย์
                     </motion.h1>
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -129,7 +129,7 @@ function TeacherAccountPage() {
                         >
                             Choose Image
                         </label>
-                    </div>
+                    </div> */}
 
                     <Form
                         {...formItemLayout}
@@ -141,8 +141,9 @@ function TeacherAccountPage() {
                             contact_number: '',
                         }}
                     >
-                        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                        <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }} >
                             <Form.Item
+                            
                                 label={<span className="text-lg font-semibold font-NotoSans">ตำแหน่ง</span>}
                                 name="position_id"
                                 rules={[{ required: true, message: "กรุณาเลือกตำแหน่ง !" }]}
@@ -189,7 +190,9 @@ function TeacherAccountPage() {
                                         message: "อีเมลต้องลงท้ายด้วย @sut.ac.th เช่น XXXXX@sut.ac.th"
 
                                     },
+                                    
                                 ]}
+                                style={{ marginBottom: '20px' }}
                             >
                                 <Input
                                     prefix={<MailOutlined className="text-indigo-500" />}
@@ -201,7 +204,7 @@ function TeacherAccountPage() {
 
                         <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                             <Form.Item
-                                label={<span className="text-lg font-semibold font-NotoSans">เบอร์ติดต่อ</span>}
+                                label={<span className="text-lg font-semibold font-NotoSans ">เบอร์ติดต่อ</span>}
                                 name="contact_number"
                                 rules={[
                                     { required: true, message: 'กรุณาใส่เบอร์ติดต่อ' },
@@ -228,7 +231,7 @@ function TeacherAccountPage() {
                                     type="primary"
                                     htmlType="submit"
                                     loading={loading}
-                                    style={{ height: '48px' }} // เพิ่มความสูงที่ต้องการ
+                                    style={{ height: '48px' , marginTop: '40px'}} // เพิ่มความสูงที่ต้องการ
                                     className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-full shadow-lg"
                                 >
                                     {loading ? 'กำลังบันทึก...' : 'ยืนยันข้อมูล'}
@@ -239,7 +242,7 @@ function TeacherAccountPage() {
                 </motion.div>
             </motion.div>
             <AnimatePresence>
-                {isModalOpen && (
+                {/* {isModalOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -267,7 +270,7 @@ function TeacherAccountPage() {
                             </motion.button>
                         </motion.div>
                     </motion.div>
-                )}
+                )} */}
             </AnimatePresence>
         </FrontLayout>
     );

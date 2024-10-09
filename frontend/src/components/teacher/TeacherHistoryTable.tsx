@@ -33,6 +33,7 @@ const TeacherHistoryTable: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [selectedBooking, setSelectedBooking] = React.useState<any>(null); // Replace 'any' with a more specific type if possible
     // Function to get the icon, color, and description based on status
+    const [refreshKey, setRefreshKey] = React.useState(0); // Add this line
     const getStatusIconAndColor = (status: string): { icon: JSX.Element; color: string; description: string } => {
         switch (status) {
             case 'รอการเข้าพบ':
@@ -71,7 +72,7 @@ const TeacherHistoryTable: React.FC = () => {
         try {
             const res = await GetBookingStudentListByAdvisorID(id);
             if (res.status === 200) {
-                setBookingsData(res.data.data); // Access the correct data field
+                setBookingsData(res.data.data);
                 console.log("GetBookingByStudent data:", res.data.data);
             } else {
                 console.error("Expected an array but got:", res.data);
@@ -86,7 +87,11 @@ const TeacherHistoryTable: React.FC = () => {
         if (id) {
             getBookingStudentListByAdvisorID(id);
         }
-    }, []);
+    }, [refreshKey]); // Add refreshKey as a dependency
+
+    const handleUpdateSuccess = () => {
+        setRefreshKey(oldKey => oldKey + 1); // Increment refreshKey to trigger useEffect
+    };
     // Update handleViewDetails to open the modal with selected booking details
     const handleViewDetails = (id: number) => {
         const booking = bookingsData.find(b => b.ID === id);
@@ -100,6 +105,7 @@ const TeacherHistoryTable: React.FC = () => {
         setIsModalOpen(false);
         setSelectedBooking(null);
     };
+    
 
     // Handle delete action
     // const handleDelete = (id: number) => {
@@ -173,9 +179,7 @@ const TeacherHistoryTable: React.FC = () => {
             sortable: false,
             width: 150,
             headerClassName: 'font-bold text-xl',
-            renderCell: (params) => {
-                return `${formatDay(params.value)}`;
-            },
+
         },
         {
             field: 'timeRange',
@@ -259,7 +263,7 @@ const TeacherHistoryTable: React.FC = () => {
                             reasons: booking.reason || 'No title',
                             location: booking.time_slot?.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
-                            date: booking?.time_slot?.slot_date || '', // แปลงวันที่ที่นี่
+                            date: formatDay(booking?.time_slot?.slot_date) || '', // แปลงวันที่ที่นี่
                             slot_start_time: booking.time_slot?.slot_start_time || '',
                             slot_end_time: booking.time_slot?.slot_end_time || '',
                             status: booking.status?.status || "unknow",
@@ -301,6 +305,7 @@ const TeacherHistoryTable: React.FC = () => {
                 open={isModalOpen}
                 onClose={handleCloseModal}
                 bookingDetails={selectedBooking}
+                onUpdateSuccess={handleUpdateSuccess}
             />
         </div>
     );

@@ -8,15 +8,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BookingsInterface } from '../../interfaces/IBookings';
 import { UpdateBookingStudentById } from '../../services/https/teacher/listBookingStudent';
 import { motion } from 'framer-motion';
-import toast, { Toaster } from 'react-hot-toast';
-import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
-import {  CheckCircle ,XCircle } from 'react-feather'; // เพิ่ม import icons
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { CheckCircle, XCircle } from 'react-feather'; // เพิ่ม import icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { CheckCircle as Clock, Cancel } from '@mui/icons-material';
 interface BookingDetailsModalProps {
     open: boolean;
     onClose: () => void;
     bookingDetails: BookingsInterface;
+    onUpdateSuccess: () => void;
 }
 
 const theme = createTheme({
@@ -52,68 +53,69 @@ const formatTime = (timeString: string) => {
     return time.toLocaleTimeString('th-TH', options);
 };
 
-const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose, bookingDetails }) => {
+const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose, bookingDetails, onUpdateSuccess }) => {
     const [comment, setComment] = useState<string>('');
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const handleSubmit = async () => {
+        if (!comment.trim()) return; // Prevent submitting empty comments
+
         const id = String(bookingDetails.ID);
         const updatedValues: BookingsInterface = {
             ...bookingDetails,
             comment,
         };
-
-        toast.promise(
-            UpdateBookingStudentById(id, updatedValues),
-            {
-                loading: 'กำลังบันทึกข้อมูล...',
-                success: (res) => {
-                    if (res.status === 200) {
-                        setTimeout(() => window.location.reload(), 2000);
-                        return (
-                            <div style={{ display: 'flex', alignItems: 'center',}}>
-                                <CheckCircle color="green" size={20} style={{ marginRight: '8px'}} />
-                                <span>บันทึกข้อมูลสำเร็จ</span>
-                            </div>
-                        );
-                    } else {
-                        throw new Error('Unexpected response status');
-                    }
-                },
-                error: (_) => (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <XCircle color="red" size={20} style={{ marginRight: '8px' }} />
-                        <span>เกิดข้อผิดพลาดในการบันทึกข้อมูล</span>
-                    </div>
-                ),
-            },
-            {
-                style: {
-                    minWidth: '250px',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                },
-                success: {
-                    duration: 5000,
-                    icon: '🎉',
-                },
-                error: {
-                    duration: 5000,
-                    icon: '❌',
-                },
+        try {
+            const res = await UpdateBookingStudentById(id, updatedValues);
+            if (res.status === 200) {
+                toast.success(res.message || 'บันทึกข้อมูลสำเร็จ', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                onUpdateSuccess();
+                setIsEditing(false); // Exit editing mode after successful submission
+                onClose();
             }
-        );
-    };
-    React.useEffect(() => {
-        if (bookingDetails) {
-            setComment(bookingDetails.comment || '');
-            setIsEditing(bookingDetails.comment ? false : true); // ถ้า comment มีอยู่ ให้ set isEditing เป็น false
+        } catch (error: any) {
+            const errorMessage = error.res?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
+            toast.error(errorMessage, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
-    }, [bookingDetails]);
+    };
 
     const handleEdit = () => {
         setIsEditing(true);
     };
+
+    const handleClose = () => {
+        setIsEditing(false);
+        onClose();
+    };
+
+
+    React.useEffect(() => {
+        if (bookingDetails) {
+            setComment(bookingDetails.comment || '');
+            setIsEditing(!bookingDetails.comment); // Start in editing mode if there's no comment
+        }
+    }, [bookingDetails]);
+
+    const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setComment(e.target.value);
+    };
+
 
     const getStatusProps = (status: string) => {
         switch (status) {
@@ -135,11 +137,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
 
     return (
         <ThemeProvider theme={theme}>
-            <Modal
-                open={open}
-                onClose={onClose}
-                closeAfterTransition
-            >
+            <Modal open={open} onClose={handleClose} closeAfterTransition>
                 <Fade in={open}>
                     <Box
                         sx={{
@@ -205,29 +203,30 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                                 multiline
                                 rows={3}
                                 value={comment}
-                                onChange={(e) => setComment(e.target.value)}
+                                onChange={handleCommentChange}
                                 variant="outlined"
                                 sx={{ mb: 2 }}
                                 InputProps={{
-                                    readOnly: !isEditing, // ใช้สถานะ isEditing เพื่อควบคุมความสามารถในการแก้ไข
+                                    readOnly: !isEditing,
                                 }}
                             />
 
-                            {!isEditing && bookingDetails?.status?.status && (
+                            {!isEditing && comment.trim() && (
                                 <Button variant="outlined" onClick={handleEdit}>
                                     แก้ไขข้อความ
                                 </Button>
                             )}
 
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-                                <Button variant="outlined" onClick={onClose} color="error">
+                                <Button variant="outlined" onClick={handleClose} color="error">
                                     ยกเลิก
                                 </Button>
                                 <Button
                                     variant="contained"
                                     color="secondary"
                                     onClick={handleSubmit}
-                                    sx={{color : 'white'}}
+                                    sx={{ color: 'white' }}
+                                    disabled={!comment.trim() || !isEditing}
                                 >
                                     แสดงความคิดเห็น
                                 </Button>
@@ -237,7 +236,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                     </Box>
                 </Fade>
             </Modal>
-            <Toaster position="top-right" reverseOrder={false} />
+            <ToastContainer />
         </ThemeProvider>
     );
 };

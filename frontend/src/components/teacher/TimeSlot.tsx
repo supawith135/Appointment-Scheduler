@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { message } from "antd";
 import { GetTimeSlotById } from '../../services/https/teacher/timeSlot';
@@ -31,15 +31,17 @@ function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: Cal
   const textColor = isToday ? 'text-red-500' : 'text-gray-400';
   const backgroundColor = isToday ? 'bg-blue-500' : '';
 
+  
+
   return (
-    <motion.div 
+    <motion.div
       className="text-center p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       <p className={`text-sm ${textColor}`}>{day}</p>
-      <motion.p 
+      <motion.p
         className={`text-2xl font-bold mb-2 ${backgroundColor} ${isToday ? 'text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto' : ''}`}
         whileHover={{ scale: 1.1 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -96,12 +98,21 @@ function TimeSlot() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+
+  
   const getDaysToShow = () => {
     if (screenSize < 640) return 2; // iPhone
     if (screenSize < 768) return 3; // iPad portrait
     if (screenSize < 1024) return 4; // iPad landscape
     return 7; // Larger screens
   };
+
+  const handleDeleteSuccess = () => {
+    const id = String(localStorage.getItem("id"));
+    if (id) {
+        getTimeSlotById(id); // Refresh data after deletion
+    }
+};
   
   const getTimeSlotById = async (id: string) => {
     setIsLoading(true);
@@ -130,7 +141,7 @@ function TimeSlot() {
   const id = String(localStorage.getItem("id"))
   useEffect(() => {
     if (id) {
-        getTimeSlotById(id);
+      getTimeSlotById(id);
     }
   }, [messageApi, id]);
 
@@ -161,7 +172,7 @@ function TimeSlot() {
     for (let i = 0; i < numDays; i++) {
       const day = new Date(date);
       day.setDate(date.getDate() + i);
-      
+
       const daySlots = bookingSlots
         .filter(slot => new Date(slot.slot_date!).toDateString() === day.toDateString())
         .sort((a, b) => new Date(a.slot_start_time!).getTime() - new Date(b.slot_start_time!).getTime());
@@ -190,7 +201,7 @@ function TimeSlot() {
   if (isLoading) {
     return <div className="text-center p-4">กำลังโหลดข้อมูล...</div>;
   }
-  
+
   const thaiDayShortNames: { [key: string]: string } = {
     'วันอาทิตย์': 'อา.',
     'วันจันทร์': 'จ.',
@@ -204,7 +215,7 @@ function TimeSlot() {
   return (
     <div className="p-4 max-w-7xl mx-auto">
       {contextHolder}
-      <motion.div 
+      <motion.div
         className="flex justify-between items-center mb-6 sm:mb-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -218,7 +229,7 @@ function TimeSlot() {
         >
           &lt;
         </motion.button>
-        <motion.div 
+        <motion.div
           className="flex items-center"
           whileHover={{ scale: 1.05 }}
         >
@@ -238,10 +249,10 @@ function TimeSlot() {
           &gt;
         </motion.button>
       </motion.div>
-      <motion.div 
+      <motion.div
         className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4"
-        initial={{ opacity: 0 , y : -20}}
-        animate={{ opacity: 1 , y : 0}}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <AnimatePresence>
@@ -270,7 +281,7 @@ function TimeSlot() {
         </AnimatePresence>
       </motion.div>
       {selectedSlot && (
-        <motion.p 
+        <motion.p
           className="mt-4 text-center text-sm sm:text-lg font-semibold"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -294,9 +305,10 @@ function TimeSlot() {
         onSubmit={handleModalSubmit}
         selectedTime={selectedSlot ? new Date(selectedSlot.slot_start_time!).toLocaleString() : null}
         slotDetails={selectedSlot}
+        onDeleteSuccess={handleDeleteSuccess} // Pass the function as a prop
       />
       {selectedReason && (
-        <motion.p 
+        <motion.p
           className="mt-4 text-center text-sm sm:text-lg font-semibold"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

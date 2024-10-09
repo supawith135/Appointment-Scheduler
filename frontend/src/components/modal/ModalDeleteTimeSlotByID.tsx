@@ -10,9 +10,11 @@ interface ModalProps {
     onSubmit: (reason: string) => void;
     selectedTime: string | null;
     slotDetails: TimeSlotsInterface | null;
+    onDeleteSuccess: () => void; // New prop
+    
 }
 
-const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDetails}) => {
+const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDetails, onDeleteSuccess}) => {
     const [_ , setReason] = useState('');
     const modalRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,8 @@ const ModalDeleteTimeSlotByID: React.FC<ModalProps> = ({isOpen, onClose, slotDet
                     popup: 'animated zoomIn'
                 }
             }).then(() => {
-                window.location.reload();
+                onDeleteSuccess();
+                onClose();;
             });
         } else {
             Swal.fire({
