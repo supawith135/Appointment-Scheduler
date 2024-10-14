@@ -49,9 +49,8 @@ AdvisorStudents AS (
 TotalBookings AS (
     SELECT COUNT(b.user_id) AS total_bookings_for_advisor
     FROM bookings b
-    JOIN time_slots ts ON b.time_slot_id = ts.id
-    JOIN users creator ON ts.user_id = creator.id
-    WHERE creator.role_id = 2 AND b.deleted_at IS NULL AND ts.user_id = ?
+    LEFT JOIN time_slots ts ON b.time_slot_id = ts.id
+    WHERE  b.deleted_at IS NULL AND ts.user_id = ? OR b.created_by_id = ?
 ),
 RemainingBookings AS (
     SELECT COUNT(b.user_id) AS remaining_bookings_for_advisor
@@ -67,7 +66,7 @@ SELECT
     (SELECT advisor_student_count FROM AdvisorStudents) AS advisor_student_count,
     (SELECT total_bookings_for_advisor FROM TotalBookings) AS total_bookings_for_advisor,
     (SELECT remaining_bookings_for_advisor FROM RemainingBookings) AS remaining_bookings_for_advisor;
-	`, advisorID, advisorID, advisorID).Scan(&stats).Error
+	`, advisorID, advisorID, advisorID, advisorID).Scan(&stats).Error
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

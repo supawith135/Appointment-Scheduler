@@ -67,6 +67,10 @@ func main() {
 		//student
 		teachers.GET("/studentDetail/:user_name", teacher.GetTeacherStudentByUserName)
 		teachers.GET("/studentInCharge/:id", teacher.GetStudentInCharge)
+		teachers.GET("/student", teacher.GetStudentsList)
+		teachers.POST("/createBookingTeacher", teacher.CreateBookingTeacher)
+
+		
 	}
 
 	// Admin routes

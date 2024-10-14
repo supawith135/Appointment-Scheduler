@@ -29,8 +29,17 @@ async function GetStudentInCharge(id: string) {
         .then((res) => res)
         .catch((e) => e.response);
 }
+
+async function GetStudentsList() {
+
+    return await axios
+        .get(`${apiUrl}/teacher/student`, requestOptions)
+        .then((res) => res)
+        .catch((e) => e.response);
+}
 export {
     GetTeacherStudentByUserName,
-    GetStudentInCharge
+    GetStudentInCharge,
+    GetStudentsList
 
 };

@@ -52,6 +52,11 @@ function Login() {
           else if (role === 'teacher') window.location.href = "/Teacher" ;
           else if (role === 'admin') window.location.href = "/Admin" ;
           else window.location.href = "/"; 
+          // const role = res.data.role;
+          // if (role === 'student') navigate('/Student');
+          // else if (role === 'teacher') navigate('/Teacher');
+          // else if (role === 'admin') navigate('/Admin');
+          // else navigate('/');
           
         }, 2000);
       } else {

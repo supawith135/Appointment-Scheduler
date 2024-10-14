@@ -4,7 +4,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { DataGrid, GridColDef} from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Tooltip from '@mui/material/Tooltip';
 import { GetBookingByStudentID } from '../../services/https/student/booking';
 import { BookingsInterface } from '../../interfaces/IBookings';
@@ -15,12 +15,33 @@ const StudentHistoryTable: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [selectedBooking, setSelectedBooking] = React.useState<any>(null); // Replace 'any' with a more specific type if possible
     // ฟังก์ชันเพื่อแปลงเวลาให้เป็นรูปแบบ "HH:MM"
+    const formatDay = (dateInput: string | Date | undefined) => {
+        if (!dateInput) return '';
+
+        // Convert the input to a Date object
+        const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+        // If the year is less than a reasonable value (e.g., 1900), return an empty string
+        if (date.getFullYear() < 1900) return '';
+
+        return date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
     const formatTime = (time: string | undefined) => {
         if (!time) return '';
+        
+        // Parse the date string and adjust for the timezone offset
         const date = new Date(time);
-        return date.toLocaleTimeString('th-TH', {
+        const offsetMinutes = date.getTimezoneOffset();
+        const adjustedDate = new Date(date.getTime() + offsetMinutes * 60000);
+    
+        return adjustedDate.toLocaleTimeString('th-TH', {
             hour: '2-digit',
             minute: '2-digit',
+            hour12: false
         });
     };
 
@@ -114,14 +135,14 @@ const StudentHistoryTable: React.FC = () => {
             headerName: 'ชื่ออาจารย์',
             description: 'รายชื่ออาจารย์',
             sortable: false,
-            width : 250,
+            width: 250,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
         },
         {
             field: 'reasons',
             headerName: 'เหตุผลเข้าพบ',
             description: 'รายละเอียดเหตุผลเข้าพบ',
-            width : 150,
+            width: 150,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
 
         },
@@ -129,7 +150,7 @@ const StudentHistoryTable: React.FC = () => {
             field: 'location',
             headerName: 'สถานที่นัดหมาย',
             description: 'สถานที่เข้าพบอาจารย์',
-            width : 120,
+            width: 120,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
 
         },
@@ -138,35 +159,28 @@ const StudentHistoryTable: React.FC = () => {
             headerName: 'วันที่เข้าพบอาจารย์',
             description: 'วันที่เข้าพบอาจารย์',
             sortable: false,
-            width : 150,
+            width: 150,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
-            renderCell: (params) => {
-                // Convert slot_date to readable date format
-                const date = new Date(params.value);
-                return date.toLocaleDateString('th-TH', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                });
-            },
+
         },
         {
             field: 'timeRange',
             headerName: 'ช่วงเวลาพบ',
             description: 'ช่วงเวลาเข้าพบอาจารย์',
-            width : 130,
-            headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
+            width: 130,
+            headerClassName: 'font-bold text-xl',
             valueGetter: (_, row) => {
-                const startTime = row?.slot_start_time;
-                const endTime = row?.slot_end_time;
-                return `${formatTime(startTime)} - ${formatTime(endTime)} น.`;
+                const startTime = formatTime(row.slot_start_time || row.CreatedAt);
+                const endTime = formatTime(row.slot_end_time || row.CreatedAt);
+                if (!startTime && !endTime) return '';
+                return `${startTime} - ${endTime} น.`;
             }
         },
         {
             field: 'comment',
             headerName: 'ความคิดเห็นอาจารย์',
             description: 'รายละเอียดความคิดเห็นของอาจารย์',
-            width : 170,
+            width: 170,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
 
         },
@@ -174,7 +188,7 @@ const StudentHistoryTable: React.FC = () => {
             field: 'status',
             headerName: 'สถานะ',
             description: 'สถานะเข้าพบ',
-            width : 80,
+            width: 80,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
             renderCell: (params) => {
                 const { icon, color, description } = getStatusIconAndColor(params.value as string);
@@ -193,7 +207,7 @@ const StudentHistoryTable: React.FC = () => {
             field: 'actions',
             headerName: 'Actions',
             description: 'Actions!',
-            width : 100,
+            width: 100,
             sortable: false,
             headerClassName: 'font-bold text-lg', // ขนาดและความหนาของหัวข้อ
             renderCell: (params) => (
@@ -226,13 +240,18 @@ const StudentHistoryTable: React.FC = () => {
                     <DataGrid
                         rows={bookingsData.map((booking) => ({
                             id: booking.ID ?? 0,
-                            advisorName: `${booking.time_slot?.user?.position?.position_name} ${booking.time_slot?.user?.full_name}` || 'Unknown',
+                            advisorName:
+                                (booking.time_slot?.user?.position?.position_name && booking.time_slot?.user?.full_name)
+                                    ? `${booking.time_slot.user.position.position_name} ${booking.time_slot.user.full_name}`
+                                    : (booking.created_by_id && booking.created_by?.full_name)
+                                        ? `${booking.created_by.position?.position_name} ${booking.created_by.full_name}`
+                                        : 'Unknown',
                             reasons: booking.reason || 'No title',
-                            location: booking.time_slot?.location || 'No Location',
+                            location: booking.location ||booking.time_slot?.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
-                            date: booking?.time_slot?.slot_date,
-                            slot_start_time: booking.time_slot?.slot_start_time || '',
-                            slot_end_time: booking.time_slot?.slot_end_time || '',
+                            date: formatDay(booking?.time_slot?.slot_date) || formatDay(booking?.CreatedAt) || '',
+                            slot_start_time: booking.time_slot?.slot_start_time || booking?.CreatedAt || '', // แสดง start_time หรือ CreatedAt
+                            slot_end_time: booking.time_slot?.slot_end_time || booking?.CreatedAt || '', // แสดง end_time หรือ CreatedAt
                             status: booking.status?.status || 0,
                         }))}
                         columns={columns}

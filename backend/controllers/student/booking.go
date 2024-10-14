@@ -61,8 +61,9 @@ func GetBookingByStudentId(c *gin.Context) {
 	db := config.DB()
 
 	// Query for bookings with the provided user_id, preload related fields, and order by ID descending
-	results := db.Preload("User").Preload("User.Advisor").Preload("TimeSlot.User.Position").Preload("Status").
-		Where("user_id = ?", UserID).Order("id DESC").Find(&bookings)
+	results := db.Preload("User").Preload("User.Advisor").Preload("TimeSlot.User.Position").
+	Preload("Status").Preload("CreatedBy.Position"). // Preload CreatedBy เพื่อดึงข้อมูลอาจารย์
+	Where("user_id = ?", UserID).Order("id DESC").Find(&bookings)
 
 	// Check if there's any error in the query
 	if results.Error != nil {

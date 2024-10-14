@@ -72,3 +72,27 @@ func GetStudentInCharge(c *gin.Context) {
         "data":    Users,
     })
 }
+
+func GetStudentsList(c *gin.Context) {
+
+	var users []entity.Users
+
+	// Get the DB instance and Preload associated fields
+	db := config.DB() // Get the DB instance
+
+	results := db.Preload("Position").Preload("Role").Preload("Advisor.Position").Preload("Gender").Where("role_id = ?", 1).Find(&users)
+
+	// Log and return detailed error if something goes wrong
+	if results.Error != nil {
+		log.Printf("Database query error: %v", results.Error)
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": results.Error.Error()})
+		return
+	}
+
+	// Return users in JSON format
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Students List successfully",
+		"data":    users,
+	})
+}

@@ -17,4 +17,11 @@ export interface BookingsInterface {
     
     user_id?: number;
     user?: UsersInterface;
+
+    CreatedAt?: Date;
+
+    created_by_id?: number;
+    created_by?: UsersInterface;
+
+    location?: string;
 }
