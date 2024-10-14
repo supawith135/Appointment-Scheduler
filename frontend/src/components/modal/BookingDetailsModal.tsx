@@ -34,23 +34,34 @@ const theme = createTheme({
     },
 });
 
-const formatThaiDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
+const formatThaiDate = (dateInput: string | Date | undefined) => {
+    if (!dateInput) return '';
+
+    // Convert the input to a Date object
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+
+    // If the year is less than a reasonable value (e.g., 1900), return an empty string
+    if (date.getFullYear() < 1900) return '';
+
+    return date.toLocaleDateString('th-TH', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-    };
-    const date = new Date(dateString);
-    return date.toLocaleDateString('th-TH', options);
+    });
 };
+const formatTime = (time: string | undefined) => {
+    if (!time) return '';
+    
+    // Parse the date string and adjust for the timezone offset
+    const date = new Date(time);
+    const offsetMinutes = date.getTimezoneOffset();
+    const adjustedDate = new Date(date.getTime() + offsetMinutes * 60000);
 
-const formatTime = (timeString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
+    return adjustedDate.toLocaleTimeString('th-TH', {
         hour: '2-digit',
         minute: '2-digit',
-    };
-    const time = new Date(timeString);
-    return time.toLocaleTimeString('th-TH', options);
+        hour12: false
+    });
 };
 
 const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose, bookingDetails, onUpdateSuccess }) => {
@@ -131,9 +142,9 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
     };
     const statusProps = getStatusProps(bookingDetails?.status?.status || "");
 
-    const slotDate = bookingDetails?.time_slot?.slot_date;
-    const slotStartTime = bookingDetails?.time_slot?.slot_start_time;
-    const slotEndTime = bookingDetails?.time_slot?.slot_end_time;
+    const slotDate =   bookingDetails?.time_slot?.slot_date || bookingDetails?.CreatedAt;
+    const slotStartTime =   bookingDetails?.time_slot?.slot_start_time || bookingDetails?.CreatedAt;
+    const slotEndTime =   bookingDetails?.time_slot?.slot_end_time || bookingDetails?.CreatedAt;
 
     return (
         <ThemeProvider theme={theme}>
@@ -185,7 +196,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ open, onClose
                             </Typography>
 
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
-                                <strong>สถานที่นัดหมาย:</strong> {bookingDetails?.time_slot?.location}
+                                <strong>สถานที่นัดหมาย:</strong> {bookingDetails?.time_slot?.location || bookingDetails?.location}
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 1, color: 'black' }}>
                                 <strong>เหตุผลที่เข้าพบ:</strong> {bookingDetails?.reason}

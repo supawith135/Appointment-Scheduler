@@ -17,6 +17,7 @@ const studentNavItems: NavItem[] = [
 
 const teacherNavItems: NavItem[] = [
   { path: '/Teacher', label: 'การนัดหมาย' },
+  { path: '/Teacher/StudentNote', label: 'บันทึกพบนักศึกษาด่วน' },
   { path: '/Teacher/CreateTimeSlot', label: 'สร้างเวลานัดหมาย' },
   { path: '/Teacher/History', label: 'ประวัติจองคิว' },
 ];

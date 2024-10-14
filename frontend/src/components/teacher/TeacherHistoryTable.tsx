@@ -49,10 +49,13 @@ const TeacherHistoryTable: React.FC = () => {
 
     const formatDay = (dateInput: string | Date | undefined) => {
         if (!dateInput) return '';
-        
-        // If dateInput is a string, convert it to a Date object
+
+        // Convert the input to a Date object
         const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-    
+
+        // If the year is less than a reasonable value (e.g., 1900), return an empty string
+        if (date.getFullYear() < 1900) return '';
+
         return date.toLocaleDateString('th-TH', {
             year: 'numeric',
             month: 'long',
@@ -61,13 +64,18 @@ const TeacherHistoryTable: React.FC = () => {
     };
     const formatTime = (time: string | undefined) => {
         if (!time) return '';
+        
+        // Parse the date string and adjust for the timezone offset
         const date = new Date(time);
-        return date.toLocaleTimeString('th-TH', {
+        const offsetMinutes = date.getTimezoneOffset();
+        const adjustedDate = new Date(date.getTime() + offsetMinutes * 60000);
+    
+        return adjustedDate.toLocaleTimeString('th-TH', {
             hour: '2-digit',
             minute: '2-digit',
+            hour12: false
         });
     };
-
     const getBookingStudentListByAdvisorID = async (id: string) => {
         try {
             const res = await GetBookingStudentListByAdvisorID(id);
@@ -105,7 +113,7 @@ const TeacherHistoryTable: React.FC = () => {
         setIsModalOpen(false);
         setSelectedBooking(null);
     };
-    
+
 
     // Handle delete action
     // const handleDelete = (id: number) => {
@@ -127,7 +135,8 @@ const TeacherHistoryTable: React.FC = () => {
 
     // Define the columns with custom actions
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 30 ,
+        {
+            field: 'id', headerName: 'ID', width: 30,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
         },
         {
@@ -160,7 +169,7 @@ const TeacherHistoryTable: React.FC = () => {
             field: 'reasons',
             headerName: 'เหตุผลเข้าพบ',
             description: 'รายละเอียดเหตุผลเข้าพบ',
-            width : 150,
+            width: 150,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
         },
@@ -168,7 +177,7 @@ const TeacherHistoryTable: React.FC = () => {
             field: 'location',
             headerName: 'สถานที่นัดหมาย',
             description: 'สถานที่เข้าพบอาจารย์',
-            width : 140,
+            width: 140,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
         },
@@ -176,7 +185,6 @@ const TeacherHistoryTable: React.FC = () => {
             field: 'date',
             headerName: 'วันที่เข้าพบอาจารย์',
             description: 'วันที่เข้าพบอาจารย์',
-            sortable: false,
             width: 150,
             headerClassName: 'font-bold text-xl',
 
@@ -185,19 +193,20 @@ const TeacherHistoryTable: React.FC = () => {
             field: 'timeRange',
             headerName: 'ช่วงเวลาพบ',
             description: 'ช่วงเวลาเข้าพบอาจารย์',
-            width : 130,
-            headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
+            width: 130,
+            headerClassName: 'font-bold text-xl',
             valueGetter: (_, row) => {
-                const startTime = row?.slot_start_time;
-                const endTime = row?.slot_end_time;
-                return `${formatTime(startTime)} - ${formatTime(endTime)} น.`;
+                const startTime = formatTime(row.slot_start_time || row.CreatedAt);
+                const endTime = formatTime(row.slot_end_time || row.CreatedAt);
+                if (!startTime && !endTime) return '';
+                return `${startTime} - ${endTime} น.`;
             }
         },
         {
             field: 'comment',
             headerName: 'ความคิดเห็นอาจารย์',
             description: 'รายละเอียดความคิดเห็นของอาจารย์',
-            width : 170,
+            width: 170,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
         },
@@ -205,7 +214,7 @@ const TeacherHistoryTable: React.FC = () => {
             field: 'status',
             headerName: 'สถานะ',
             description: 'สถานะเข้าพบ',
-            width : 100,
+            width: 100,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
 
             renderCell: (params) => {
@@ -227,7 +236,7 @@ const TeacherHistoryTable: React.FC = () => {
             headerName: 'Actions',
             description: 'Actions!',
             sortable: false,
-            width : 100,
+            width: 100,
             headerClassName: 'font-bold text-xl', // ขนาดและความหนาของหัวข้อ
             renderCell: (params) => (
                 <div style={{ display: 'flex' }}>
@@ -261,11 +270,11 @@ const TeacherHistoryTable: React.FC = () => {
                             student_id: booking.user?.user_name || 'Unknown',
                             student_name: booking.user?.full_name || 'Unknown',
                             reasons: booking.reason || 'No title',
-                            location: booking.time_slot?.location || 'No Location',
+                            location: booking.time_slot?.location || booking.location || 'No Location',
                             comment: booking.comment || 'ยังไม่แสดงความคิดเห็น',
-                            date: formatDay(booking?.time_slot?.slot_date) || '', // แปลงวันที่ที่นี่
-                            slot_start_time: booking.time_slot?.slot_start_time || '',
-                            slot_end_time: booking.time_slot?.slot_end_time || '',
+                            date: formatDay(booking?.time_slot?.slot_date) || formatDay(booking?.CreatedAt) || '',
+                            slot_start_time: booking.time_slot?.slot_start_time || booking?.CreatedAt || '', // แสดง start_time หรือ CreatedAt
+                            slot_end_time: booking.time_slot?.slot_end_time || booking?.CreatedAt || '', // แสดง end_time หรือ CreatedAt
                             status: booking.status?.status || "unknow",
                         }))}
                         columns={columns}

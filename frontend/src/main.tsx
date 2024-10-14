@@ -30,6 +30,7 @@ import AdminTeacherDetailPage from './pages/admin/AdminTeacherDetailPage'
 import AddStudentPage from './pages/admin/AddStudentPage'
 import AddTeacherPage from './pages/admin/AddTeacherPage'
 import StudentInChargePage from './pages/teacher/StudentInChargePage'
+import TeacherStudentNotePage from './pages/teacher/TeacherStudentNotePage'
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 const router = createBrowserRouter([
   {
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
           { path: 'Profile', element: <TeacherProfile /> },
           { path: 'Account', element: <TeacherAccountPage /> },
           { path: 'StudentInCharge', element: <StudentInChargePage /> },
+          { path: 'StudentNote', element: <TeacherStudentNotePage /> },
           
         ],
       },

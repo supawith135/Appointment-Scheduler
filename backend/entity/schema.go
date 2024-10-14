@@ -1,8 +1,8 @@
 package entity
 
 import (
-	"time"
 	"gorm.io/gorm"
+	"time"
 )
 
 // Users represents a user entity.
@@ -72,6 +72,10 @@ type Bookings struct {
 	Comment    string    `json:"comment"`
 	UserID     *uint     `json:"user_id"`
 	User       Users     `gorm:"foreignKey:UserID;references:ID" json:"user"`
+
+	CreatedByID *uint   `json:"created_by_id"` // อาจารย์เป็นคนสร้างการนัดนี้ 
+	CreatedBy   Users  `gorm:"foreignKey:CreatedByID;references:ID" json:"created_by"`
+	Location    *string `json:"location"`
 }
 
 // Statuses represents a status entity.
