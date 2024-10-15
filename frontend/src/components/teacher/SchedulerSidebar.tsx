@@ -36,8 +36,10 @@ interface ErrorState {
     [key: string]: { [index: number]: string };
 }
 
-
-function SchedulerSidebar() {
+interface SchedulerSidebarProps {
+    onTimeSlotCreated: () => void;
+}
+function SchedulerSidebar({ onTimeSlotCreated }: SchedulerSidebarProps) {
     const today = dayjs().add(1, 'day').format('YYYY-MM-DD');
     const [availability, setAvailability] = React.useState<Record<string, DateRange<Dayjs>[]>>({
         [today]: [[dayjs().startOf('day'), dayjs().endOf('day')]]
@@ -55,6 +57,8 @@ function SchedulerSidebar() {
     const [isLoading, setIsLoading] = React.useState(false);
     // const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     // const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+
+    
     const durationMinutes = parseInt(duration.split(' ')[0]);
 
     dayjs.locale('th'); // Set the locale to Thai
@@ -98,7 +102,7 @@ function SchedulerSidebar() {
         return title && location && Object.keys(availability).length > 0 && !hasErrors;
     };
 
-    const  isTimeRangeValid = (start: Dayjs | null, end: Dayjs | null): boolean => {
+    const isTimeRangeValid = (start: Dayjs | null, end: Dayjs | null): boolean => {
         if (!start || !end) return true;
         const startMinutes = start.minute();
         const endMinutes = end.minute();
@@ -377,7 +381,7 @@ function SchedulerSidebar() {
             toast.error("ไม่มีช่วงเวลาที่จะสร้าง กรุณาเพิ่มช่วงเวลาก่อนยืนยัน");
             return;
         }
-        console.log(allTimeSlots);
+        console.log("allTimeSlots: ",allTimeSlots);
         setIsLoading(true);
 
         try {
@@ -395,12 +399,11 @@ function SchedulerSidebar() {
                 pauseOnHover: true,
                 draggable: true,
                 onClose: () => {
-                    window.location.reload();
+                    onTimeSlotCreated();
                 }
             });
-
             // รีเซ็ต state
-            resetForm();
+            resetFullForm();
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการสร้างช่วงเวลา", {
                 position: "top-right",
@@ -409,21 +412,29 @@ function SchedulerSidebar() {
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
-                onClose: () => {
-                    window.location.reload();
-                }
+                // onClose: () => {
+                // }
             });
+            resetPartialForm();
         } finally {
             setIsLoading(false);
-            // พิจารณาว่าจำเป็นต้อง reload หรือไม่
-            // window.location.reload();
         }
+    };
+    const resetPartialForm = () => {
+        setAvailability({});
+        setSelectedDate(null);
+        setErrors({});
+        setErrorTitle(null);
+        setErrorLocation(null);
     };
 
     // ฟังก์ชันสำหรับรีเซ็ต form
-    const resetForm = () => {
+    const resetFullForm = () => {
         setTitle('');
         setLocation('');
+        setErrors({});
+        setErrorTitle(null);
+        setErrorLocation(null);
         setAvailability({});
         setSelectedDate(null);
     };

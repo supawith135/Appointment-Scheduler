@@ -13,6 +13,11 @@ interface DayInfo {
   isSelected?: boolean;
 }
 
+interface TimeSlotProps {
+  refreshTrigger: number;
+}
+
+
 interface CalendarDayProps {
   day: string;
   date: number;
@@ -76,7 +81,7 @@ function BookingCalendayDay({ day, date, slots, onTimeSelect, currentDate }: Cal
   );
 }
 
-function TimeSlot() {
+function TimeSlot({ refreshTrigger }: TimeSlotProps) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [days, setDays] = useState<DayInfo[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlotsInterface | null>(null);
@@ -143,7 +148,7 @@ function TimeSlot() {
     if (id) {
       getTimeSlotById(id);
     }
-  }, [messageApi, id]);
+  }, [messageApi, id, refreshTrigger]);
 
   useEffect(() => {
     generateWeekDays(currentDate);
