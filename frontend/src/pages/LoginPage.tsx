@@ -46,19 +46,27 @@ function Login() {
         localStorage.setItem("id", res.data.id);
         localStorage.setItem("role", res.data.role);
 
+       
         setTimeout(() => {
           const role = res.data.role;
-          if (role === 'student') window.location.href = "/Student";
-          else if (role === 'teacher') window.location.href = "/Teacher" ;
-          else if (role === 'admin') window.location.href = "/Admin" ;
-          else window.location.href = "/"; 
-          // const role = res.data.role;
-          // if (role === 'student') navigate('/Student');
-          // else if (role === 'teacher') navigate('/Teacher');
-          // else if (role === 'admin') navigate('/Admin');
-          // else navigate('/');
-          
-        }, 2000);
+          switch (role) {
+              case 'student':
+                  // navigate('/Student');
+                  window.location.href = "/Student"
+                  break;
+              case 'teacher':
+                  // navigate('/Teacher');
+                  window.location.href = "/Teacher"
+                  break;
+              case 'admin':
+                  // navigate('/Admin');
+                  window.location.href = "/Admin"
+                  break;
+              default:
+                  navigate('/');
+                  
+          }
+      }, 2000); // หน่วงเวลา 2 วินาที
       } else {
         showNotification(res.data.error || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ', 'error');
       }

@@ -55,9 +55,9 @@ const TeacherListTable: React.FC = () => {
                 }
                 
                 // แจ้งเตือนเมื่อการลบสำเร็จ
-                toast.success('ลบข้อมูลเรียบร้อยแล้ว', {
-                    onClose: () => window.location.reload(), // Reload หน้าเมื่อแจ้งเตือนเสร็จแล้ว
-                });
+                toast.success('ลบข้อมูลเรียบร้อยแล้ว');
+                // เรียกใช้งาน getTeachersList เพื่อรีเฟรชข้อมูล
+                await getTeachersList();
 
                 handleCloseDialog();
             } catch (error) {

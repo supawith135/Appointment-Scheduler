@@ -54,9 +54,9 @@ const StudentListTable: React.FC = () => {
                     setStudentData((prevData) => prevData.filter(student => String(student.ID) !== id));
                 }
                 // แจ้งเตือนเมื่อการลบสำเร็จ
-                toast.success('ลบข้อมูลเรียบร้อยแล้ว', {
-                    onClose: () => window.location.reload(), // Reload หน้าเมื่อแจ้งเตือนเสร็จแล้ว
-                });
+                toast.success('ลบข้อมูลเรียบร้อยแล้ว');
+                // เรียกใช้งาน getStudentsList เพื่อรีเฟรชข้อมูล
+                await getStudentsList();
 
                 handleCloseDialog();
             } catch (error) {

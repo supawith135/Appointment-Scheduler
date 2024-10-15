@@ -16,7 +16,7 @@ function StudentNote() {
     const [studentsData, setStudentsData] = useState<UsersInterface[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<UsersInterface | null>(null);
-    
+
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -123,9 +123,9 @@ function StudentNote() {
                     >
                         <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                             <Form.Item
-                                label={<span className="text-xl font-bold font-NotoSans">ค้นหานักศึกษา</span>}
+                                label={ <span className="text-xl font-bold font-NotoSans">ค้นหานักศึกษา</span>}
                                 name="student_search"
-                                rules={[{ required: true, message: "กรุณาเลือกนักศึกษา!" }]}
+                                rules={[{ required: true, message: "กรุณาเลือกนักศึกษา! เช่น B64xxxxx สมพงษ์ ดีงาม" }]}
                             >
                                 <AutoComplete
                                     options={studentOptions}
@@ -134,7 +134,7 @@ function StudentNote() {
                                         option && option.value ? option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1 : false
                                     }
                                     // placeholder='ค้นหาชื่อนักศึกษา'
-                                    style={{ width: '100%' }}
+                                    style={{ width: '100%', height: '48px' }}
                                 >
                                     <Input prefix={<UserOutlined className="text-indigo-500" />} style={{ height: '48px' }} />
                                 </AutoComplete>
@@ -146,7 +146,7 @@ function StudentNote() {
                                 label={<span className="text-lg font-semibold font-NotoSans">สถานที่พบ</span>}
                                 name="location"
                                 rules={[{ required: true, message: "กรุณากรอกสถานที่พบ!" }]}
-                                
+
                             >
                                 <Input
                                     prefix={<EnvironmentOutlined className="text-indigo-500" />}
@@ -160,7 +160,7 @@ function StudentNote() {
                             <Form.Item
                                 label={<span className="text-lg font-semibold font-NotoSans">เหตุผลที่พบ</span>}
                                 name="reason"
-                                rules={[{ required: true, message: 'กรุณากรอกเหตุผลที่พบ' }]}
+                                rules={[{ required: true, message: 'กรุณากรอกเหตุผลที่พบ!' }]}
                             >
                                 <Input
                                     prefix={<MailOutlined className="text-indigo-500" />}
@@ -173,10 +173,10 @@ function StudentNote() {
                             <Form.Item
                                 label={<span className="text-lg font-semibold font-NotoSans">ความคิดเห็น</span>}
                                 name="comment"
-                                rules={[{ required: true, message: 'กรุณากรอกความคิดเห็น' }]}
+                                rules={[{ required: true, message: 'กรุณากรอกความคิดเห็น!' }]}
                             >
                                 <TextArea
-                                
+                                    
                                     rows={4}
                                     style={{ minHeight: '80px' }}
                                 />
